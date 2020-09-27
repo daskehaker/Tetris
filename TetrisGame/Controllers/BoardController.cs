@@ -32,27 +32,88 @@ namespace TetrisGame.Controllers
             return board.getBoadr();
         }
 
-        [Route("spawn")]
+        [Route("start")]
         [HttpGet]
-        public IActionResult SpawnPiece()
+        public async Task<IActionResult> StartGame()
         {
-            PieceDto piece = new PieceDto(3, 0, "green");
-            _hubContext.Clients.All.SendAsync("Spawn", piece.x, piece.y, piece.color, piece.shape);
-            return Ok(piece.x);
+            PieceDto piece = new PieceDto(3, 0, GameConfiguration.Colors[0]);
+            for (int i = 0; i < 5; i++)
+            {
+                Spawn(piece);
+                piece.moveDown();
+                await Task.Delay(1000);
+            }
+            return Ok();
         }
 
-        [Route("move")]
+        [Route("move/left")]
         [HttpPost]
-        public IActionResult MovePiece([FromBody] PieceResource pieceResource )
+        public IActionResult MoveLeft([FromBody] PieceResource pieceResource )
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            PieceDto piece = new PieceDto(pieceResource.x, 0, "green");
-            _hubContext.Clients.All.SendAsync("Spawn", piece.x, piece.y, piece.color, piece.shape);
-            return Ok( piece );
+            PieceDto piece = MapPiece(pieceResource);
+            piece.moveLeft();
+            Spawn(piece);
+            return Ok(piece);
+        }
+
+        [Route("move/right")]
+        [HttpPost]
+        public IActionResult MoveRight([FromBody] PieceResource pieceResource)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            PieceDto piece = MapPiece(pieceResource);
+            piece.moveRight();
+            Spawn(piece);
+            return Ok(piece);
+        }
+
+        [Route("move/down")]
+        [HttpPost]
+        public IActionResult MoveDown([FromBody] PieceResource pieceResource)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            PieceDto piece = MapPiece(pieceResource);
+            piece.moveDown();
+            Spawn(piece);
+            return Ok(piece);
+        }
+
+        [Route("move/rotate")]
+        [HttpPost]
+        public IActionResult Rotate([FromBody] PieceResource pieceResource)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //transpose()
+            //reverse()
+
+            return Ok();
+        }
+
+        public PieceDto MapPiece(PieceResource p)
+        {
+            return new PieceDto(p.x, p.y, p.color, p.shape);
+        }
+
+        public void Spawn(PieceDto p)
+        {
+            _hubContext.Clients.All.SendAsync("Spawn", p.x, p.y, p.color, p.shape);
         }
     }
 }

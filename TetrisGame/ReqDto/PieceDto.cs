@@ -26,9 +26,46 @@ namespace TetrisGame.ReqDto
             this.shape = arr;
         }
 
-        public void move()
+        public PieceDto(int x, int y, string color, int[][] shape)
         {
-            this.x++;
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.shape = shape;
+        }
+
+        public void moveRight()
+        {
+
+            if(checkRight()) this.x++;
+        }
+
+        public void moveLeft()
+        {
+            if(checkLeft()) this.x--;
+        }
+
+        public void moveDown()
+        {
+            if (checkBottom()) this.y++;
+        }
+
+        private bool checkLeft()
+        {
+            if (this.x > 0) return true;
+            return false;
+        }
+
+        private bool checkRight()
+        {
+            if (this.x < 7) return true;
+            return false;
+        }
+
+        private bool checkBottom()
+        {
+            if (this.y < 18) return true;
+            return false;
         }
     }
 }
