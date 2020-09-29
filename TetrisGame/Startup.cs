@@ -10,7 +10,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TetrisGame.Entities;
 using TetrisGame.Hubs;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using TetrisGame.Models;
 
 namespace TetrisGame
 {
@@ -39,6 +44,19 @@ namespace TetrisGame
 
             services.AddControllers();
             services.AddSignalR();
+            services.AddDbContext<TetrisContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentityCore<AppUser>().AddEntityFrameworkStores<TetrisContext>(); //del sitos eilutes tiksliai nezinau
+
+            //nustatymai slaptazodzio reikalavimam
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +70,8 @@ namespace TetrisGame
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
             app.UseCors("CorsPolicy");
