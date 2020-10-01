@@ -141,4 +141,5 @@ C:\Users\Paulius\source\repos\TetrisGame\TetrisGame\bin\Debug\netcoreapp3.1\runt
 C:\Users\Paulius\source\repos\TetrisGame\TetrisGame\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
 C:\Users\Paulius\source\repos\TetrisGame\TetrisGame\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\Paulius\source\repos\TetrisGame\TetrisGame\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\Paulius\source\repos\TetrisGame\TetrisGame\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Paulius\source\repos\TetrisGame\TetrisGame\obj\Debug\netcoreapp3.1\TetrisGame.MvcApplicationPartsAssemblyInfo.cache
