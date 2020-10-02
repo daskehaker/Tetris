@@ -1,1 +1,1 @@
-{"version":3,"file":"MessageDto.js","sourceRoot":"","sources":["../../../../../src/app/Dto/MessageDto.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,UAAU;IAAvB;QACS,SAAI,GAAW,EAAE,CAAC;QAClB,YAAO,GAAW,EAAE,CAAC;IAC9B,CAAC;CAAA"}
+{"version":3,"file":"MessageDto.js","sourceRoot":"","sources":["../../../../../src/app/Dto/MessageDto.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,UAAU;IACrB,YACS,IAAY,EACZ,OAAe;QADf,SAAI,GAAJ,IAAI,CAAQ;QACZ,YAAO,GAAP,OAAO,CAAQ;IACtB,CAAC;CACJ"}

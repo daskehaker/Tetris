@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 let ChatComponent = class ChatComponent {
     constructor(chatService) {
         this.chatService = chatService;
-        this.msgDto = new MessageDto();
+        this.msgDto = new MessageDto("", "");
         this.msgInboxArray = [];
     }
     ngOnInit() {
@@ -23,12 +23,12 @@ let ChatComponent = class ChatComponent {
         else {
             console.log('Singleton failed, variables contain different instances.');
         }
+        console.log("Singletone sent message to chat");
+        this.chatService.broadcastMessage(s1.introRules());
     }
     // calls the service method to get the new messages sent
     addToInbox(obj) {
-        let newObj = new MessageDto();
-        newObj.user = obj.user;
-        newObj.msgText = obj.msgText;
+        let newObj = new MessageDto(obj.user, obj.msgText);
         this.msgInboxArray.push(newObj);
     }
     //sends the message via service

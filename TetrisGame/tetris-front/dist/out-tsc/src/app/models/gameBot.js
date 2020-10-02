@@ -1,15 +1,15 @@
+import { MessageDto } from './../Dto/MessageDto';
 export class Bot {
-    constructor() { }
+    constructor() {
+    }
     static getInstance() {
         if (!Bot.instance) {
             Bot.instance = new Bot();
-            Bot.introMsg.user = "I am Game Bot, I was immplemented using Singleton pattern";
-            Bot.introMsg.msgText = "This is the game rules. Please play according to them.";
         }
         return Bot.instance;
     }
-    get introMsg() {
-        return this.introMsg;
+    introRules() {
+        return new MessageDto("Hello I am Singleton Game bot ", "I will Introduce game rules");
     }
 }
 //# sourceMappingURL=gameBot.js.map

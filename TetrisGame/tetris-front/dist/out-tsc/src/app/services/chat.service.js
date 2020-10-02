@@ -8,7 +8,7 @@ let ChatService = class ChatService {
         this.http = http;
         this.connectionService = connectionService;
         this.POST_URL = environment.rootUrl + "chat/send/";
-        this.receiveMessageObject = new MessageDto();
+        this.receiveMessageObject = new MessageDto("", "");
         this.sharedObj = new Subject();
         this.connectionService.connection.on("ReceiveOne", (user, message) => {
             this.mapReceiveMessage(user, message);

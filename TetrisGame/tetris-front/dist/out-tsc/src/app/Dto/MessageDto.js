@@ -1,7 +1,7 @@
 export class MessageDto {
-    constructor() {
-        this.user = '';
-        this.msgText = '';
+    constructor(user, msgText) {
+        this.user = user;
+        this.msgText = msgText;
     }
 }
 //# sourceMappingURL=MessageDto.js.map

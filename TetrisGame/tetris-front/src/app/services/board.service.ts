@@ -1,16 +1,15 @@
 import { environment } from './../../environments/environment';
-import { IPiece } from './../shared/interfaces';
+import { IPiece, IObserver } from './../shared/interfaces';
 import { ConnectionService } from './connection.service';
 import { PieceDto } from './../Dto/PieceDto';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ROWS, COLS } from '../shared/constants';
 import { Subject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BoardService {
+export class BoardService implements IObserver {
 
   readonly rootUrl=environment.rootUrl + "board/"
 
@@ -21,6 +20,7 @@ export class BoardService {
     this.connectionService.connection.on("Spawn", (x, y, color, shape) => {
       this.mapSpawnPiece(x, y, color, shape);
     });
+    this.connectionService.add(this);
   }
 
   private mapSpawnPiece(x: number, y: number, color: string, shape: number[][]) {
@@ -32,6 +32,12 @@ export class BoardService {
   }
 
   /* ****************************** Public Mehods **************************************** */
+
+  public update(): void {
+    if(this.connectionService.getState() == true){
+      console.log("Board Observer reacted to event");
+    }
+  }
 
   public broadcastPiece(){
     this.http.get(this.rootUrl + 'start').subscribe()
