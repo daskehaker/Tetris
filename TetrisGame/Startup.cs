@@ -82,6 +82,18 @@ namespace TetrisGame
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
                 };
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        if (string.IsNullOrEmpty(accessToken) == false)
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
         }
 
@@ -93,6 +105,8 @@ namespace TetrisGame
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors("CorsPolicy");
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -100,7 +114,6 @@ namespace TetrisGame
             app.UseAuthentication();
 
             app.UseAuthorization();
-            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {

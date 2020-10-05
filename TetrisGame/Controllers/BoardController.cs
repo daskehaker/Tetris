@@ -9,6 +9,7 @@ using TetrisGame.ReqDto;
 using Microsoft.AspNetCore.SignalR;
 using TetrisGame.Hubs;
 using TetrisGame.Controllers.Resource;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TetrisGame.Controllers
 {
@@ -23,97 +24,38 @@ namespace TetrisGame.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<int[][]>> GetBoadr()
+        [Route("connected")]
+        public Dictionary<string, string> getUses()
+        {
+            return ConnectedUser.Ids;
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<GameBoad>> GetBoadr()
         {
             int height = GameConfiguration.Rows;
             int width = GameConfiguration.Columns;
+            string userId = User.Claims.First(c => c.Type == "UserID").Value;
 
-            GameBoad board = new GameBoad(height, width);
-            return board.getBoadr();
+            GameBoad board = new GameBoad(userId, height, width);
+            return Ok(board);
         }
 
         [Route("start")]
-        [HttpGet]
-        public async Task<IActionResult> StartGame()
-        {
-            PieceDto piece = new PieceDto(3, 0, GameConfiguration.Colors[0]);
-            for (int i = 0; i < 5; i++)
-            {
-                Spawn(piece);
-                piece.moveDown();
-                await Task.Delay(1000);
-            }
-            return Ok();
-        }
-
-        [Route("move/left")]
         [HttpPost]
-        public IActionResult MoveLeft([FromBody] PieceResource pieceResource )
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            PieceDto piece = MapPiece(pieceResource);
-            piece.moveLeft();
+        public IActionResult StartGame([FromBody] PieceDto piece)
+        {
             Spawn(piece);
             return Ok(piece);
-        }
-
-        [Route("move/right")]
-        [HttpPost]
-        public IActionResult MoveRight([FromBody] PieceResource pieceResource)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            PieceDto piece = MapPiece(pieceResource);
-            piece.moveRight();
-            Spawn(piece);
-            return Ok(piece);
-        }
-
-        [Route("move/down")]
-        [HttpPost]
-        public IActionResult MoveDown([FromBody] PieceResource pieceResource)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            PieceDto piece = MapPiece(pieceResource);
-            piece.moveDown();
-            Spawn(piece);
-            return Ok(piece);
-        }
-
-        [Route("move/rotate")]
-        [HttpPost]
-        public IActionResult Rotate([FromBody] PieceResource pieceResource)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            //transpose()
-            //reverse()
-
-            return Ok();
-        }
-
-        public PieceDto MapPiece(PieceResource p)
-        {
-            return new PieceDto(p.x, p.y, p.color, p.shape);
         }
 
         public void Spawn(PieceDto p)
         {
-            _hubContext.Clients.All.SendAsync("Spawn", p.x, p.y, p.color, p.shape);
+            string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            _hubContext.Clients.AllExcept(ConnectedUser.Ids.GetValueOrDefault(userId)).SendAsync("Spawn", p.x, p.y, p.color, p.shape);
+            //_hubContext.Clients.AllExcept().SendAsync("Spawn", p.x, p.y, p.color, p.shape);
         }
     }
 }

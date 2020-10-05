@@ -7,7 +7,7 @@ let LoginComponent = class LoginComponent {
         this.model = new User("", "");
     }
     onSubmit() {
-        this.service.login(this.model).subscribe(res => console.log(res));
+        this.service.login(this.model).subscribe((res) => localStorage.setItem('token', res.token));
     }
 };
 LoginComponent = __decorate([

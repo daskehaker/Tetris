@@ -13,6 +13,6 @@ export class LoginComponent {
   constructor(private service: UserService) {}
 
   onSubmit() {
-    this.service.login(this.model).subscribe(res => console.log(res));
+    this.service.login(this.model).subscribe((res: any) => localStorage.setItem('token', res.token));
   }
 }

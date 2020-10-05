@@ -1,7 +1,14 @@
-import { PieceDto } from '../../Dto/PieceDto';
+import { UserService } from 'src/app/services/user.service';
+import { Player } from './../../user/player';
+import { PieceDto } from './../../Dto/PieceDto';
+import { IPiece } from './../../shared/interfaces';
 import { BoardService } from '../../services/board.service';
-import { Component, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
-import { BLOCK_SIZE, ROWS, COLS, KEY } from '../../shared/constants';
+import { Component, OnInit, ElementRef, ViewChild, HostListener, Input } from '@angular/core';
+import { BLOCK_SIZE, ROWS, COLS, KEY, POINTS } from '../../shared/constants';
+import { Piece } from 'src/app/models/piece';
+import { Key } from 'protractor';
+import { RouterState } from '@angular/router';
+import { Board } from 'src/app/models/board';
 
 @Component({
   selector: 'game-board',
@@ -9,74 +16,75 @@ import { BLOCK_SIZE, ROWS, COLS, KEY } from '../../shared/constants';
   styleUrls: ['./board.component.css']
 })
 export class BoardComponent implements OnInit {
+  @Input() boardService: BoardService;
+  @Input() userService: UserService;
+
   // Get reference to the canvas.
   @ViewChild('board', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
 
+  player = new Player();
   ctx: CanvasRenderingContext2D;
   points: number;
   lines: number;
   level: number;
   board: number[][];
-  piece: PieceDto;
+  piece: Piece;
+  pieceDto: PieceDto;
 
-  constructor (private boardService: BoardService) {}
+  //neveikia
+  // moves = {
+  //   [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
+  //   [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
+  //   [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
+  //   [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
+  //   [KEY.UP]: (p: IPiece): IPiece => this.boardService.rotate(p)
+  // };
+  constructor () {}
 
   ngOnInit(): void {
-    this.initBoard();
-    this.boardService.retrieveMapperObject().subscribe((receivedObj: PieceDto) => {
-      this.piece = receivedObj;
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      this.draw(receivedObj)
-    });
-  }
+    this.userService.getUserProfile().subscribe((res: any) => {
+     this.player = new Player({id: res.userId, name: res.UserName})
 
+    })
+    this.initBoard();
+  }
 
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    if (event.keyCode == KEY.LEFT) {
-      // If the keyCode exists in our moves stop the event from bubbling.
-      event.preventDefault();
-      // Get the next state of the piece.
-      this.boardService.MoveLeft(this.piece);
-      // Move the piece
-      // Clear the old position before drawing
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      // Draw the new position.
-    }
-    if (event.keyCode == KEY.RIGHT) {
-      // If the keyCode exists in our moves stop the event from bubbling.
-      event.preventDefault();
-      // Get the next state of the piece.
-      this.boardService.MoveRight(this.piece);
-      // Move the piece
-      // Clear the old position before drawing
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      // Draw the new position.
-    }
-    if (event.keyCode == KEY.DOWN) {
-      // If the keyCode exists in our moves stop the event from bubbling.
-      event.preventDefault();
-      // Get the next state of the piece.
-      this.boardService.MoveDown(this.piece);
-      // Move the piece
-      // Clear the old position before drawing
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      // Draw the new position.
-    }
+    event.preventDefault();
+    var p = Object.assign({}, this.piece.dto)
+    switch(event.keyCode) {
+      case KEY.RIGHT: {
+        p.x++;
+         break;
+        }
+        case KEY.LEFT: {
+          p.x--;
+          break;
+        }
+        case KEY.DOWN: {
+          p.y++;
+          break;
+        }
+        case KEY.UP: {
+          p = this.boardService.rotate(p);
+        }
+        default: {
+          //statements;
+          break;
+        }
+      }
+      this.move(p);
   }
 
-  draw(obj: PieceDto) {
-    this.ctx.fillStyle = obj.color;
-    obj.shape.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value > 0) {
-          // this.x & this.y = position on the board
-          // x & y position are the positions of the shape
-          this.ctx.fillRect(obj.x + x, obj.y + y, 1, 1);
-        }
-      });
-    });
+  move(p: IPiece) {
+    if(this.boardService.valid(p, this.board)){
+      this.piece.move(p)
+      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      this.piece.draw();
+      this.boardService.broadcastPiece(this.piece.dto);
+    } else console.log("not valid", p, this.piece)
   }
 
   initBoard() {
@@ -89,10 +97,13 @@ export class BoardComponent implements OnInit {
 
     this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 
-    this.boardService.getEmptyBoard().subscribe((res: number[][]) => this.board=res);
+    this.boardService.getEmptyBoard();
   }
 
   play() {
-    this.boardService.broadcastPiece();
+    this.board = this.boardService.getBoardById(this.player.Id)
+    this.piece = new Piece(this.ctx);
+    this.piece.draw();
+    this.boardService.broadcastPiece(this.piece.dto);
   }
 }

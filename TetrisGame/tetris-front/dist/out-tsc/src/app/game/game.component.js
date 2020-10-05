@@ -1,7 +1,12 @@
 import { __decorate } from "tslib";
 import { Component } from '@angular/core';
 let GameComponent = class GameComponent {
-    constructor() { }
+    constructor(bService, uService) {
+        this.bService = bService;
+        this.uService = uService;
+        this.boardService = bService;
+        this.userService = uService;
+    }
     ngOnInit() {
     }
 };

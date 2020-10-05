@@ -1,4 +1,5 @@
 import { __decorate } from "tslib";
+import { Bot } from './../models/gameBot';
 import { MessageDto } from './../Dto/MessageDto';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -13,6 +14,7 @@ let ChatService = class ChatService {
         this.connectionService.connection.on("ReceiveOne", (user, message) => {
             this.mapReceiveMessage(user, message);
         });
+        this.connectionService.add(this);
     }
     mapReceiveMessage(user, message) {
         this.receiveMessageObject.user = user;
@@ -27,6 +29,12 @@ let ChatService = class ChatService {
     }
     retrieveMapperObject() {
         return this.sharedObj.asObservable();
+    }
+    update() {
+        if (this.connectionService.getState() == true) {
+            console.log("Chat Observer reacted to event");
+            this.http.post(this.POST_URL, Bot.getInstance().introRules()).subscribe();
+        }
     }
 };
 ChatService = __decorate([

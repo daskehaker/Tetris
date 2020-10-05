@@ -7,12 +7,14 @@ namespace TetrisGame.Models
 {
     public class GameBoad
     {
-        private int Height { get; set; }
-        private int Width { get; set; }
-        private int[][] BoardMatrix { get; set; }
+        public string Player { get; set; }
+        public int Height { get; set; }
+        public int Width { get; set; }
+        public int[][] BoardMatrix { get; set; }
 
-        public GameBoad(int Height, int Width)
+        public GameBoad(string Id, int Height, int Width)
         {
+            this.Player = Id;
             this.Height = Height;
             this.Width = Width;
             createBoard(Height, Width);
@@ -26,21 +28,6 @@ namespace TetrisGame.Models
                 this.BoardMatrix[i]= new int[width];
             }
 
-        }
-
-        public int[][] getBoadr()
-        {
-            return this.BoardMatrix;
-        }
-
-        public int getHeight()
-        {
-            return this.Height;
-        }
-
-        public int getWidth()
-        {
-            return this.Width;
         }
     }
 }

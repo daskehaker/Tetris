@@ -1,10 +1,13 @@
+import { Player } from './../user/player';
 import { environment } from './../../environments/environment';
 import { IPiece, IObserver } from './../shared/interfaces';
 import { ConnectionService } from './connection.service';
 import { PieceDto } from './../Dto/PieceDto';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
+import { COLS, ROWS } from '../shared/constants';
+import { Board } from '../models/board';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +15,7 @@ import { Subject, Observable } from 'rxjs';
 export class BoardService implements IObserver {
 
   readonly rootUrl=environment.rootUrl + "board/"
+  boards: Board[] = [];
 
   private receivePieceObject: PieceDto = new PieceDto();
   private sharedObj = new Subject<PieceDto>();
@@ -39,30 +43,38 @@ export class BoardService implements IObserver {
     }
   }
 
-  public broadcastPiece(){
-    this.http.get(this.rootUrl + 'start').subscribe()
+  public broadcastPiece(piece: IPiece){
+    var tokenHeader = new HttpHeaders({'Authorization':'Bearer ' + localStorage.getItem('token')});
+    this.http.post(this.rootUrl + 'start', piece, {headers: tokenHeader}).subscribe()
   }
 
   getEmptyBoard() {
-    return this.http.get(this.rootUrl);
+    var tokenHeader = new HttpHeaders({'Authorization':'Bearer ' + localStorage.getItem('token')})
+    this.http.get(this.rootUrl, {headers: tokenHeader}).subscribe((res: any) => {
+      let board = new Board({
+        player : new Player({id: res.Player}),
+        height: res.Height,
+        width: res.Width,
+        boradMatrix: res.BoardMatrix
+      })
+      this.boards.push(board);
+    })
+  }
+
+  getBoards(): Board[] {
+    return this.boards;
+  }
+
+  getBoardById(id: string){
+    return this.boards.find(b => b.player.Id === id).boradMatrix;
   }
 
   public retrieveMapperObject(): Observable<PieceDto> {
     return this.sharedObj.asObservable();
   }
 
-  MoveDown(piece: PieceDto) {
-    return this.http.post(this.rootUrl + 'move/down', piece).subscribe()
-  }
 
-  MoveRight(piece: PieceDto) {
-    return this.http.post(this.rootUrl + 'move/right', piece).subscribe()
-  }
-
-  MoveLeft(piece: PieceDto) {
-    return this.http.post(this.rootUrl + 'move/left', piece).subscribe()
-  }
-
+  // -------------- GAME LOGIC --------------------
   valid(p: IPiece, board: number[][]): boolean {
     return p.shape.every((row, dy) => {
       return row.every((value, dx) => {
@@ -71,7 +83,8 @@ export class BoardService implements IObserver {
         return (
           this.isEmpty(value) ||
           (this.insideWalls(x) &&
-            this.aboveFloor(y) )
+            this.aboveFloor(y) &&
+            this.notOccupied(board, x, y))
         );
       });
     });
@@ -82,10 +95,26 @@ export class BoardService implements IObserver {
   }
 
   insideWalls(x: number): boolean {
-    return x >= 0 && x < 9//COLS;
+    return x >= 0 && x < COLS;
   }
 
   aboveFloor(y: number): boolean {
-    return y <= 18//ROWS;
+    return y <= ROWS;
   }
+
+  notOccupied(board: number[][], x: number, y: number): boolean {
+    return board[y] && board[y][x] === 0;
+  }
+
+  rotate(piece: IPiece): IPiece {
+    let p: IPiece = JSON.parse(JSON.stringify(piece));
+    for (let y = 0; y < p.shape.length; ++y) {
+      for (let x = 0; x < y; ++x) {
+        [p.shape[x][y], p.shape[y][x]] = [p.shape[y][x], p.shape[x][y]];
+      }
+    }
+    p.shape.forEach(row => row.reverse());
+    return p;
+  }
+
 }

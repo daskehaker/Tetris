@@ -24,11 +24,11 @@ namespace TetrisGame.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<AppUser> GetUsetProfile()
+        public async Task<Object> GetUsetProfile()
         {
             string userId = User.Claims.First(c => c.Type == "UserID").Value;
             var user = await _userManager.FindByIdAsync(userId);
-            return user;
+            return new { userId, user.UserName };
         }
 
         [HttpGet("All")]

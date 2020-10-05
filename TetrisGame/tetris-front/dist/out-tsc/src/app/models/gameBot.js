@@ -9,7 +9,7 @@ export class Bot {
         return Bot.instance;
     }
     introRules() {
-        return new MessageDto("Hello I am Singleton Game bot ", "I will Introduce game rules");
+        return new MessageDto("Hello I am Singleton Game bot ", "There is only one instance of me. I will Introduce the game rules");
     }
 }
 //# sourceMappingURL=gameBot.js.map

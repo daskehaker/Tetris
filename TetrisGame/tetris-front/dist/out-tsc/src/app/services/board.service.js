@@ -1,18 +1,24 @@
 import { __decorate } from "tslib";
+import { Player } from './../user/player';
 import { environment } from './../../environments/environment';
 import { PieceDto } from './../Dto/PieceDto';
+import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { COLS, ROWS } from '../shared/constants';
+import { Board } from '../models/board';
 let BoardService = class BoardService {
     constructor(http, connectionService) {
         this.http = http;
         this.connectionService = connectionService;
         this.rootUrl = environment.rootUrl + "board/";
+        this.boards = [];
         this.receivePieceObject = new PieceDto();
         this.sharedObj = new Subject();
         this.connectionService.connection.on("Spawn", (x, y, color, shape) => {
             this.mapSpawnPiece(x, y, color, shape);
         });
+        this.connectionService.add(this);
     }
     mapSpawnPiece(x, y, color, shape) {
         this.receivePieceObject.x = x;
@@ -22,24 +28,37 @@ let BoardService = class BoardService {
         this.sharedObj.next(this.receivePieceObject);
     }
     /* ****************************** Public Mehods **************************************** */
-    broadcastPiece() {
-        this.http.get(this.rootUrl + 'start').subscribe();
+    update() {
+        if (this.connectionService.getState() == true) {
+            console.log("Board Observer reacted to event");
+        }
+    }
+    broadcastPiece(piece) {
+        var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
+        this.http.post(this.rootUrl + 'start', piece, { headers: tokenHeader }).subscribe();
     }
     getEmptyBoard() {
-        return this.http.get(this.rootUrl);
+        var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
+        this.http.get(this.rootUrl, { headers: tokenHeader }).subscribe((res) => {
+            let board = new Board({
+                player: new Player({ id: res.Player }),
+                height: res.Height,
+                width: res.Width,
+                boradMatrix: res.BoardMatrix
+            });
+            this.boards.push(board);
+        });
+    }
+    getBoards() {
+        return this.boards;
+    }
+    getBoardById(id) {
+        return this.boards.find(b => b.player.Id === id).boradMatrix;
     }
     retrieveMapperObject() {
         return this.sharedObj.asObservable();
     }
-    MoveDown(piece) {
-        return this.http.post(this.rootUrl + 'move/down', piece).subscribe();
-    }
-    MoveRight(piece) {
-        return this.http.post(this.rootUrl + 'move/right', piece).subscribe();
-    }
-    MoveLeft(piece) {
-        return this.http.post(this.rootUrl + 'move/left', piece).subscribe();
-    }
+    // -------------- GAME LOGIC --------------------
     valid(p, board) {
         return p.shape.every((row, dy) => {
             return row.every((value, dx) => {
@@ -47,7 +66,8 @@ let BoardService = class BoardService {
                 let y = p.y + dy;
                 return (this.isEmpty(value) ||
                     (this.insideWalls(x) &&
-                        this.aboveFloor(y)));
+                        this.aboveFloor(y) &&
+                        this.notOccupied(board, x, y)));
             });
         });
     }
@@ -55,10 +75,23 @@ let BoardService = class BoardService {
         return value === 0;
     }
     insideWalls(x) {
-        return x >= 0 && x < 9; //COLS;
+        return x >= 0 && x < COLS;
     }
     aboveFloor(y) {
-        return y <= 18; //ROWS;
+        return y <= ROWS;
+    }
+    notOccupied(board, x, y) {
+        return board[y] && board[y][x] === 0;
+    }
+    rotate(piece) {
+        let p = JSON.parse(JSON.stringify(piece));
+        for (let y = 0; y < p.shape.length; ++y) {
+            for (let x = 0; x < y; ++x) {
+                [p.shape[x][y], p.shape[y][x]] = [p.shape[y][x], p.shape[x][y]];
+            }
+        }
+        p.shape.forEach(row => row.reverse());
+        return p;
     }
 };
 BoardService = __decorate([

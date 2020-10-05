@@ -8,7 +8,10 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ConnectionService implements ISubject {
-  private connectoin: any = new signalR.HubConnectionBuilder().withUrl("https://localhost:44356/tetrissocket") //mapping to the tetrishus as in startup
+  private connectoin: any = new signalR.HubConnectionBuilder().withUrl("https://localhost:44356/tetrissocket", {
+    //player1 Token
+    accessTokenFactory: () => localStorage.getItem('token')
+  }) //mapping to the tetrishus as in startup
   .configureLogging(signalR.LogLevel.Information)
   .build();
 
