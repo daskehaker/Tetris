@@ -17,4 +17,14 @@ POINTS.TRIPLE = 500;
 POINTS.TETRIS = 800;
 POINTS.SOFT_DROP = 1;
 POINTS.HARD_DROP = 2;
+export const COLORS = [
+    'none',
+    'cyan',
+    'blue',
+    'orange',
+    'yellow',
+    'green',
+    'purple',
+    'red'
+];
 //# sourceMappingURL=constants.js.map

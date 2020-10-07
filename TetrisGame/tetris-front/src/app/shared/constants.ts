@@ -19,3 +19,14 @@ export class POINTS {
   static readonly SOFT_DROP = 1;
   static readonly HARD_DROP = 2;
 }
+
+export const COLORS = [
+  'none',
+  'cyan',
+  'blue',
+  'orange',
+  'yellow',
+  'green',
+  'purple',
+  'red'
+];

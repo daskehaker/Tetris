@@ -1,7 +1,7 @@
 import { __decorate } from "tslib";
 import { Player } from './../../user/player';
 import { Component, ViewChild, Input } from '@angular/core';
-import { COLS, BLOCK_SIZE, ROWS } from '../../shared/constants';
+import { COLS, BLOCK_SIZE, ROWS, COLORS } from '../../shared/constants';
 let OponentBoardComponent = class OponentBoardComponent {
     constructor() {
         //token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiJmZGU2YTg5Ny0xMmNhLTRjYjEtYTQwZS02ZjYwODk0OWI0ZGUiLCJuYmYiOjE2MDE4ODgzNTQsImV4cCI6MTYxNzYxMzE1NCwiaWF0IjoxNjAxODg4MzU0fQ.Zpv7hvOteKNtd9RGEzxux6ZT4-C9nnmnIKVt4j_kMMM"
@@ -9,10 +9,14 @@ let OponentBoardComponent = class OponentBoardComponent {
     }
     ngOnInit() {
         this.initBoard();
-        this.boardService.retrieveMapperObject().subscribe((receivedObj) => {
+        this.boardService.retrieveMapperPiece().subscribe((receivedObj) => {
             this.pieceDto = receivedObj;
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             this.draw(receivedObj);
+        });
+        this.boardService.retrieveMapperBoard().subscribe((retrieveObj) => {
+            this.board = retrieveObj;
+            this.drawBoard();
         });
     }
     initBoard() {
@@ -35,6 +39,18 @@ let OponentBoardComponent = class OponentBoardComponent {
                 }
             });
         });
+    }
+    drawBoard() {
+        if (this.board != null) {
+            this.board.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value > 0) {
+                        this.ctx.fillStyle = COLORS[value];
+                        this.ctx.fillRect(x, y, 1, 1);
+                    }
+                });
+            });
+        }
     }
 };
 __decorate([

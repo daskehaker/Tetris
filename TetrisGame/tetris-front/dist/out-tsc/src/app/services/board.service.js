@@ -14,9 +14,13 @@ let BoardService = class BoardService {
         this.rootUrl = environment.rootUrl + "board/";
         this.boards = [];
         this.receivePieceObject = new PieceDto();
-        this.sharedObj = new Subject();
+        this.sharedPiece = new Subject();
+        this.sharedBoard = new Subject();
         this.connectionService.connection.on("Spawn", (x, y, color, shape) => {
             this.mapSpawnPiece(x, y, color, shape);
+        });
+        this.connectionService.connection.on("BroadcastBoard", (board) => {
+            this.sharedBoard.next(board);
         });
         this.connectionService.add(this);
     }
@@ -25,7 +29,7 @@ let BoardService = class BoardService {
         this.receivePieceObject.y = y;
         this.receivePieceObject.color = color;
         this.receivePieceObject.shape = shape;
-        this.sharedObj.next(this.receivePieceObject);
+        this.sharedPiece.next(this.receivePieceObject);
     }
     /* ****************************** Public Mehods **************************************** */
     update() {
@@ -33,9 +37,13 @@ let BoardService = class BoardService {
             console.log("Board Observer reacted to event");
         }
     }
+    broadcastBoard(board) {
+        var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
+        this.http.post(this.rootUrl + 'start', board, { headers: tokenHeader }).subscribe();
+    }
     broadcastPiece(piece) {
         var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
-        this.http.post(this.rootUrl + 'start', piece, { headers: tokenHeader }).subscribe();
+        this.http.post(this.rootUrl + 'broadcarst/board', piece, { headers: tokenHeader }).subscribe();
     }
     getEmptyBoard() {
         var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
@@ -55,8 +63,11 @@ let BoardService = class BoardService {
     getBoardById(id) {
         return this.boards.find(b => b.player.Id === id).boradMatrix;
     }
-    retrieveMapperObject() {
-        return this.sharedObj.asObservable();
+    retrieveMapperPiece() {
+        return this.sharedPiece.asObservable();
+    }
+    retrieveMapperBoard() {
+        return this.sharedBoard.asObservable();
     }
     // -------------- GAME LOGIC --------------------
     valid(p, board) {

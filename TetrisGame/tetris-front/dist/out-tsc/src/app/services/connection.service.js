@@ -7,7 +7,7 @@ let ConnectionService = class ConnectionService {
         this.http = http;
         this.connectoin = new signalR.HubConnectionBuilder().withUrl("https://localhost:44356/tetrissocket", {
             //player1 Token
-            accessTokenFactory: () => localStorage.getItem('token').toString()
+            accessTokenFactory: () => localStorage.getItem('token')
         }) //mapping to the tetrishus as in startup
             .configureLogging(signalR.LogLevel.Information)
             .build();

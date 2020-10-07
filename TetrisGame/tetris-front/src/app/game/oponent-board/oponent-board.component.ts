@@ -2,7 +2,7 @@ import { Player } from './../../user/player';
 import { PieceDto } from './../../Dto/PieceDto';
 import { BoardService } from './../../services/board.service';
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
-import { COLS, BLOCK_SIZE, ROWS } from '../../shared/constants';
+import { COLS, BLOCK_SIZE, ROWS, COLORS } from '../../shared/constants';
 import { IPiece } from 'src/app/shared/interfaces';
 import { UserService } from 'src/app/services/user.service';
 
@@ -29,11 +29,14 @@ export class OponentBoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.initBoard();
-    this.boardService.retrieveMapperObject().subscribe((receivedObj: IPiece) => {
+    this.boardService.retrieveMapperPiece().subscribe((receivedObj: IPiece) => {
       this.pieceDto = receivedObj;
-      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
       this.draw(receivedObj)
     });
+    this.boardService.retrieveMapperBoard().subscribe((retrieveObj: number[][]) => {
+      this.board = retrieveObj;
+      //this.drawBoard()
+    })
   }
 
   initBoard() {
@@ -50,6 +53,7 @@ export class OponentBoardComponent implements OnInit {
   }
 
   draw(obj: PieceDto) {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.fillStyle = obj.color;
     obj.shape.forEach((row, y) => {
       row.forEach((value, x) => {
@@ -60,5 +64,19 @@ export class OponentBoardComponent implements OnInit {
         }
       });
     });
+    this.drawBoard();
+  }
+
+  drawBoard() {
+    if(this.board != null){
+      this.board.forEach((row, y) => {
+        row.forEach((value, x) => {
+          if (value > 0) {
+            this.ctx.fillStyle = COLORS[value];
+            this.ctx.fillRect(x, y, 1, 1);
+          }
+        });
+      });
+    }
   }
 }

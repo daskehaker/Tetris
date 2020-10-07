@@ -18,11 +18,15 @@ export class BoardService implements IObserver {
   boards: Board[] = [];
 
   private receivePieceObject: PieceDto = new PieceDto();
-  private sharedObj = new Subject<PieceDto>();
+  private sharedPiece = new Subject<PieceDto>();
+  private sharedBoard = new Subject<number[][]>();
 
   constructor(private http: HttpClient, private connectionService:ConnectionService) {
     this.connectionService.connection.on("Spawn", (x, y, color, shape) => {
       this.mapSpawnPiece(x, y, color, shape);
+    });
+    this.connectionService.connection.on("BroadcastBoard", (board) => {
+      this.sharedBoard.next(board)
     });
     this.connectionService.add(this);
   }
@@ -32,7 +36,7 @@ export class BoardService implements IObserver {
     this.receivePieceObject.y = y;
     this.receivePieceObject.color = color;
     this.receivePieceObject.shape = shape;
-    this.sharedObj.next(this.receivePieceObject);
+    this.sharedPiece.next(this.receivePieceObject);
   }
 
   /* ****************************** Public Mehods **************************************** */
@@ -41,6 +45,11 @@ export class BoardService implements IObserver {
     if(this.connectionService.getState() == true){
       console.log("Board Observer reacted to event");
     }
+  }
+
+  public broadcastBoard(board: number[][]) {
+    var tokenHeader = new HttpHeaders({'Authorization':'Bearer ' + localStorage.getItem('token')});
+    this.http.post(this.rootUrl + 'broadcarst/board', board, {headers: tokenHeader}).subscribe()
   }
 
   public broadcastPiece(piece: IPiece){
@@ -69,8 +78,12 @@ export class BoardService implements IObserver {
     return this.boards.find(b => b.player.Id === id).boradMatrix;
   }
 
-  public retrieveMapperObject(): Observable<PieceDto> {
-    return this.sharedObj.asObservable();
+  public retrieveMapperPiece(): Observable<PieceDto> {
+    return this.sharedPiece.asObservable();
+  }
+
+  public retrieveMapperBoard(): Observable<number[][]> {
+    return this.sharedBoard.asObservable();
   }
 
 
