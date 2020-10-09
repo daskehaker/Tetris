@@ -11,12 +11,11 @@ let OponentBoardComponent = class OponentBoardComponent {
         this.initBoard();
         this.boardService.retrieveMapperPiece().subscribe((receivedObj) => {
             this.pieceDto = receivedObj;
-            this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             this.draw(receivedObj);
         });
         this.boardService.retrieveMapperBoard().subscribe((retrieveObj) => {
             this.board = retrieveObj;
-            this.drawBoard();
+            //this.drawBoard()
         });
     }
     initBoard() {
@@ -29,6 +28,7 @@ let OponentBoardComponent = class OponentBoardComponent {
         this.boardService.getEmptyBoard();
     }
     draw(obj) {
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = obj.color;
         obj.shape.forEach((row, y) => {
             row.forEach((value, x) => {
@@ -39,6 +39,7 @@ let OponentBoardComponent = class OponentBoardComponent {
                 }
             });
         });
+        this.drawBoard();
     }
     drawBoard() {
         if (this.board != null) {

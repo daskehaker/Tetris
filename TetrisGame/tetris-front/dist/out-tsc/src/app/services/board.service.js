@@ -39,11 +39,11 @@ let BoardService = class BoardService {
     }
     broadcastBoard(board) {
         var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
-        this.http.post(this.rootUrl + 'start', board, { headers: tokenHeader }).subscribe();
+        this.http.post(this.rootUrl + 'broadcarst/board', board, { headers: tokenHeader }).subscribe();
     }
     broadcastPiece(piece) {
         var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
-        this.http.post(this.rootUrl + 'broadcarst/board', piece, { headers: tokenHeader }).subscribe();
+        this.http.post(this.rootUrl + 'start', piece, { headers: tokenHeader }).subscribe();
     }
     getEmptyBoard() {
         var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
