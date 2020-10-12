@@ -3,6 +3,7 @@ import { Player } from './../../user/player';
 import { Component, ViewChild, HostListener, Input } from '@angular/core';
 import { BLOCK_SIZE, ROWS, COLS, KEY, COLORS, LEVEL } from '../../shared/constants';
 import { Piece } from 'src/app/models/piece';
+import { Time, getSpeed } from 'src/app/models/time';
 import { Points } from 'src/app/shared/points';
 let BoardComponent = class BoardComponent {
     //neveikia
@@ -15,7 +16,7 @@ let BoardComponent = class BoardComponent {
     // };
     constructor() {
         this.player = new Player();
-        this.time = { start: 0, elapsed: 0, level: 1000 };
+        this.time = new Time({ start: 0, elapsed: 0, level: 1000 });
     }
     ngOnInit() {
         this.userService.getUserProfile().subscribe((res) => {
@@ -72,6 +73,7 @@ let BoardComponent = class BoardComponent {
         if (this.time.elapsed > this.time.level) {
             // Reset start time
             this.time.start = now;
+            this.time = getSpeed(this.time, this.player.level);
             if (!this.drop()) {
                 this.gameOver();
                 return;

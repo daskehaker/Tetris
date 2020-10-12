@@ -9,6 +9,7 @@ import { Piece } from 'src/app/models/piece';
 import { Key } from 'protractor';
 import { RouterState } from '@angular/router';
 import { Board } from 'src/app/models/board';
+import { Time, getSpeed } from 'src/app/models/time';
 import { Points } from 'src/app/shared/points';
 
 @Component({
@@ -30,7 +31,7 @@ export class BoardComponent implements OnInit {
   piece: Piece;
   next: Piece;
   pieceDto: PieceDto;
-  time = { start: 0, elapsed: 0, level: 1000 };
+  time = new Time({ start: 0, elapsed: 0, level: 1000 });
   requestId: number;
 
   //neveikia
@@ -107,6 +108,7 @@ export class BoardComponent implements OnInit {
     if (this.time.elapsed > this.time.level) {
       // Reset start time
       this.time.start = now;
+      this.time = getSpeed(this.time, this.player.level);
       if(!this.drop()){
         this.gameOver();
         return;
