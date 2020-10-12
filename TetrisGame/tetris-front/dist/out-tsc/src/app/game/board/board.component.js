@@ -1,8 +1,9 @@
 import { __decorate } from "tslib";
 import { Player } from './../../user/player';
 import { Component, ViewChild, HostListener, Input } from '@angular/core';
-import { BLOCK_SIZE, ROWS, COLS, KEY, COLORS } from '../../shared/constants';
+import { BLOCK_SIZE, ROWS, COLS, KEY, COLORS, LEVEL } from '../../shared/constants';
 import { Piece } from 'src/app/models/piece';
+import { Points } from 'src/app/shared/points';
 let BoardComponent = class BoardComponent {
     //neveikia
     // moves = {
@@ -71,10 +72,13 @@ let BoardComponent = class BoardComponent {
         if (this.time.elapsed > this.time.level) {
             // Reset start time
             this.time.start = now;
-            this.drop();
+            if (!this.drop()) {
+                this.gameOver();
+                return;
+            }
         }
         this.draw();
-        requestAnimationFrame(this.animate.bind(this));
+        this.requestId = requestAnimationFrame(this.animate.bind(this));
     }
     move(p) {
         if (this.boardService.valid(p, this.board)) {
@@ -93,7 +97,8 @@ let BoardComponent = class BoardComponent {
         }
         else {
             this.freeze();
-            //this.clearLines();
+            this.clearLines();
+            this.boardService.broadcastBoard(this.board);
             if (this.piece.y === 0) {
                 // Game over
                 return false;
@@ -129,8 +134,49 @@ let BoardComponent = class BoardComponent {
                 }
             });
         });
-        this.boardService.broadcastBoard(this.board);
         //console.table(this.board);
+    }
+    clearLines() {
+        let lines = 0;
+        this.board.forEach((row, y) => {
+            // If every value is greater than 0.
+            if (row.every(value => value > 0)) {
+                lines++;
+                // Remove the row.
+                this.board.splice(y, 1);
+                // Add a zero filled at the top.
+                this.board.unshift(Array(COLS).fill(0));
+            }
+        });
+        if (lines > 0) {
+            // Add points if we cleared some lines
+            this.player.points += this.getLineClearPoints(lines, this.player.level);
+            this.player.lines += lines;
+            // If we have reached the lines per level
+            if (this.player.lines >= 1 /*LINES_PER_LEVEL*/) {
+                // Goto next level
+                this.player.level++;
+                // Remove lines so we start working for the next level
+                this.player.lines -= 1; //LINES_PER_LEVEL;
+                // Increase speed of game.
+                this.time.level = LEVEL[this.player.level];
+            }
+        }
+    }
+    gameOver() {
+        cancelAnimationFrame(this.requestId);
+        this.ctx.fillStyle = 'black';
+        this.ctx.fillRect(1, 3, 8, 1.2);
+        this.ctx.font = '1px Arial';
+        this.ctx.fillStyle = 'red';
+        this.ctx.fillText('GAME OVER', 1.8, 4);
+    }
+    getLineClearPoints(lines, level) {
+        const lineClearPoints = lines === 1 ? Points.SINGLE :
+            lines === 2 ? Points.DOUBLE :
+                lines === 3 ? Points.TRIPLE :
+                    lines === 4 ? Points.TETRIS : 0;
+        return (level + 1) * lineClearPoints;
     }
 };
 __decorate([
