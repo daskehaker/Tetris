@@ -1,4 +1,5 @@
 import { PieceDto } from './../Dto/PieceDto';
+import { getRandomPiece } from './../piecesAbstractFactory/abstractFactory';
 export class Piece {
     constructor(ctx) {
         this.ctx = ctx;
@@ -11,8 +12,9 @@ export class Piece {
         this.shape = this.dto.shape = p.shape;
     }
     spawn() {
-        this.color = this.dto.color = 'blue';
-        this.shape = this.dto.shape = [[2, 0, 0], [2, 2, 2], [0, 0, 0]];
+        this.dto = getRandomPiece();
+        this.color = this.dto.color;
+        this.shape = this.dto.shape;
         // Position where the shape spawns.
         this.x = this.dto.x = 3;
         this.y = this.dto.y = 0;

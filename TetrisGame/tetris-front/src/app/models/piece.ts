@@ -1,5 +1,6 @@
 import { PieceDto } from './../Dto/PieceDto';
 import { IPiece } from './../shared/interfaces';
+import { getRandomPiece } from './../piecesAbstractFactory/abstractFactory';
 
 export class Piece implements IPiece {
   x: number;
@@ -19,8 +20,9 @@ export class Piece implements IPiece {
   }
 
   spawn() {
-    this.color = this.dto.color = 'blue';
-    this.shape = this.dto.shape = [[2, 0, 0], [2, 2, 2], [0, 0, 0]];
+    this.dto = getRandomPiece();
+    this.color = this.dto.color;
+    this.shape = this.dto.shape;
 
     // Position where the shape spawns.
     this.x = this.dto.x = 3;
