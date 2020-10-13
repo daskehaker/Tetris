@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="tetris-front\src\app\Strategy\" />
+    <Folder Include="tetris-front\src\app\NewFolder\" />
   </ItemGroup>
 
 

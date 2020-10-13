@@ -11,6 +11,12 @@ import { RouterState } from '@angular/router';
 import { Board } from 'src/app/models/board';
 import { Time, getSpeed } from 'src/app/models/time';
 import { Points } from 'src/app/shared/points';
+import { MessageDto } from '../../Dto/MessageDto';
+import { ChatService } from '../../services/chat.service';
+import { Context, defender1, defender2 } from '../../Strategy/strategy'
+import { Direct } from 'protractor/built/driverProviders';
+import { Director, PieceBuilder } from '../../Builder/builder';
+import { SpecialPiece } from '../../models/SpecialPiece';
 
 @Component({
   selector: 'game-board',
@@ -29,6 +35,7 @@ export class BoardComponent implements OnInit {
   ctx: CanvasRenderingContext2D;
   board: number[][];
   piece: Piece;
+  special: SpecialPiece;
   next: Piece;
   pieceDto: PieceDto;
   time = new Time({ start: 0, elapsed: 0, level: 1000 });
@@ -42,7 +49,7 @@ export class BoardComponent implements OnInit {
   //   [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
   //   [KEY.UP]: (p: IPiece): IPiece => this.boardService.rotate(p)
   // };
-  constructor () {}
+  constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
     this.userService.getUserProfile().subscribe((res: any) => {
@@ -93,13 +100,13 @@ export class BoardComponent implements OnInit {
     this.boardService.getEmptyBoard();
   }
 
-  play() {
-    this.board = this.boardService.getBoardById(this.player.Id)
-    this.piece = new Piece(this.ctx);
-    //this.piece.draw();
-    this.animate();
-    this.boardService.broadcastPiece(this.piece.dto);
-  }
+  //play() {
+  //  this.board = this.boardService.getBoardById(this.player.Id)
+  //  this.piece = new Piece(this.ctx);
+  //  //this.piece.draw();
+  //  this.animate();
+  //  this.boardService.broadcastPiece(this.piece.dto);
+  //}
 
   animate(now = 0) {
     // Update elapsed time.
@@ -146,6 +153,7 @@ export class BoardComponent implements OnInit {
     }
     return true;
   }
+
 
   draw() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -220,4 +228,53 @@ export class BoardComponent implements OnInit {
           lines === 4 ? Points.TETRIS : 0;
     return (level + 1) * lineClearPoints;
   }
+
+  defend1() {
+
+    const context = new Context(new defender1());
+    context.defend(this.chatService, this.player.name);
+
+  }
+
+  defend2() {
+
+    const context = new Context(new defender2());
+    context.defend(this.chatService, this.player.name);
+
+  }
+
+
+  play() {
+    this.board = this.boardService.getBoardById(this.player.Id)
+    this.piece = new Piece(this.ctx);
+    console.log("play");
+    //this.piece.draw();
+    this.animate();
+    this.boardService.broadcastPiece(this.piece.dto);
+  }
+
+  bomb(bomb: SpecialPiece) {
+    this.piece.setShape(bomb.shape);
+    this.piece.setColor(bomb.color);
+    this.piece.setRadius(bomb.radius);
+
+  }
+
+  
+
+
+  dropBomb() {
+
+
+
+    const director = new Director();
+    const builder = new PieceBuilder();
+    director.setBuilder(builder);
+
+    director.buildBomb();
+    const build = builder.getSpecialPiece();
+    console.log(build);
+    this.bomb(build);
+  }
+
 }

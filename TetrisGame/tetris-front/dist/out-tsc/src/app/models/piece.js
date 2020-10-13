@@ -19,6 +19,18 @@ export class Piece {
         this.x = this.dto.x = 3;
         this.y = this.dto.y = 0;
     }
+    setShape(shape) {
+        this.dto.shape = shape;
+    }
+    setPower(power) {
+        this.dto.power = power;
+    }
+    setColor(color) {
+        this.dto.color = color;
+    }
+    setRadius(radius) {
+        this.dto.radius = radius;
+    }
     draw() {
         this.ctx.fillStyle = this.color;
         this.shape.forEach((row, y) => {

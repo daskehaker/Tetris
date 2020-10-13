@@ -12,7 +12,7 @@ interface Builder {
 }
 
 export class PieceBuilder implements Builder {
-  private piece: SpecialPiece
+  public piece: SpecialPiece
 
   constructor() {
     this.reset();
@@ -21,8 +21,9 @@ export class PieceBuilder implements Builder {
     this.piece.shape = shape;
   }
   public setPlayer(player: Player): void {
-    this.piece.player = player;
   }
+
+
   public setEffectRadius(radius: number): void {
     this.piece.radius = radius;
   }
@@ -32,7 +33,7 @@ export class PieceBuilder implements Builder {
   }
 
   public setColor(color: string): void {
-    this.piece.color = color;
+    this.piece.color =color;
   }
 
   public setPower(power: string) {
@@ -47,7 +48,7 @@ export class PieceBuilder implements Builder {
     const result = this.piece;
     this.reset();
 
-    return this.piece;
+    return result;
   }
 }
 

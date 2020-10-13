@@ -1,18 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\dovsav\\Source\\Repos\\Tetris\\TetrisGame\\TetrisGame.csproj": {}
+    "C:\\Users\\dovsav\\Documents\\GitHub\\Tetris\\TetrisGame\\TetrisGame.csproj": {}
   },
   "projects": {
-    "C:\\Users\\dovsav\\Source\\Repos\\Tetris\\TetrisGame\\TetrisGame.csproj": {
+    "C:\\Users\\dovsav\\Documents\\GitHub\\Tetris\\TetrisGame\\TetrisGame.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\dovsav\\Source\\Repos\\Tetris\\TetrisGame\\TetrisGame.csproj",
+        "projectUniqueName": "C:\\Users\\dovsav\\Documents\\GitHub\\Tetris\\TetrisGame\\TetrisGame.csproj",
         "projectName": "TetrisGame",
-        "projectPath": "C:\\Users\\dovsav\\Source\\Repos\\Tetris\\TetrisGame\\TetrisGame.csproj",
+        "projectPath": "C:\\Users\\dovsav\\Documents\\GitHub\\Tetris\\TetrisGame\\TetrisGame.csproj",
         "packagesPath": "C:\\Users\\dovsav\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\dovsav\\Source\\Repos\\Tetris\\TetrisGame\\obj\\",
+        "outputPath": "C:\\Users\\dovsav\\Documents\\GitHub\\Tetris\\TetrisGame\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
           "C:\\Users\\dovsav\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -81,6 +84,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.2, 3.1.2]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -89,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300\\RuntimeIdentifierGraph.json"
         }
       }
     }

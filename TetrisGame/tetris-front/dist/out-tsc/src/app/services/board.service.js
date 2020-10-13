@@ -45,6 +45,10 @@ let BoardService = class BoardService {
         var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
         this.http.post(this.rootUrl + 'start', piece, { headers: tokenHeader }).subscribe();
     }
+    broadcastPieceBuilder(piece) {
+        var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
+        this.http.post(this.rootUrl + 'start', piece, { headers: tokenHeader }).subscribe();
+    }
     getEmptyBoard() {
         var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
         this.http.get(this.rootUrl, { headers: tokenHeader }).subscribe((res) => {

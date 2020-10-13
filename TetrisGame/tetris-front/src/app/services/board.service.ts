@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { COLS, ROWS } from '../shared/constants';
 import { Board } from '../models/board';
+import { SpecialPiece } from '../models/SpecialPiece';
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +56,11 @@ export class BoardService implements IObserver {
   public broadcastPiece(piece: IPiece){
     var tokenHeader = new HttpHeaders({'Authorization':'Bearer ' + localStorage.getItem('token')});
     this.http.post(this.rootUrl + 'start', piece, {headers: tokenHeader}).subscribe()
+  }
+
+  public broadcastPieceBuilder(piece: SpecialPiece) {
+    var tokenHeader = new HttpHeaders({ 'Authorization': 'Bearer ' + localStorage.getItem('token') });
+    this.http.post(this.rootUrl + 'start', piece, { headers: tokenHeader }).subscribe()
   }
 
   getEmptyBoard() {

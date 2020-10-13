@@ -1,12 +1,17 @@
 import { PieceDto } from './../Dto/PieceDto';
 import { IPiece } from './../shared/interfaces';
 import { getRandomPiece } from './../piecesAbstractFactory/abstractFactory';
+import { Player } from '../user/player';
 
 export class Piece implements IPiece {
   x: number;
   y: number;
   color: string;
   shape: number[][];
+  radius: number;
+  player: Player;
+  power: string;
+  speed: number;
   dto = new PieceDto();
 
   constructor(private ctx: CanvasRenderingContext2D) {
@@ -28,6 +33,22 @@ export class Piece implements IPiece {
     this.x = this.dto.x = 3;
     this.y = this.dto.y = 0;
 
+  }
+
+  setShape(shape: number[][]) {
+    this.dto.shape = shape;
+  }
+
+  setPower(power: string) {
+    this.dto.power = power;
+  }
+
+  setColor(color: string) {
+    this.dto.color = color;
+  }
+
+  setRadius(radius: number) {
+    this.dto.radius = radius;
   }
 
 

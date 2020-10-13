@@ -3,7 +3,10 @@ import { Player } from './../../user/player';
 import { Component, ViewChild, HostListener, Input } from '@angular/core';
 import { BLOCK_SIZE, ROWS, COLS, KEY, COLORS, LEVEL } from '../../shared/constants';
 import { Piece } from 'src/app/models/piece';
+import { Time, getSpeed } from 'src/app/models/time';
 import { Points } from 'src/app/shared/points';
+import { Context, defender1, defender2 } from '../../Strategy/strategy';
+import { Director, PieceBuilder } from '../../Builder/builder';
 let BoardComponent = class BoardComponent {
     //neveikia
     // moves = {
@@ -13,9 +16,10 @@ let BoardComponent = class BoardComponent {
     //   [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
     //   [KEY.UP]: (p: IPiece): IPiece => this.boardService.rotate(p)
     // };
-    constructor() {
+    constructor(chatService) {
+        this.chatService = chatService;
         this.player = new Player();
-        this.time = { start: 0, elapsed: 0, level: 1000 };
+        this.time = new Time({ start: 0, elapsed: 0, level: 1000 });
     }
     ngOnInit() {
         this.userService.getUserProfile().subscribe((res) => {
@@ -58,13 +62,13 @@ let BoardComponent = class BoardComponent {
         this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
         this.boardService.getEmptyBoard();
     }
-    play() {
-        this.board = this.boardService.getBoardById(this.player.Id);
-        this.piece = new Piece(this.ctx);
-        //this.piece.draw();
-        this.animate();
-        this.boardService.broadcastPiece(this.piece.dto);
-    }
+    //play() {
+    //  this.board = this.boardService.getBoardById(this.player.Id)
+    //  this.piece = new Piece(this.ctx);
+    //  //this.piece.draw();
+    //  this.animate();
+    //  this.boardService.broadcastPiece(this.piece.dto);
+    //}
     animate(now = 0) {
         // Update elapsed time.
         this.time.elapsed = now - this.time.start;
@@ -72,6 +76,7 @@ let BoardComponent = class BoardComponent {
         if (this.time.elapsed > this.time.level) {
             // Reset start time
             this.time.start = now;
+            this.time = getSpeed(this.time, this.player.level);
             if (!this.drop()) {
                 this.gameOver();
                 return;
@@ -177,6 +182,36 @@ let BoardComponent = class BoardComponent {
                 lines === 3 ? Points.TRIPLE :
                     lines === 4 ? Points.TETRIS : 0;
         return (level + 1) * lineClearPoints;
+    }
+    defend1() {
+        const context = new Context(new defender1());
+        context.defend(this.chatService, this.player.name);
+    }
+    defend2() {
+        const context = new Context(new defender2());
+        context.defend(this.chatService, this.player.name);
+    }
+    play() {
+        this.board = this.boardService.getBoardById(this.player.Id);
+        this.piece = new Piece(this.ctx);
+        console.log("play");
+        //this.piece.draw();
+        this.animate();
+        this.boardService.broadcastPiece(this.piece.dto);
+    }
+    bomb(bomb) {
+        this.piece.setShape(bomb.shape);
+        this.piece.setColor(bomb.color);
+        this.piece.setRadius(bomb.radius);
+    }
+    dropBomb() {
+        const director = new Director();
+        const builder = new PieceBuilder();
+        director.setBuilder(builder);
+        director.buildBomb();
+        builder.getSpecialPiece();
+        console.log(builder.getSpecialPiece());
+        this.bomb(builder.getSpecialPiece());
     }
 };
 __decorate([

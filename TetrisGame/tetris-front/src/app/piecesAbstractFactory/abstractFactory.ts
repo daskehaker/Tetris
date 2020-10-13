@@ -95,6 +95,8 @@ class YellowFactory implements AbstractFactory {
 }
 
 class JShape implements IPiece{
+  radius: number;
+  power: string;
   x: number;
   y: number;
   color: string;
@@ -134,6 +136,8 @@ class YellowJShape extends JShape {
 }
 
 class OShape implements IPiece {
+  radius: number;
+  power: string;
   x: number;
   y: number;
   color: string;
@@ -173,6 +177,8 @@ class YellowOShape extends OShape {
 }
 
 class LShape implements IPiece {
+  radius: number;
+  power: string;
   x: number;
   y: number;
   color: string;
@@ -212,6 +218,8 @@ class YellowLShape extends LShape {
 }
 
 class ZShape implements IPiece {
+  radius: number;
+  power: string;
   x: number;
   y: number;
   color: string;
@@ -251,6 +259,8 @@ class YellowZShape extends ZShape {
 }
 
 class TShape implements IPiece {
+  radius: number;
+  power: string;
   x: number;
   y: number;
   color: string;
@@ -290,6 +300,8 @@ class YellowTShape extends TShape {
 }
 
 class SShape implements IPiece {
+  radius: number;
+  power: string;
   x: number;
   y: number;
   color: string;

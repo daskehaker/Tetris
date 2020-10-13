@@ -2,7 +2,9 @@ export interface IPiece{
   x: number;
   y: number;
   color: string;
+  radius: number;
   shape: number[][];
+  power: string;
 }
 
 export interface IUser{
@@ -24,3 +26,4 @@ export interface ISubject{
 export interface IObserver{
   update(subject: ISubject);
 }
+

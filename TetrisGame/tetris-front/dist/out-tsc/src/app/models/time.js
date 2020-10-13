@@ -65,18 +65,18 @@ class SlowTime extends Time {
         this.level = 1000;
     }
 }
-export function getSpeed(timeObject, points) {
+export function getSpeed(timeObject, level) {
     var factory = new TimeFactory();
-    if (points < 300) {
+    if (level < 4) {
         return factory.getSlowSpeed({ start: timeObject.start, elapsed: timeObject.elapsed, level: timeObject.level });
     }
-    else if (points < 500) {
+    else if (level < 7) {
         return factory.getNormalSpeed({ start: timeObject.start, elapsed: timeObject.elapsed, level: timeObject.level });
     }
-    else if (points < 700) {
+    else if (level < 10) {
         return factory.getFastSpeed({ start: timeObject.start, elapsed: timeObject.elapsed, level: timeObject.level });
     }
-    else if (points < 900) {
+    else if (level < 12) {
         return factory.getVeryFastSpeed({ start: timeObject.start, elapsed: timeObject.elapsed, level: timeObject.level });
     }
     else {
