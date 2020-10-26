@@ -4,12 +4,12 @@ export class PieceBuilder {
         this.reset();
     }
     setShape(shape) {
-        //this.piece.dto.shape = shape;
+        this.piece.shape = shape;
     }
     setPlayer(player) {
     }
     setEffectRadius(radius) {
-        //this.piece.dto.radius = radius;
+        this.piece.radius = radius;
     }
     reset() {
         this.piece = new SpecialPiece();
@@ -18,10 +18,10 @@ export class PieceBuilder {
         this.piece.color = color;
     }
     setPower(power) {
-        //this.piece.dto.power = power;
+        this.piece.power = power;
     }
     setSpeed(speed) {
-        //this.piece.dto.speed = speed;
+        this.piece.speed = speed;
     }
     getSpecialPiece() {
         const result = this.piece;
@@ -35,9 +35,9 @@ export class Director {
     }
     buildBomb() {
         this.builder.setColor("Black");
-        //this.builder.setEffectRadius(3);
-        //this.builder.setShape([[0, 0, 0], [0, 1, 0], [0, 0, 0]]);
-        //this.builder.setPower("Explode");
+        this.builder.setEffectRadius(3);
+        this.builder.setShape([[0, 0, 0], [0, 1, 0], [0, 0, 0]]);
+        this.builder.setPower("Explode");
     }
     buildInvisiblePiece() {
         this.builder.setColor("White");

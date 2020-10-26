@@ -209,9 +209,9 @@ let BoardComponent = class BoardComponent {
         const builder = new PieceBuilder();
         director.setBuilder(builder);
         director.buildBomb();
-        builder.getSpecialPiece();
-        console.log(builder.getSpecialPiece());
-        this.bomb(builder.getSpecialPiece());
+        const build = builder.getSpecialPiece();
+        console.log(build);
+        this.bomb(build);
     }
 };
 __decorate([
