@@ -21,9 +21,8 @@ class RedFactory {
 class BlueFactory {
     createJShape() {
         const simple = new ConcreteBlueJShape();
-        var decoratorOption = getRandomInt(2);
-        const decorator1 = decoratorOption === 1 ? new AlertDecorator(simple) : new SoundDecorator(simple);
-        return decorator1;
+        const decorator1 = new SoundDecorator(simple);
+        return new AlertDecorator(decorator1);
     }
     createOShape() {
         return new BlueOShape();

@@ -34,9 +34,8 @@ class RedFactory implements AbstractFactory {
 class BlueFactory implements AbstractFactory {
   public createJShape(): JShape {
     const simple = new ConcreteBlueJShape();
-    var decoratorOption = getRandomInt(2);
-    const decorator1 = decoratorOption === 1 ? new AlertDecorator(simple) : new SoundDecorator(simple);
-    return decorator1;
+    const decorator1 = new SoundDecorator(simple);
+    return new AlertDecorator(decorator1);
   }
   public createOShape(): OShape {
       return new BlueOShape();
