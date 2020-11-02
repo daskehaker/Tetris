@@ -1,4 +1,5 @@
 import { __decorate } from "tslib";
+import { Facade, AK47, USP, Gun } from '../../models/Facade_Prototype';
 import { Player } from './../../user/player';
 import { Component, ViewChild, HostListener, Input } from '@angular/core';
 import { BLOCK_SIZE, ROWS, COLS, KEY, COLORS, LEVEL } from '../../shared/constants';
@@ -7,6 +8,7 @@ import { Time, getSpeed } from 'src/app/models/time';
 import { Points } from 'src/app/shared/points';
 import { Context, defender1, defender2 } from '../../Strategy/strategy';
 import { Director, PieceBuilder } from '../../Builder/builder';
+//import { Facade } from 'src/app/models/Facade';
 let BoardComponent = class BoardComponent {
     //neveikia
     // moves = {
@@ -203,6 +205,41 @@ let BoardComponent = class BoardComponent {
         this.piece.setShape(bomb.shape);
         this.piece.setColor(bomb.color);
         this.piece.setRadius(bomb.radius);
+    }
+    attack() {
+        const subsystem1 = new AK47();
+        const subsystem2 = new USP();
+        const facade = new Facade(subsystem1, subsystem2);
+        console.log(facade.operation());
+    }
+    duplicate() {
+        const p1 = new Gun();
+        p1.x = 245;
+        p1.y = 245;
+        p1.AK47ref = new AK47(p1);
+        const p2 = new Gun();
+        p2.x = 210;
+        p2.y = 210;
+        p2.USPref = new USP(p2);
+        const p3 = p1.cloneAK();
+        if (p1.x === p2.x && p1.y === p3.y) {
+            console.log('Koordinačių taškai sutampa. Yay!');
+        }
+        else {
+            console.log('Koordinačių taškai nesutampa. Booo!');
+        }
+        if (p1.AK47ref === p2.AK47ref) {
+            console.log('AK47 with back reference has not been cloned. Booo!');
+        }
+        else {
+            console.log('AK47 with back reference has been cloned. Yay!');
+        }
+        if (p1.AK47ref.prototype === p2.AK47ref.prototype) {
+            console.log('AK47 with back reference is linked to original object. Booo!');
+        }
+        else {
+            console.log('AK47 with back reference is linked to the clone. Yay!');
+        }
     }
     dropBomb() {
         const director = new Director();

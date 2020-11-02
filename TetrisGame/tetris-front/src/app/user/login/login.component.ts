@@ -16,3 +16,7 @@ export class LoginComponent {
     this.service.login(this.model).subscribe((res: any) => localStorage.setItem('token', res.token));
   }
 }
+
+export interface Adapter{
+  login();
+}

@@ -1,3 +1,4 @@
+import { Facade, AK47, USP, Gun } from '../../models/Facade_Prototype';
 import { UserService } from 'src/app/services/user.service';
 import { Player } from './../../user/player';
 import { PieceDto } from './../../Dto/PieceDto';
@@ -17,6 +18,8 @@ import { Context, defender1, defender2 } from '../../Strategy/strategy'
 import { Direct } from 'protractor/built/driverProviders';
 import { Director, PieceBuilder } from '../../Builder/builder';
 import { SpecialPiece } from '../../models/SpecialPiece';
+
+//import { Facade } from 'src/app/models/Facade';
 
 @Component({
   selector: 'game-board',
@@ -260,8 +263,46 @@ export class BoardComponent implements OnInit {
 
   }
 
-  
+  attack()
+  {
+    const subsystem1 = new AK47();
+    const subsystem2 = new USP();
+    const facade = new Facade(subsystem1, subsystem2);
+    console.log(facade.operation());
 
+  }
+  duplicate()
+  {
+    const p1 = new Gun();
+    p1.x = 245;
+    p1.y = 245;
+    p1.AK47ref = new AK47(p1);
+
+    const p2 = new Gun();
+    p2.x = 210;
+    p2.y = 210;
+    p2.USPref = new USP(p2);
+
+    const p3 = p1.cloneAK();
+    if (p1.x === p3.x && p1.y === p3.y) {
+        console.log('Koordinačių taškai sutampa. Yay!');
+    } else {
+        console.log('Koordinačių taškai nesutampa. Booo!');
+    }
+
+    if (p1.AK47ref === p2.AK47ref) {
+      console.log('AK47 with back reference has not been cloned. Booo!');
+    } else {
+      console.log('AK47 with back reference has been cloned. Yay!');
+    }
+
+ /* if (p1.AK47ref.prototype === p2.AK47ref.prototype) {
+        console.log('AK47 with back reference is linked to original object. Booo!');
+   } else {
+      console.log('AK47 with back reference is linked to the clone. Yay!');
+    }*/
+
+  }
 
   dropBomb() {
 
