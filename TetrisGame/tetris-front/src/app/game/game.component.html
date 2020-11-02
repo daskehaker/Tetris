@@ -1,0 +1,17 @@
+<div class="container">
+  <div>
+    While waiting
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <game-board [boardService]="boardService" [userService]="userService"></game-board>
+    </div>
+    <div class="col">
+      <oponent-board [boardService]="boardService" [userService]="userService"></oponent-board>
+    </div>
+    <div class="col">
+      <chat></chat>
+    </div>
+  </div>
+</div>

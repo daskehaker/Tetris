@@ -1,0 +1,20 @@
+
+<h1>{{player.name}}</h1>
+<gui-movement [piece]="piece" (emitPiece)="move($event)"></gui-movement>
+<div class="grid">
+  <canvas #board class="game-board"></canvas>
+  <div class="right-column">
+    <div>
+      <h1>TETRIS</h1>
+      <p>Score: {{ player.points }}</p>
+      <p>Lines: {{ player.lines }}</p>
+      <p>Level: {{ player.level }}</p>
+    </div>
+    <button (click)="play()" class="play-button">Play</button>
+    <button (click)="dropBomb()" class="play-button">Spell 1</button>
+    <button class="play-button">Spell 2</button>
+    <button class="play-button">Spell 3</button>
+    <button (click)="defend1()" class="play-button" style="color: red;">Defender 1</button>
+    <button (click)="defend2()" class="play-button" style="color: red;">Defender 2</button>
+  </div>
+</div>
