@@ -1,5 +1,6 @@
 import { IMessage } from './../shared/interfaces';
 import { MessageDto } from './../Dto/MessageDto';
+import { Player } from '../user/player';
 
 export class Bot {
   private static instance: Bot;
@@ -18,5 +19,10 @@ export class Bot {
 
   public introRules(): IMessage{
     return new MessageDto("Hello I am Singleton Game bot ", "There is only one instance of me. I will Introduce the game rules");
+  }
+
+  public gameOverMessage(player: Player): IMessage {
+    console.log("SINGLETON anounces game result");
+    return new MessageDto("Singleton Bot", `${player.name} end game. His result: ${player.points}`);
   }
 }

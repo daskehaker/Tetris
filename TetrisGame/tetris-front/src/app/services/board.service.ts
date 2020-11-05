@@ -1,3 +1,4 @@
+import { Piece } from 'src/app/models/piece';
 import { Player } from './../user/player';
 import { environment } from './../../environments/environment';
 import { IPiece, IObserver } from './../shared/interfaces';
@@ -9,6 +10,8 @@ import { Subject, Observable } from 'rxjs';
 import { COLS, ROWS } from '../shared/constants';
 import { Board } from '../models/board';
 import { SpecialPiece } from '../models/SpecialPiece';
+import { IAdapter } from '../Adapter/IAdapter';
+import { Adapter } from '../Adapter/Adapter';
 
 @Injectable({
   providedIn: 'root'
@@ -18,26 +21,20 @@ export class BoardService implements IObserver {
   readonly rootUrl=environment.rootUrl + "board/"
   boards: Board[] = [];
 
-  private receivePieceObject: PieceDto = new PieceDto();
   private sharedPiece = new Subject<PieceDto>();
   private sharedBoard = new Subject<number[][]>();
+  private adapter: IAdapter;
 
   constructor(private http: HttpClient, private connectionService:ConnectionService) {
+    this.adapter = new Adapter();
     this.connectionService.connection.on("Spawn", (x, y, color, shape) => {
-      this.mapSpawnPiece(x, y, color, shape);
+      this.adapter.mapSpawnPiece(x, y, color, shape)
+      this.sharedPiece.next(this.adapter.getPiece());
     });
     this.connectionService.connection.on("BroadcastBoard", (board) => {
       this.sharedBoard.next(board)
     });
     this.connectionService.add(this);
-  }
-
-  private mapSpawnPiece(x: number, y: number, color: string, shape: number[][]) {
-    this.receivePieceObject.x = x;
-    this.receivePieceObject.y = y;
-    this.receivePieceObject.color = color;
-    this.receivePieceObject.shape = shape;
-    this.sharedPiece.next(this.receivePieceObject);
   }
 
   /* ****************************** Public Mehods **************************************** */

@@ -1,5 +1,6 @@
 import { __decorate } from "tslib";
-import { Facade, AK47, USP, Gun } from '../../models/Facade_Prototype';
+import { USPGun } from './../../Prototype/USPGun';
+import { AK47Gun } from './../../Prototype/AK47Gun';
 import { Player } from './../../user/player';
 import { Component, ViewChild, HostListener, Input } from '@angular/core';
 import { BLOCK_SIZE, ROWS, COLS, KEY, COLORS, LEVEL } from '../../shared/constants';
@@ -8,20 +9,19 @@ import { Time, getSpeed } from 'src/app/models/time';
 import { Points } from 'src/app/shared/points';
 import { Context, defender1, defender2 } from '../../Strategy/strategy';
 import { Director, PieceBuilder } from '../../Builder/builder';
+import { Bot } from 'src/app/Singleton/gameBot';
+import { KeyboardControl } from './../../Bridge/KeyboardControl';
 //import { Facade } from 'src/app/models/Facade';
 let BoardComponent = class BoardComponent {
-    //neveikia
-    // moves = {
-    //   [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
-    //   [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
-    //   [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-    //   [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-    //   [KEY.UP]: (p: IPiece): IPiece => this.boardService.rotate(p)
-    // };
     constructor(chatService) {
         this.chatService = chatService;
         this.player = new Player();
         this.time = new Time({ start: 0, elapsed: 0, level: 1000 });
+        this.keyboardControl = new KeyboardControl();
+        this.gunsArray = [];
+        this.gunsDeepCopiesArray = [];
+        this.gunsShallowCopiesArray = [];
+        this.oponents = [{ id: "1", name: "Petras" }, { id: "1", name: "Jonas" }, { id: "1", name: "Ona" }];
     }
     ngOnInit() {
         this.userService.getUserProfile().subscribe((res) => {
@@ -34,19 +34,23 @@ let BoardComponent = class BoardComponent {
         var p = Object.assign({}, this.piece.dto);
         switch (event.keyCode) {
             case KEY.RIGHT: {
-                p.x++;
+                // p.x++;
+                p = this.keyboardControl.right(p);
                 break;
             }
             case KEY.LEFT: {
-                p.x--;
+                //p.x--;
+                p = this.keyboardControl.left(p);
                 break;
             }
             case KEY.DOWN: {
-                p.y++;
+                //p.y++;
+                p = this.keyboardControl.down(p);
                 break;
             }
             case KEY.UP: {
-                p = this.boardService.rotate(p);
+                //p = this.boardService.rotate(p);
+                p = this.keyboardControl.rotate(p);
             }
             default: {
                 //statements;
@@ -90,6 +94,9 @@ let BoardComponent = class BoardComponent {
     move(p) {
         if (this.boardService.valid(p, this.board)) {
             this.piece.move(p);
+            this.piece.shape = p.shape;
+            this.piece.x = p.x;
+            this.piece.y = p.y;
             this.boardService.broadcastPiece(this.piece.dto);
         }
         else
@@ -177,6 +184,8 @@ let BoardComponent = class BoardComponent {
         this.ctx.font = '1px Arial';
         this.ctx.fillStyle = 'red';
         this.ctx.fillText('GAME OVER', 1.8, 4);
+        const s = Bot.getInstance();
+        this.chatService.broadcastMessage(s.gameOverMessage(this.player));
     }
     getLineClearPoints(lines, level) {
         const lineClearPoints = lines === 1 ? Points.SINGLE :
@@ -206,39 +215,42 @@ let BoardComponent = class BoardComponent {
         this.piece.setColor(bomb.color);
         this.piece.setRadius(bomb.radius);
     }
-    attack() {
-        const subsystem1 = new AK47();
-        const subsystem2 = new USP();
-        const facade = new Facade(subsystem1, subsystem2);
-        console.log(facade.operation());
+    getAK47() {
+        this.player.points = this.player.points - 50;
+        const kalasas = new AK47Gun();
+        kalasas.owner = this.player;
+        this.gunsArray.push(kalasas);
     }
-    duplicate() {
-        const p1 = new Gun();
-        p1.x = 245;
-        p1.y = 245;
-        p1.AK47ref = new AK47(p1);
-        const p2 = new Gun();
-        p2.x = 210;
-        p2.y = 210;
-        p2.USPref = new USP(p2);
-        const p3 = p1.cloneAK();
-        if (p1.x === p2.x && p1.y === p3.y) {
-            console.log('Koordinačių taškai sutampa. Yay!');
+    getUSP() {
+        this.player.points = this.player.points - 50;
+        const usp = new USPGun();
+        usp.owner = this.player;
+        this.gunsArray.push(usp);
+    }
+    clone(gun) {
+        this.player.points = this.player.points - 10;
+        const newGun = gun.clone();
+        this.gunsShallowCopiesArray.push(newGun);
+    }
+    cloneDeep(gun) {
+        this.player.points = this.player.points - 15;
+        this.gunsDeepCopiesArray.push(gun.cloneDeep());
+    }
+    setVersus(gun, name) {
+        gun.oponent.name = name;
+    }
+    shoot(gun) {
+        if (gun) {
+            console.log(gun.damage + gun.oponent.name);
+            let index = this.gunsDeepCopiesArray.indexOf(gun);
+            this.gunsDeepCopiesArray.splice(index, 1);
         }
         else {
-            console.log('Koordinačių taškai nesutampa. Booo!');
-        }
-        if (p1.AK47ref === p2.AK47ref) {
-            console.log('AK47 with back reference has not been cloned. Booo!');
-        }
-        else {
-            console.log('AK47 with back reference has been cloned. Yay!');
-        }
-        if (p1.AK47ref.prototype === p2.AK47ref.prototype) {
-            console.log('AK47 with back reference is linked to original object. Booo!');
-        }
-        else {
-            console.log('AK47 with back reference is linked to the clone. Yay!');
+            this.gunsShallowCopiesArray.forEach(element => {
+                console.log(element.damage + element.oponent.name);
+                this.player.points = this.player.points - 5;
+                this.gunsShallowCopiesArray = [];
+            });
         }
     }
     dropBomb() {

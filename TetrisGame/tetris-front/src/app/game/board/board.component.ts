@@ -1,3 +1,5 @@
+import { USPGun } from './../../Prototype/USPGun';
+import { AK47Gun } from './../../Prototype/AK47Gun';
 import { Facade, AK47, USP, Gun } from '../../models/Facade_Prototype';
 import { UserService } from 'src/app/services/user.service';
 import { Player } from './../../user/player';
@@ -18,6 +20,10 @@ import { Context, defender1, defender2 } from '../../Strategy/strategy'
 import { Direct } from 'protractor/built/driverProviders';
 import { Director, PieceBuilder } from '../../Builder/builder';
 import { SpecialPiece } from '../../models/SpecialPiece';
+import { Bot } from 'src/app/Singleton/gameBot';
+import { KeyboardControl } from './../../Bridge/KeyboardControl';
+import { ConcreteGun } from 'src/app/Prototype/ConcreteGun';
+import { Oponent } from 'src/app/Prototype/Oponent';
 
 //import { Facade } from 'src/app/models/Facade';
 
@@ -43,15 +49,13 @@ export class BoardComponent implements OnInit {
   pieceDto: PieceDto;
   time = new Time({ start: 0, elapsed: 0, level: 1000 });
   requestId: number;
+  keyboardControl = new KeyboardControl();
+  gunsArray: ConcreteGun[] = [];
+  gunsDeepCopiesArray: ConcreteGun[] = [];
+  gunsShallowCopiesArray: ConcreteGun[] = [];
 
-  //neveikia
-  // moves = {
-  //   [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
-  //   [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
-  //   [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-  //   [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-  //   [KEY.UP]: (p: IPiece): IPiece => this.boardService.rotate(p)
-  // };
+  oponents: Oponent[] = [{id: "1", name: "Petras"}, {id: "1", name: "Jonas"}, {id: "1", name: "Ona"}]
+  
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
@@ -68,26 +72,30 @@ export class BoardComponent implements OnInit {
     var p = Object.assign({}, this.piece.dto)
     switch(event.keyCode) {
       case KEY.RIGHT: {
-        p.x++;
+        // p.x++;
+        p = this.keyboardControl.right(p);
          break;
         }
         case KEY.LEFT: {
-          p.x--;
+          //p.x--;
+          p = this.keyboardControl.left(p);
           break;
         }
         case KEY.DOWN: {
-          p.y++;
+          //p.y++;
+          p = this.keyboardControl.down(p);
           break;
         }
         case KEY.UP: {
-          p = this.boardService.rotate(p);
+          //p = this.boardService.rotate(p);
+          p = this.keyboardControl.rotate(p)
         }
         default: {
           //statements;
           break;
         }
       }
-      this.move(p);
+    this.move(p);
   }
 
   initBoard() {
@@ -131,6 +139,9 @@ export class BoardComponent implements OnInit {
   move(p: IPiece) {
     if(this.boardService.valid(p, this.board)){
       this.piece.move(p)
+      this.piece.shape = p.shape;
+      this.piece.x = p.x;
+      this.piece.y = p.y;
       this.boardService.broadcastPiece(this.piece.dto);
     } else console.log("not valid", p, this.piece)
   }
@@ -222,6 +233,8 @@ export class BoardComponent implements OnInit {
     this.ctx.font = '1px Arial';
     this.ctx.fillStyle = 'red';
     this.ctx.fillText('GAME OVER', 1.8, 4);
+    const s=Bot.getInstance();
+    this.chatService.broadcastMessage(s.gameOverMessage(this.player));
   }
 
   getLineClearPoints(lines: number, level: number): number {
@@ -263,51 +276,52 @@ export class BoardComponent implements OnInit {
 
   }
 
-  attack()
+  getAK47()
   {
-    const subsystem1 = new AK47();
-    const subsystem2 = new USP();
-    const facade = new Facade(subsystem1, subsystem2);
-    console.log(facade.operation());
-
+    this.player.points = this.player.points - 50;
+    const kalasas = new AK47Gun();
+    kalasas.owner = this.player;
+    this.gunsArray.push(kalasas);
   }
-  duplicate()
-  {
-    const p1 = new Gun();
-    p1.x = 245;
-    p1.y = 245;
-    p1.AK47ref = new AK47(p1);
 
-    const p2 = new Gun();
-    p2.x = 210;
-    p2.y = 210;
-    p2.USPref = new USP(p2);
+  getUSP(){
+    this.player.points = this.player.points - 50;
+    const usp = new USPGun();
+    usp.owner = this.player;
+    this.gunsArray.push(usp);
+  }
 
-    const p3 = p1.cloneAK();
-    if (p1.x === p3.x && p1.y === p3.y) {
-        console.log('Koordinačių taškai sutampa. Yay!');
-    } else {
-        console.log('Koordinačių taškai nesutampa. Booo!');
+  clone(gun: ConcreteGun){
+    this.player.points = this.player.points - 10;
+    const newGun = gun.clone();
+    this.gunsShallowCopiesArray.push(newGun)
+  }
+
+  cloneDeep(gun: USPGun){
+    this.player.points = this.player.points - 15;
+    this.gunsDeepCopiesArray.push(gun.cloneDeep());
+  }
+
+  setVersus(gun: ConcreteGun, name: string){
+    gun.oponent.name = name;
+  }
+
+  shoot(gun?: ConcreteGun){
+    if(gun){
+      console.log(gun.damage + gun.oponent.name);
+      let index = this.gunsDeepCopiesArray.indexOf(gun);
+      this.gunsDeepCopiesArray.splice(index, 1);
     }
-
-    if (p1.AK47ref === p2.AK47ref) {
-      console.log('AK47 with back reference has not been cloned. Booo!');
-    } else {
-      console.log('AK47 with back reference has been cloned. Yay!');
+    else {
+        this.gunsShallowCopiesArray.forEach(element => {
+          console.log(element.damage + element.oponent.name);
+          this.player.points = this.player.points - 5;
+          this.gunsShallowCopiesArray = [];
+        });
     }
-
- /* if (p1.AK47ref.prototype === p2.AK47ref.prototype) {
-        console.log('AK47 with back reference is linked to original object. Booo!');
-   } else {
-      console.log('AK47 with back reference is linked to the clone. Yay!');
-    }*/
-
   }
 
   dropBomb() {
-
-
-
     const director = new Director();
     const builder = new PieceBuilder();
     director.setBuilder(builder);

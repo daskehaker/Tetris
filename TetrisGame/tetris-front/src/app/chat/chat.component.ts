@@ -1,4 +1,4 @@
-import { Bot } from './../models/gameBot';
+import { Bot } from './../Singleton/gameBot';
 import { MessageDto } from './../Dto/MessageDto';
 import { ChatService } from './../services/chat.service';
 import { Component, OnInit, AfterViewInit } from '@angular/core';

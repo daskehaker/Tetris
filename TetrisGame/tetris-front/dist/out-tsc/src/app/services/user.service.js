@@ -1,4 +1,5 @@
 import { __decorate } from "tslib";
+import { Adapter } from './../Adapter/Adapter';
 import { HttpHeaders } from '@angular/common/http';
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
@@ -9,7 +10,9 @@ let UserService = class UserService {
         this.rootUrl = environment.rootUrl + "appusers/";
     }
     register(newUser) {
-        return this.http.post(this.rootUrl + 'register', newUser);
+        this.adapter = new Adapter();
+        this.adapter.mapUser(newUser);
+        return this.http.post(this.rootUrl + 'register', this.adapter.getUser());
     }
     login(user) {
         return this.http.post(this.rootUrl + 'login', user);
