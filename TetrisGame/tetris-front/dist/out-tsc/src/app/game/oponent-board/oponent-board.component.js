@@ -7,6 +7,9 @@ let OponentBoardComponent = class OponentBoardComponent {
         //token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiJmZGU2YTg5Ny0xMmNhLTRjYjEtYTQwZS02ZjYwODk0OWI0ZGUiLCJuYmYiOjE2MDE4ODgzNTQsImV4cCI6MTYxNzYxMzE1NCwiaWF0IjoxNjAxODg4MzU0fQ.Zpv7hvOteKNtd9RGEzxux6ZT4-C9nnmnIKVt4j_kMMM"
         this.player = new Player({ id: "fde6a897-12ca-4cb1-a40e-6f608949b4de", name: "player2" });
     }
+    getPlayerName() {
+        return null;
+    }
     ngOnInit() {
         this.initBoard();
         this.boardService.retrieveMapperPiece().subscribe((receivedObj) => {

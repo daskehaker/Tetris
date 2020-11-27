@@ -5,6 +5,7 @@ export interface IPiece{
   radius: number;
   shape: number[][];
   power: string;
+  rotationCount: number;
 }
 
 export interface IUser{

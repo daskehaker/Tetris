@@ -6,10 +6,14 @@ export const LINES_PER_LEVEL = 10;
 export class KEY {
   static readonly ESC = 27;
   static readonly SPACE = 32;
-  static readonly LEFT = 37;
-  static readonly RIGHT = 39;
-  static readonly DOWN = 40;
-  static readonly UP = 38;
+  static  LEFT = 37;
+  static  RIGHT = 39;
+  static  DOWN = 40;
+  static UP = 38;
+  static E = 69;
+  static R = 82;
+  static D = 68;
+  static F = 70;
 }
 
 export class POINTS {
@@ -20,6 +24,24 @@ export class POINTS {
   static readonly SOFT_DROP = 1;
   static readonly HARD_DROP = 2;
 }
+
+export class SHAPES {
+  static readonly JShape = [[2, 0, 0], [2, 2, 2], [0, 0, 0]];
+  static readonly OShape = [[2, 2, 0], [2, 2, 0], [0, 0, 0]];
+  static readonly LShape = [[0, 0, 0], [2, 2, 2], [2, 0, 0]];
+  static readonly ZShape = [[0, 0, 0], [2, 2, 0], [0, 2, 2]];
+  static readonly TShape = [[2, 2, 2], [0, 2, 0], [0, 0, 0]];
+  static readonly SShape = [[0, 0, 0], [0, 2, 2], [2, 2, 0]];
+}
+
+export const SHAPE = [
+  [[2, 0, 0], [2, 2, 2], [0, 0, 0]],
+  [[2, 2, 0], [2, 2, 0], [0, 0, 0]],
+  [[0, 0, 0], [2, 2, 2], [2, 0, 0]],
+  [[0, 0, 0], [2, 2, 0], [0, 2, 2]],
+  [[2, 2, 2], [0, 2, 0], [0, 0, 0]],
+  [[0, 0, 0], [0, 2, 2], [2, 2, 0]]
+];
 
 export const COLORS = [
   'none',

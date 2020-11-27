@@ -3,25 +3,17 @@ export class PieceBuilder {
     constructor() {
         this.reset();
     }
-    setShape(shape) {
-        //this.piece.dto.shape = shape;
-    }
-    setPlayer(player) {
-    }
-    setEffectRadius(radius) {
-        //this.piece.dto.radius = radius;
-    }
     reset() {
         this.piece = new SpecialPiece();
     }
+    setShape(shape) {
+        this.piece.shape = shape;
+    }
+    setPlayer(player) {
+        this.piece.player = player;
+    }
     setColor(color) {
         this.piece.color = color;
-    }
-    setPower(power) {
-        //this.piece.dto.power = power;
-    }
-    setSpeed(speed) {
-        //this.piece.dto.speed = speed;
     }
     getSpecialPiece() {
         const result = this.piece;
@@ -30,18 +22,21 @@ export class PieceBuilder {
     }
 }
 export class Director {
+    constructor(player) {
+        this.player = player;
+    }
     setBuilder(builder) {
         this.builder = builder;
     }
     buildBomb() {
+        this.builder.setPlayer(this.player);
         this.builder.setColor("Black");
-        //this.builder.setEffectRadius(3);
-        //this.builder.setShape([[0, 0, 0], [0, 1, 0], [0, 0, 0]]);
-        //this.builder.setPower("Explode");
+        this.builder.setShape([[0, 0, 0], [0, 1, 0], [0, 0, 0]]);
     }
-    buildInvisiblePiece() {
-        this.builder.setColor("White");
-        this.builder.setShape([[0, 1, 0], [1, 1, 1], [0, 0, 0]]);
+    BuildLongPiece() {
+        this.builder.setPlayer(this.player);
+        this.builder.setColor("Blue");
+        this.builder.setShape([[0, 1, 0], [0, 1, 0], [0, 1, 0]]);
     }
 }
 //# sourceMappingURL=builder.js.map

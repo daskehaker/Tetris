@@ -12,6 +12,7 @@ export class Piece implements IPiece {
   player: Player;
   power: string;
   speed: number;
+  rotationCount: number = 0;
   dto = new PieceDto();
 
   constructor(private ctx: CanvasRenderingContext2D) {

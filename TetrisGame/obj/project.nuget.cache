@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "I87pNg9qjkEScbOwFmgkW8yYtpvd96/sYikZbP6OvMxaIW4+ZgUA4Dau4h2uIfXZubOpx96UC9axGy1mxjfFDQ==",
+  "dgSpecHash": "lVTaJX99B9QRxIkN59Ct49o/xKP1GeHMp481z+WTm/6HdJyJH9UmOC6UDwzSXRU9jNGhlAkcLCdEKp0QLcFeUg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\dovsav\\Documents\\GitHub\\Tetris\\TetrisGame\\TetrisGame.csproj",
+  "projectFilePath": "C:\\Users\\dovsav\\Source\\Repos\\Tetris\\TetrisGame\\TetrisGame.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\dovsav\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.8\\microsoft.aspnetcore.authentication.jwtbearer.3.1.8.nupkg.sha512",
     "C:\\Users\\dovsav\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\3.1.8\\microsoft.aspnetcore.cryptography.internal.3.1.8.nupkg.sha512",
@@ -169,15 +169,7 @@
     "C:\\Users\\dovsav\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\dovsav\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\dovsav\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512",
-    "C:\\Users\\dovsav\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512",
-    "C:\\Users\\dovsav\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512"
+    "C:\\Users\\dovsav\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file C:\\Users\\dovsav\\Documents\\GitHub\\Tetris\\TetrisGame\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
-    }
-  ]
+  "logs": []
 }

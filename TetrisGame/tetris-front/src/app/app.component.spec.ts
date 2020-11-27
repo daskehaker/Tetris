@@ -25,7 +25,9 @@ describe('AppComponent', () => {
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
+    console.log(fixture);
     const compiled = fixture.nativeElement;
+    console.log(compiled);
     expect(compiled.querySelector('.content span').textContent).toContain('tetris-front app is running!');
   });
 });

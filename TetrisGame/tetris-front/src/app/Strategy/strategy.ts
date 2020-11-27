@@ -1,7 +1,12 @@
-import { IMessage } from './../shared/interfaces';
+import { IMessage, IPiece } from './../shared/interfaces';
 import { MessageDto } from './../Dto/MessageDto';
 import { Player } from './../user/player';
 import { ChatService } from '../services/chat.service';
+import { Piece } from '../models/piece';
+import { BoardService } from '../services/board.service';
+import { BoardComponent } from '../game/board/board.component';
+import { Key } from 'protractor';
+import { KEY } from '../shared/constants';
 
 
 export class Context {
@@ -15,46 +20,48 @@ export class Context {
     this.strategy = strategy;
   }
 
-  public defend(chatService: ChatService, player : string) {
-    this.strategy.useDefender(null, chatService, player);
+  public defend(player: string, piece: Piece, board: BoardService): IPiece {
+    return this.strategy.useDefender(player, piece, board);
   }
 }
 
 interface defenderStrategy {
-  useDefender(data: string, chatService: ChatService, player: string): string;
+  useDefender(player: string, piece: Piece, board: BoardService): IPiece;
 }
 
 
 export class defender1 implements defenderStrategy {
-  message: MessageDto;
-  public useDefender(data: string, chatService: ChatService, player: string): string {
-    
-    this.message = new MessageDto(player, "using defender1");
-    chatService.broadcastMessage(this.message);
-
-    //console.log("Hello defender1");
-    return null;
+  public useDefender(player: string, piece: Piece, board: BoardService): IPiece {
+    console.log("defender 1");
+    return board.rotate(piece);
   }
 }
 
 export class defender2 implements defenderStrategy {
-  message: MessageDto;
-  public useDefender(data: string, chatService: ChatService, player: string): string {
-    this.message = new MessageDto(player, "using defender2");
-    chatService.broadcastMessage(this.message);
-
-    //console.log("Hello defender2");
+  public useDefender(player: string, piece: Piece, board: BoardService): IPiece {
+    var temp = KEY.RIGHT;
+    KEY.RIGHT = KEY.LEFT;
+    KEY.LEFT = temp;
+    console.log("defender 2");
     return null;
   }
 }
 
 export class defender3 implements defenderStrategy {
-  message: MessageDto;
-  public useDefender(data: string, chatService: ChatService, player: string): string {
-    this.message = new MessageDto("Player ", "used defender3");
-    chatService.broadcastMessage(this.message);
+  public useDefender(player: string, piece: Piece, board: BoardService): IPiece {
+    KEY.RIGHT = null;
+    KEY.LEFT = null;
+    console.log("defender 3");
+    return null;
+  }
+}
 
-    //console.log("Hello defender3");
+export class defender4 implements defenderStrategy {
+  public useDefender(player: string, piece: Piece, board: BoardService): IPiece {
+    if (piece.rotationCount >= 2) {
+      KEY.UP = null;
+    }
+    console.log("defender 4");
     return null;
   }
 }

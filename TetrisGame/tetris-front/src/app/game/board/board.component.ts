@@ -1,22 +1,20 @@
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Builder } from 'protractor';
+import { Piece } from 'src/app/models/piece';
+import { getSpeed, Time } from 'src/app/models/time';
 import { UserService } from 'src/app/services/user.service';
-import { Player } from './../../user/player';
+import { Points } from 'src/app/shared/points';
+import { Director, PieceBuilder } from '../../Builder/builder';
+import { changeColor, changeShape } from '../../Command/command';
+import { SpecialPiece } from '../../models/SpecialPiece';
+import { BoardService } from '../../services/board.service';
+import { ChatService } from '../../services/chat.service';
+import { BLOCK_SIZE, COLORS, COLS, KEY, LEVEL, ROWS } from '../../shared/constants';
+import { Context, defender1, defender2, defender3, defender4 } from '../../Strategy/strategy';
+import { OponentBoardComponent } from '../oponent-board/oponent-board.component';
 import { PieceDto } from './../../Dto/PieceDto';
 import { IPiece } from './../../shared/interfaces';
-import { BoardService } from '../../services/board.service';
-import { Component, OnInit, ElementRef, ViewChild, HostListener, Input } from '@angular/core';
-import { BLOCK_SIZE, ROWS, COLS, KEY, POINTS, COLORS, LINES_PER_LEVEL, LEVEL } from '../../shared/constants';
-import { Piece } from 'src/app/models/piece';
-import { Key } from 'protractor';
-import { RouterState } from '@angular/router';
-import { Board } from 'src/app/models/board';
-import { Time, getSpeed } from 'src/app/models/time';
-import { Points } from 'src/app/shared/points';
-import { MessageDto } from '../../Dto/MessageDto';
-import { ChatService } from '../../services/chat.service';
-import { Context, defender1, defender2 } from '../../Strategy/strategy'
-import { Direct } from 'protractor/built/driverProviders';
-import { Director, PieceBuilder } from '../../Builder/builder';
-import { SpecialPiece } from '../../models/SpecialPiece';
+import { Player } from './../../user/player';
 
 @Component({
   selector: 'game-board',
@@ -40,6 +38,10 @@ export class BoardComponent implements OnInit {
   pieceDto: PieceDto;
   time = new Time({ start: 0, elapsed: 0, level: 1000 });
   requestId: number;
+  strategy = new Context(new defender1());
+  pieceCount = 0;
+  commandColor: changeColor;
+  commandShape: changeShape;
 
   //neveikia
   // moves = {
@@ -66,26 +68,57 @@ export class BoardComponent implements OnInit {
     switch(event.keyCode) {
       case KEY.RIGHT: {
         p.x++;
+        this.move(p);
          break;
         }
-        case KEY.LEFT: {
-          p.x--;
-          break;
+      case KEY.LEFT: {
+        p.x--;
+        this.move(p);
+        break;
         }
-        case KEY.DOWN: {
-          p.y++;
-          break;
+      case KEY.DOWN: {
+        p.y++;
+        this.move(p);
+        break;
+      }
+      case KEY.UP: {
+        p = this.boardService.rotate(p);
+        this.piece.rotationCount++;
+        this.move(p);
+        break;
+      }
+      case KEY.E: {
+        if (this.commandShape == null) {
+          this.commandShape = new changeShape(this.piece);
         }
-        case KEY.UP: {
-          p = this.boardService.rotate(p);
+        this.commandShape.execute();
+        break;
+      }
+      case KEY.R: {
+        this.commandShape.undo();
+        break;
+      }
+      case KEY.D: {
+        if (this.commandColor == null) {
+          this.commandColor = new changeColor(this.piece);
         }
+        this.commandColor.execute();
+        break;
+      }
+      case KEY.F: {
+        this.commandColor.undo();
+        break;
+      }
+
         default: {
           //statements;
           break;
         }
-      }
-      this.move(p);
+    }
+
+      
   }
+
 
   initBoard() {
     // Get the 2D context that we draw on.
@@ -116,6 +149,23 @@ export class BoardComponent implements OnInit {
       // Reset start time
       this.time.start = now;
       this.time = getSpeed(this.time, this.player.level);
+      if (this.pieceCount > 0) {
+        //=============Strategy Spell=======================
+        switch (this.piece.color.toLowerCase()) {
+          case "blue":
+            this.strategy.setStrategy(new defender1());
+            this.move(this.strategy.defend(this.player.name, this.piece, this.boardService));
+            break;
+          case "yellow":
+            this.strategy.setStrategy(new defender4());
+            this.strategy.defend(this.player.name, this.piece, this.boardService);
+            break;
+          default:
+        }
+      //==================================
+      }
+      
+
       if(!this.drop()){
         this.gameOver();
         return;
@@ -142,11 +192,40 @@ export class BoardComponent implements OnInit {
       this.freeze();
       this.clearLines();
       this.boardService.broadcastBoard(this.board);
+
       if (this.piece.y === 0) {
         // Game over
         return false;
       }
       this.piece = new Piece(this.ctx)
+      this.pieceCount--;
+      //=============Strategy Spell=======================
+      if (this.pieceCount > 0) {
+        if (this.piece.color.toLowerCase() == "green") {
+          this.strategy.setStrategy(new defender2());
+          this.strategy.defend(this.player.name, this.piece, this.boardService);
+        } else if (this.piece.color.toLowerCase() == "red") {
+          this.strategy.setStrategy(new defender3());
+          this.strategy.defend(this.player.name, this.piece, this.boardService);
+        } else {
+          KEY.RIGHT = 39;
+          KEY.LEFT = 37;
+        }
+
+      } else {
+        KEY.RIGHT = 39;
+        KEY.LEFT = 37;
+      }
+
+      
+      this.piece.rotationCount = 0;
+      KEY.UP = 38;
+      this.commandColor = null;
+      this.commandShape = null;
+      /////
+
+
+
       //this.piece = this.next;
       //this.next = new Piece(this.ctx);
       //this.next.drawNext(this.ctxNext);
@@ -229,20 +308,6 @@ export class BoardComponent implements OnInit {
     return (level + 1) * lineClearPoints;
   }
 
-  defend1() {
-
-    const context = new Context(new defender1());
-    context.defend(this.chatService, this.player.name);
-
-  }
-
-  defend2() {
-
-    const context = new Context(new defender2());
-    context.defend(this.chatService, this.player.name);
-
-  }
-
 
   play() {
     this.board = this.boardService.getBoardById(this.player.Id)
@@ -252,29 +317,38 @@ export class BoardComponent implements OnInit {
     this.animate();
     this.boardService.broadcastPiece(this.piece.dto);
   }
+  oponentBoard = new OponentBoardComponent;
+  
+  player1() {
+    if (this.player.points >= -200) {
+      this.player.points -= 200;
+      this.pieceCount = 5;
+    }
 
-  bomb(bomb: SpecialPiece) {
-    this.piece.setShape(bomb.shape);
-    this.piece.setColor(bomb.color);
-    this.piece.setRadius(bomb.radius);
 
   }
+  director: Director;
+  builder: PieceBuilder;
+  player2() {
+    this.director = new Director(this.player);
+    this.builder = new PieceBuilder();
+    this.director.setBuilder(this.builder);
+    this.director.buildBomb();
+    var bomb = this.builder.getSpecialPiece();
+    this.piece.color = bomb.color;
+    this.piece.shape = bomb.shape;
+    this.piece.dto.shape = bomb.shape;
+  }
 
-  
-
-
-  dropBomb() {
-
-
-
-    const director = new Director();
-    const builder = new PieceBuilder();
-    director.setBuilder(builder);
-
-    director.buildBomb();
-    const build = builder.getSpecialPiece();
-    console.log(build);
-    this.bomb(build);
+  player3() {
+    this.director = new Director(this.player);
+    this.builder = new PieceBuilder();
+    this.director.setBuilder(this.builder);
+    this.director.BuildLongPiece();
+    var long = this.builder.getSpecialPiece();
+    this.piece.color = long.color;
+    this.piece.shape = long.shape;
+    this.piece.dto.shape = long.shape;
   }
 
 }

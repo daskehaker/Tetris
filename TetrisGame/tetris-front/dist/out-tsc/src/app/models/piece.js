@@ -3,6 +3,7 @@ import { getRandomPiece } from './../piecesAbstractFactory/abstractFactory';
 export class Piece {
     constructor(ctx) {
         this.ctx = ctx;
+        this.rotationCount = 0;
         this.dto = new PieceDto();
         this.spawn();
     }
