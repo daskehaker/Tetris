@@ -48,9 +48,6 @@ export class Director {
     this.builder = builder
   }
 
-  constructor(player: Player) {
-    this.player = player;
-  }
   playerBoard: BoardComponent;
   public buildBomb(): void {
     this.builder.setPlayer(this.player);

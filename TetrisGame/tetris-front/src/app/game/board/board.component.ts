@@ -99,31 +99,29 @@ export class BoardComponent implements OnInit {
       }
       case KEY.RIGHT:{
         // p.x++;
-        p = this.keyboardControl.right(p);
+        this.move(this.keyboardControl.right(p));
           break;
       }
       case KEY.LEFT: {
         //p.x--;
-        p = this.keyboardControl.left(p);
+        this.move(this.keyboardControl.left(p));
         break;
       }
       case KEY.DOWN: {
         //p.y++;
-        p = this.keyboardControl.down(p);
+        this.move(this.keyboardControl.down(p));
         break;
       }
       case KEY.UP: {
         //p = this.boardService.rotate(p);
-        p = this.keyboardControl.rotate(p)
+          this.move(this.keyboardControl.rotate(p));
         break;
       }
       default: {
         //statements;
         break;
       }
-      }
-    this.move(p);
-
+    }
   }
 
 
@@ -329,6 +327,8 @@ export class BoardComponent implements OnInit {
     this.animate();
     this.boardService.broadcastPiece(this.piece.dto);
   }
+
+
   player1() {
     if (this.player.points >= -200) {
       this.player.points -= 200;
