@@ -13,6 +13,7 @@ import { UserComponent } from './user/user.component';
 import { RegistrationComponent } from './user/registration/registration.component';
 import { LoginComponent } from './user/login/login.component';
 import { GameComponent } from './game/game.component';
+import { GUIControl } from './Bridge/GUIControl';
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -26,7 +27,8 @@ AppModule = __decorate([
             LoginComponent,
             GameComponent,
             OponentBoardComponent,
-            BoardComponent
+            BoardComponent,
+            GUIControl
         ],
         imports: [
             BrowserModule,

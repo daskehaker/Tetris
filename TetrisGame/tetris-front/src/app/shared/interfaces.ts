@@ -5,11 +5,18 @@ export interface IPiece{
   radius: number;
   shape: number[][];
   power: string;
+  rotationCount: number;
 }
 
 export interface IUser{
   name: string;
   password: string;
+}
+
+export interface INewUser{
+  name: string;
+  password: string;
+  password2: string;
 }
 
 export interface IMessage{

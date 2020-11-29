@@ -1,5 +1,5 @@
 import { IObserver } from './../shared/interfaces';
-import { Bot } from './../models/gameBot';
+import { Bot } from './../Singleton/gameBot';
 import { ConnectionService } from './connection.service';
 import { MessageDto } from './../Dto/MessageDto';
 import { Injectable } from '@angular/core';

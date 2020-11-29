@@ -1,25 +1,29 @@
 import { __decorate } from "tslib";
-import { Player } from './../../user/player';
-import { Component, ViewChild, HostListener, Input } from '@angular/core';
-import { BLOCK_SIZE, ROWS, COLS, KEY, COLORS, LEVEL } from '../../shared/constants';
+import { Component, HostListener, Input, ViewChild } from '@angular/core';
+import { USPGun } from './../../Prototype/USPGun';
+import { AK47Gun } from './../../Prototype/AK47Gun';
+import { BLOCK_SIZE, ROWS, COLS, KEY, POINTS, COLORS, LEVEL } from '../../shared/constants';
 import { Piece } from 'src/app/models/piece';
-import { Time, getSpeed } from 'src/app/models/time';
-import { Points } from 'src/app/shared/points';
-import { Context, defender1, defender2 } from '../../Strategy/strategy';
+import { getSpeed, Time } from 'src/app/models/time';
 import { Director, PieceBuilder } from '../../Builder/builder';
+import { changeColor, changeShape } from '../../Command/command';
+import { Context, defender1, defender2, defender3, defender4 } from '../../Strategy/strategy';
+import { Player } from './../../user/player';
+import { Bot } from 'src/app/Singleton/gameBot';
+import { KeyboardControl } from './../../Bridge/KeyboardControl';
+//import { Facade } from 'src/app/models/Facade';
 let BoardComponent = class BoardComponent {
-    //neveikia
-    // moves = {
-    //   [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
-    //   [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
-    //   [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-    //   [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-    //   [KEY.UP]: (p: IPiece): IPiece => this.boardService.rotate(p)
-    // };
     constructor(chatService) {
         this.chatService = chatService;
         this.player = new Player();
         this.time = new Time({ start: 0, elapsed: 0, level: 1000 });
+        this.strategy = new Context(new defender1());
+        this.pieceCount = 0;
+        this.keyboardControl = new KeyboardControl();
+        this.gunsArray = [];
+        this.gunsDeepCopiesArray = [];
+        this.gunsShallowCopiesArray = [];
+        this.oponents = [{ id: "1", name: "Petras" }, { id: "1", name: "Jonas" }, { id: "1", name: "Ona" }];
     }
     ngOnInit() {
         this.userService.getUserProfile().subscribe((res) => {
@@ -31,20 +35,47 @@ let BoardComponent = class BoardComponent {
         event.preventDefault();
         var p = Object.assign({}, this.piece.dto);
         switch (event.keyCode) {
+            case KEY.E: {
+                if (this.commandShape == null) {
+                    this.commandShape = new changeShape(this.piece);
+                }
+                this.commandShape.execute();
+                break;
+            }
+            case KEY.R: {
+                this.commandShape.undo();
+                break;
+            }
+            case KEY.D: {
+                if (this.commandColor == null) {
+                    this.commandColor = new changeColor(this.piece);
+                }
+                this.commandColor.execute();
+                break;
+            }
+            case KEY.F: {
+                this.commandColor.undo();
+                break;
+            }
             case KEY.RIGHT: {
-                p.x++;
+                // p.x++;
+                p = this.keyboardControl.right(p);
                 break;
             }
             case KEY.LEFT: {
-                p.x--;
+                //p.x--;
+                p = this.keyboardControl.left(p);
                 break;
             }
             case KEY.DOWN: {
-                p.y++;
+                //p.y++;
+                p = this.keyboardControl.down(p);
                 break;
             }
             case KEY.UP: {
-                p = this.boardService.rotate(p);
+                //p = this.boardService.rotate(p);
+                p = this.keyboardControl.rotate(p);
+                break;
             }
             default: {
                 //statements;
@@ -77,6 +108,21 @@ let BoardComponent = class BoardComponent {
             // Reset start time
             this.time.start = now;
             this.time = getSpeed(this.time, this.player.level);
+            if (this.pieceCount > 0) {
+                //=============Strategy Spell=======================
+                switch (this.piece.color.toLowerCase()) {
+                    case "blue":
+                        this.strategy.setStrategy(new defender1());
+                        this.move(this.strategy.defend(this.player.name, this.piece, this.boardService));
+                        break;
+                    case "yellow":
+                        this.strategy.setStrategy(new defender4());
+                        this.strategy.defend(this.player.name, this.piece, this.boardService);
+                        break;
+                    default:
+                }
+                //==================================
+            }
             if (!this.drop()) {
                 this.gameOver();
                 return;
@@ -88,6 +134,9 @@ let BoardComponent = class BoardComponent {
     move(p) {
         if (this.boardService.valid(p, this.board)) {
             this.piece.move(p);
+            this.piece.shape = p.shape;
+            this.piece.x = p.x;
+            this.piece.y = p.y;
             this.boardService.broadcastPiece(this.piece.dto);
         }
         else
@@ -109,6 +158,31 @@ let BoardComponent = class BoardComponent {
                 return false;
             }
             this.piece = new Piece(this.ctx);
+            this.pieceCount--;
+            //=============Strategy Spell=======================
+            if (this.pieceCount > 0) {
+                if (this.piece.color.toLowerCase() == "green") {
+                    this.strategy.setStrategy(new defender2());
+                    this.strategy.defend(this.player.name, this.piece, this.boardService);
+                }
+                else if (this.piece.color.toLowerCase() == "red") {
+                    this.strategy.setStrategy(new defender3());
+                    this.strategy.defend(this.player.name, this.piece, this.boardService);
+                }
+                else {
+                    KEY.RIGHT = 39;
+                    KEY.LEFT = 37;
+                }
+            }
+            else {
+                KEY.RIGHT = 39;
+                KEY.LEFT = 37;
+            }
+            this.piece.rotationCount = 0;
+            KEY.UP = 38;
+            this.commandColor = null;
+            this.commandShape = null;
+            /////
             //this.piece = this.next;
             //this.next = new Piece(this.ctx);
             //this.next.drawNext(this.ctxNext);
@@ -175,21 +249,15 @@ let BoardComponent = class BoardComponent {
         this.ctx.font = '1px Arial';
         this.ctx.fillStyle = 'red';
         this.ctx.fillText('GAME OVER', 1.8, 4);
+        const s = Bot.getInstance();
+        this.chatService.broadcastMessage(s.gameOverMessage(this.player));
     }
     getLineClearPoints(lines, level) {
-        const lineClearPoints = lines === 1 ? Points.SINGLE :
-            lines === 2 ? Points.DOUBLE :
-                lines === 3 ? Points.TRIPLE :
-                    lines === 4 ? Points.TETRIS : 0;
+        const lineClearPoints = lines === 1 ? POINTS.SINGLE :
+            lines === 2 ? POINTS.DOUBLE :
+                lines === 3 ? POINTS.TRIPLE :
+                    lines === 4 ? POINTS.TETRIS : 0;
         return (level + 1) * lineClearPoints;
-    }
-    defend1() {
-        const context = new Context(new defender1());
-        context.defend(this.chatService, this.player.name);
-    }
-    defend2() {
-        const context = new Context(new defender2());
-        context.defend(this.chatService, this.player.name);
     }
     play() {
         this.board = this.boardService.getBoardById(this.player.Id);
@@ -199,10 +267,64 @@ let BoardComponent = class BoardComponent {
         this.animate();
         this.boardService.broadcastPiece(this.piece.dto);
     }
+    player1() {
+        if (this.player.points >= -200) {
+            this.player.points -= 200;
+            this.pieceCount = 5;
+        }
+    }
     bomb(bomb) {
         this.piece.setShape(bomb.shape);
         this.piece.setColor(bomb.color);
         this.piece.setRadius(bomb.radius);
+    }
+    getAK47() {
+        this.player.points = this.player.points - 50;
+        const kalasas = new AK47Gun();
+        kalasas.owner = this.player;
+        this.gunsArray.push(kalasas);
+    }
+    getUSP() {
+        this.player.points = this.player.points - 50;
+        const usp = new USPGun();
+        usp.owner = this.player;
+        this.gunsArray.push(usp);
+    }
+    player2() {
+        const director = new Director();
+        const builder = new PieceBuilder();
+        director.setBuilder(builder);
+        director.buildBomb();
+        var bomb = builder.getSpecialPiece();
+        this.piece.color = bomb.color;
+        this.piece.shape = bomb.shape;
+        this.piece.dto.shape = bomb.shape;
+    }
+    clone(gun) {
+        this.player.points = this.player.points - 10;
+        const newGun = gun.clone();
+        this.gunsShallowCopiesArray.push(newGun);
+    }
+    cloneDeep(gun) {
+        this.player.points = this.player.points - 15;
+        this.gunsDeepCopiesArray.push(gun.cloneDeep());
+    }
+    setVersus(gun, name) {
+        gun.oponent.name = name;
+    }
+    shoot(gun) {
+        if (gun) {
+            console.log(gun.damage + gun.oponent.name);
+            let index = this.gunsDeepCopiesArray.indexOf(gun);
+            this.gunsDeepCopiesArray.splice(index, 1);
+        }
+        else {
+            this.gunsShallowCopiesArray.forEach(element => {
+                console.log(element.damage + element.oponent.name);
+                this.player.points = this.player.points - 5;
+                this.gunsShallowCopiesArray = [];
+            });
+        }
     }
     dropBomb() {
         const director = new Director();
@@ -210,7 +332,6 @@ let BoardComponent = class BoardComponent {
         director.setBuilder(builder);
         director.buildBomb();
         const build = builder.getSpecialPiece();
-        console.log(build);
         this.bomb(build);
     }
 };

@@ -1,5 +1,5 @@
 import { __decorate } from "tslib";
-import { Bot } from './../models/gameBot';
+import { Bot } from './../Singleton/gameBot';
 import { MessageDto } from './../Dto/MessageDto';
 import { Component } from '@angular/core';
 let ChatComponent = class ChatComponent {

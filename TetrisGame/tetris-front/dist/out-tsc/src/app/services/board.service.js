@@ -1,35 +1,29 @@
 import { __decorate } from "tslib";
 import { Player } from './../user/player';
 import { environment } from './../../environments/environment';
-import { PieceDto } from './../Dto/PieceDto';
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { COLS, ROWS } from '../shared/constants';
 import { Board } from '../models/board';
+import { Adapter } from '../Adapter/Adapter';
 let BoardService = class BoardService {
     constructor(http, connectionService) {
         this.http = http;
         this.connectionService = connectionService;
         this.rootUrl = environment.rootUrl + "board/";
         this.boards = [];
-        this.receivePieceObject = new PieceDto();
         this.sharedPiece = new Subject();
         this.sharedBoard = new Subject();
+        this.adapter = new Adapter();
         this.connectionService.connection.on("Spawn", (x, y, color, shape) => {
-            this.mapSpawnPiece(x, y, color, shape);
+            this.adapter.mapSpawnPiece(x, y, color, shape);
+            this.sharedPiece.next(this.adapter.getPiece());
         });
         this.connectionService.connection.on("BroadcastBoard", (board) => {
             this.sharedBoard.next(board);
         });
         this.connectionService.add(this);
-    }
-    mapSpawnPiece(x, y, color, shape) {
-        this.receivePieceObject.x = x;
-        this.receivePieceObject.y = y;
-        this.receivePieceObject.color = color;
-        this.receivePieceObject.shape = shape;
-        this.sharedPiece.next(this.receivePieceObject);
     }
     /* ****************************** Public Mehods **************************************** */
     update() {

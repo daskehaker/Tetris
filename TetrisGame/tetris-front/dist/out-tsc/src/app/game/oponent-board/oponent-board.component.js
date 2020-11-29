@@ -3,19 +3,33 @@ import { Player } from './../../user/player';
 import { Component, ViewChild, Input } from '@angular/core';
 import { COLS, BLOCK_SIZE, ROWS, COLORS } from '../../shared/constants';
 let OponentBoardComponent = class OponentBoardComponent {
-    constructor() {
+    constructor(subscriberService) {
+        this.subscriberService = subscriberService;
         //token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiJmZGU2YTg5Ny0xMmNhLTRjYjEtYTQwZS02ZjYwODk0OWI0ZGUiLCJuYmYiOjE2MDE4ODgzNTQsImV4cCI6MTYxNzYxMzE1NCwiaWF0IjoxNjAxODg4MzU0fQ.Zpv7hvOteKNtd9RGEzxux6ZT4-C9nnmnIKVt4j_kMMM"
         this.player = new Player({ id: "fde6a897-12ca-4cb1-a40e-6f608949b4de", name: "player2" });
     }
+    getPlayerName() {
+        return null;
+    }
     ngOnInit() {
+        this.subscriberService.add(this);
         this.initBoard();
         this.boardService.retrieveMapperPiece().subscribe((receivedObj) => {
             this.pieceDto = receivedObj;
             this.draw(receivedObj);
         });
-        this.boardService.retrieveMapperBoard().subscribe((retrieveObj) => {
+        /*this.boardService.retrieveMapperBoard().subscribe((retrieveObj: number[][]) => {
+          this.board = retrieveObj;
+          //this.drawBoard()
+        })*/
+    }
+    ngOnDestroy() {
+        this.subscriberService.remove(this);
+    }
+    update(subject) {
+        console.log("OBSERVER updates oponent board");
+        this.subscriberService.retrieveMapperBoard().subscribe((retrieveObj) => {
             this.board = retrieveObj;
-            //this.drawBoard()
         });
     }
     initBoard() {
