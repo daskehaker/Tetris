@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { User } from 'src/app/shared/user';
+import { NewUser, User } from 'src/app/shared/user';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class RegistrationComponent {
 
-  model = new User("", "");
+  model = new NewUser("", "", "");
 
   constructor(private service: UserService) {}
 

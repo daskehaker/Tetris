@@ -13,6 +13,7 @@ import { UserComponent } from './user/user.component';
 import { RegistrationComponent } from './user/registration/registration.component';
 import { LoginComponent } from './user/login/login.component';
 import { GameComponent } from './game/game.component';
+import { GUIControl } from './Bridge/GUIControl';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { GameComponent } from './game/game.component';
     LoginComponent,
     GameComponent,
     OponentBoardComponent,
-    BoardComponent
+    BoardComponent,
+    GUIControl
   ],
   imports: [
     BrowserModule,

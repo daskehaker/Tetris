@@ -13,6 +13,12 @@ export interface IUser{
   password: string;
 }
 
+export interface INewUser{
+  name: string;
+  password: string;
+  password2: string;
+}
+
 export interface IMessage{
   user: string,
   msgText: string

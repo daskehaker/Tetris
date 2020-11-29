@@ -1,20 +1,30 @@
+
 import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { Builder } from 'protractor';
+import { USPGun } from './../../Prototype/USPGun';
+import { AK47Gun } from './../../Prototype/AK47Gun';
+import { Facade, AK47, USP, Gun } from '../../models/Facade_Prototype';
+import { BLOCK_SIZE, ROWS, COLS, KEY, POINTS, COLORS, LINES_PER_LEVEL, LEVEL } from '../../shared/constants';
 import { Piece } from 'src/app/models/piece';
 import { getSpeed, Time } from 'src/app/models/time';
 import { UserService } from 'src/app/services/user.service';
-import { Points } from 'src/app/shared/points';
 import { Director, PieceBuilder } from '../../Builder/builder';
 import { changeColor, changeShape } from '../../Command/command';
 import { SpecialPiece } from '../../models/SpecialPiece';
 import { BoardService } from '../../services/board.service';
 import { ChatService } from '../../services/chat.service';
-import { BLOCK_SIZE, COLORS, COLS, KEY, LEVEL, ROWS } from '../../shared/constants';
 import { Context, defender1, defender2, defender3, defender4 } from '../../Strategy/strategy';
 import { OponentBoardComponent } from '../oponent-board/oponent-board.component';
 import { PieceDto } from './../../Dto/PieceDto';
 import { IPiece } from './../../shared/interfaces';
 import { Player } from './../../user/player';
+import { Bot } from 'src/app/Singleton/gameBot';
+import { KeyboardControl } from './../../Bridge/KeyboardControl';
+import { ConcreteGun } from 'src/app/Prototype/ConcreteGun';
+import { Oponent } from 'src/app/Prototype/Oponent';
+
+//import { Facade } from 'src/app/models/Facade';
+
 
 @Component({
   selector: 'game-board',
@@ -38,19 +48,18 @@ export class BoardComponent implements OnInit {
   pieceDto: PieceDto;
   time = new Time({ start: 0, elapsed: 0, level: 1000 });
   requestId: number;
+
   strategy = new Context(new defender1());
   pieceCount = 0;
   commandColor: changeColor;
   commandShape: changeShape;
+  keyboardControl = new KeyboardControl();
+  gunsArray: ConcreteGun[] = [];
+  gunsDeepCopiesArray: ConcreteGun[] = [];
+  gunsShallowCopiesArray: ConcreteGun[] = [];
 
-  //neveikia
-  // moves = {
-  //   [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
-  //   [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
-  //   [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-  //   [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-  //   [KEY.UP]: (p: IPiece): IPiece => this.boardService.rotate(p)
-  // };
+  oponents: Oponent[] = [{id: "1", name: "Petras"}, {id: "1", name: "Jonas"}, {id: "1", name: "Ona"}]
+
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
@@ -66,27 +75,6 @@ export class BoardComponent implements OnInit {
     event.preventDefault();
     var p = Object.assign({}, this.piece.dto)
     switch(event.keyCode) {
-      case KEY.RIGHT: {
-        p.x++;
-        this.move(p);
-         break;
-        }
-      case KEY.LEFT: {
-        p.x--;
-        this.move(p);
-        break;
-        }
-      case KEY.DOWN: {
-        p.y++;
-        this.move(p);
-        break;
-      }
-      case KEY.UP: {
-        p = this.boardService.rotate(p);
-        this.piece.rotationCount++;
-        this.move(p);
-        break;
-      }
       case KEY.E: {
         if (this.commandShape == null) {
           this.commandShape = new changeShape(this.piece);
@@ -109,14 +97,33 @@ export class BoardComponent implements OnInit {
         this.commandColor.undo();
         break;
       }
-
-        default: {
-          //statements;
+      case KEY.RIGHT:{
+        // p.x++;
+        p = this.keyboardControl.right(p);
           break;
-        }
-    }
+      }
+      case KEY.LEFT: {
+        //p.x--;
+        p = this.keyboardControl.left(p);
+        break;
+      }
+      case KEY.DOWN: {
+        //p.y++;
+        p = this.keyboardControl.down(p);
+        break;
+      }
+      case KEY.UP: {
+        //p = this.boardService.rotate(p);
+        p = this.keyboardControl.rotate(p)
+        break;
+      }
+      default: {
+        //statements;
+        break;
+      }
+      }
+    this.move(p);
 
-      
   }
 
 
@@ -164,7 +171,7 @@ export class BoardComponent implements OnInit {
         }
       //==================================
       }
-      
+
 
       if(!this.drop()){
         this.gameOver();
@@ -178,6 +185,9 @@ export class BoardComponent implements OnInit {
   move(p: IPiece) {
     if(this.boardService.valid(p, this.board)){
       this.piece.move(p)
+      this.piece.shape = p.shape;
+      this.piece.x = p.x;
+      this.piece.y = p.y;
       this.boardService.broadcastPiece(this.piece.dto);
     } else console.log("not valid", p, this.piece)
   }
@@ -217,7 +227,7 @@ export class BoardComponent implements OnInit {
         KEY.LEFT = 37;
       }
 
-      
+
       this.piece.rotationCount = 0;
       KEY.UP = 38;
       this.commandColor = null;
@@ -298,13 +308,15 @@ export class BoardComponent implements OnInit {
     this.ctx.font = '1px Arial';
     this.ctx.fillStyle = 'red';
     this.ctx.fillText('GAME OVER', 1.8, 4);
+    const s=Bot.getInstance();
+    this.chatService.broadcastMessage(s.gameOverMessage(this.player));
   }
 
   getLineClearPoints(lines: number, level: number): number {
-    const lineClearPoints = lines === 1 ? Points.SINGLE :
-          lines === 2 ? Points.DOUBLE :
-          lines === 3 ? Points.TRIPLE :
-          lines === 4 ? Points.TETRIS : 0;
+    const lineClearPoints = lines === 1 ? POINTS.SINGLE :
+          lines === 2 ? POINTS.DOUBLE :
+          lines === 3 ? POINTS.TRIPLE :
+          lines === 4 ? POINTS.TETRIS : 0;
     return (level + 1) * lineClearPoints;
   }
 
@@ -317,38 +329,86 @@ export class BoardComponent implements OnInit {
     this.animate();
     this.boardService.broadcastPiece(this.piece.dto);
   }
-  oponentBoard = new OponentBoardComponent;
-  
   player1() {
     if (this.player.points >= -200) {
       this.player.points -= 200;
       this.pieceCount = 5;
     }
+  }
 
+
+  bomb(bomb: SpecialPiece) {
+    this.piece.setShape(bomb.shape);
+    this.piece.setColor(bomb.color);
+    this.piece.setRadius(bomb.radius);
 
   }
-  director: Director;
-  builder: PieceBuilder;
+
+  getAK47(){
+    this.player.points = this.player.points - 50;
+    const kalasas = new AK47Gun();
+    kalasas.owner = this.player;
+    this.gunsArray.push(kalasas);
+  }
+
+  getUSP(){
+    this.player.points = this.player.points - 50;
+    const usp = new USPGun();
+    usp.owner = this.player;
+    this.gunsArray.push(usp);
+  }
+
   player2() {
-    this.director = new Director(this.player);
-    this.builder = new PieceBuilder();
-    this.director.setBuilder(this.builder);
-    this.director.buildBomb();
-    var bomb = this.builder.getSpecialPiece();
+    const director = new Director();
+    const builder = new PieceBuilder();
+    director.setBuilder(builder);
+    director.buildBomb();
+    var bomb = builder.getSpecialPiece();
     this.piece.color = bomb.color;
     this.piece.shape = bomb.shape;
     this.piece.dto.shape = bomb.shape;
   }
 
-  player3() {
-    this.director = new Director(this.player);
-    this.builder = new PieceBuilder();
-    this.director.setBuilder(this.builder);
-    this.director.BuildLongPiece();
-    var long = this.builder.getSpecialPiece();
-    this.piece.color = long.color;
-    this.piece.shape = long.shape;
-    this.piece.dto.shape = long.shape;
+
+  clone(gun: ConcreteGun){
+    this.player.points = this.player.points - 10;
+    const newGun = gun.clone();
+    this.gunsShallowCopiesArray.push(newGun)
   }
+
+  cloneDeep(gun: USPGun){
+    this.player.points = this.player.points - 15;
+    this.gunsDeepCopiesArray.push(gun.cloneDeep());
+  }
+
+  setVersus(gun: ConcreteGun, name: string){
+    gun.oponent.name = name;
+  }
+
+  shoot(gun?: ConcreteGun){
+    if(gun){
+      console.log(gun.damage + gun.oponent.name);
+      let index = this.gunsDeepCopiesArray.indexOf(gun);
+      this.gunsDeepCopiesArray.splice(index, 1);
+    }
+    else {
+        this.gunsShallowCopiesArray.forEach(element => {
+          console.log(element.damage + element.oponent.name);
+          this.player.points = this.player.points - 5;
+          this.gunsShallowCopiesArray = [];
+        });
+    }
+  }
+  dropBomb() {
+    const director = new Director();
+    const builder = new PieceBuilder();
+    director.setBuilder(builder);
+    director.buildBomb();
+    const build = builder.getSpecialPiece();
+    this.bomb(build);
+  }
+
+
+
 
 }

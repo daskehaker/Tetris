@@ -1,7 +1,10 @@
+import { SubscriberService } from './../../services/subscriber.service';
+import { Subject } from 'rxjs';
+import { IObserver, ISubject } from './../../shared/interfaces';
 import { Player } from './../../user/player';
 import { PieceDto } from './../../Dto/PieceDto';
 import { BoardService } from './../../services/board.service';
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, OnDestroy } from '@angular/core';
 import { COLS, BLOCK_SIZE, ROWS, COLORS } from '../../shared/constants';
 import { IPiece } from 'src/app/shared/interfaces';
 import { UserService } from 'src/app/services/user.service';
@@ -11,7 +14,7 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './oponent-board.component.html',
   styleUrls: ['./oponent-board.component.css']
 })
-export class OponentBoardComponent implements OnInit {
+export class OponentBoardComponent implements OnInit, IObserver, OnDestroy {
   //@ViewChild('board', { static: true })
   @Input() boardService: BoardService;
   @Input() userService: UserService;
@@ -25,23 +28,34 @@ export class OponentBoardComponent implements OnInit {
   //token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiJmZGU2YTg5Ny0xMmNhLTRjYjEtYTQwZS02ZjYwODk0OWI0ZGUiLCJuYmYiOjE2MDE4ODgzNTQsImV4cCI6MTYxNzYxMzE1NCwiaWF0IjoxNjAxODg4MzU0fQ.Zpv7hvOteKNtd9RGEzxux6ZT4-C9nnmnIKVt4j_kMMM"
   player = new Player({id: "fde6a897-12ca-4cb1-a40e-6f608949b4de", name: "player2"})
 
-  
 
   public getPlayerName(): string {
     return null;
   }
+  constructor(private subscriberService: SubscriberService) { }
 
-  constructor() { }
 
   ngOnInit(): void {
+    this.subscriberService.add(this);
     this.initBoard();
     this.boardService.retrieveMapperPiece().subscribe((receivedObj: IPiece) => {
       this.pieceDto = receivedObj;
       this.draw(receivedObj)
     });
-    this.boardService.retrieveMapperBoard().subscribe((retrieveObj: number[][]) => {
+    /*this.boardService.retrieveMapperBoard().subscribe((retrieveObj: number[][]) => {
       this.board = retrieveObj;
       //this.drawBoard()
+    })*/
+  }
+
+  ngOnDestroy(){
+    this.subscriberService.remove(this);
+  }
+
+  update(subject: ISubject) {
+    console.log("OBSERVER updates oponent board");
+    this.subscriberService.retrieveMapperBoard().subscribe((retrieveObj: number[][]) => {
+      this.board = retrieveObj;
     })
   }
 
