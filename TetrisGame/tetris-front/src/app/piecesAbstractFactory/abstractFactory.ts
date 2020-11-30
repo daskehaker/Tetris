@@ -1,4 +1,5 @@
 
+import { Piece } from '../models/piece';
 import { IPiece } from './../shared/interfaces';
 
 interface AbstractFactory {
@@ -11,23 +12,48 @@ interface AbstractFactory {
 }
 
 class RedFactory implements AbstractFactory {
+  private fliesMap: { [s: string]: IPiece; } = <any>{};
   public createJShape(): JShape {
-      return new RedJShape();
+    console.log("flyweight used");
+    if (this.fliesMap["JShape"] === undefined || null) {
+      this.fliesMap["JShape"] = new RedJShape();
+    }
+    return this.fliesMap["JShape"];
   }
   public createOShape(): OShape {
-      return new RedOShape();
+    console.log("flyweight used");
+    if (this.fliesMap["OShape"] === undefined || null) {
+      this.fliesMap["OShape"] = new RedOShape();
+    }
+    return this.fliesMap["OShape"];
   }
   public createLShape(): LShape {
-    return new RedLShape();
+    console.log("flyweight used");
+    if (this.fliesMap["LShape"] === undefined || null) {
+      this.fliesMap["LShape"] = new RedLShape();
+    }
+    return this.fliesMap["LShape"];
   }
   public createZShape(): ZShape {
-    return new RedZShape();
+    console.log("flyweight used");
+    if (this.fliesMap["ZShape"] === undefined || null) {
+      this.fliesMap["ZShape"] = new RedZShape();
+    }
+    return this.fliesMap["ZShape"];
   }
   public createTShape(): TShape {
-    return new RedTShape();
+    console.log("flyweight used");
+    if (this.fliesMap["TShape"] === undefined || null) {
+      this.fliesMap["TShape"] = new RedTShape();
+    }
+    return this.fliesMap["TShape"];
   }
   public createSShape(): SShape {
-    return new RedSShape();
+    console.log("flyweight used");
+    if (this.fliesMap["SShape"] === undefined || null) {
+      this.fliesMap["SShape"] = new RedSShape();
+    }
+    return this.fliesMap["SShape"];
   }
 }
 
@@ -353,7 +379,7 @@ function getRandomInt(max) {
 }
 
 export function getRandomPiece(){
-  var factoryType = getRandomInt(4);
+  var factoryType = 0;//getRandomInt(4);
   let factory = null;
   switch(factoryType) {
     case 0: {

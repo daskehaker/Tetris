@@ -1,21 +1,48 @@
 class RedFactory {
+    constructor() {
+        this.fliesMap = {};
+    }
     createJShape() {
-        return new RedJShape();
+        console.log("flyweight used");
+        if (this.fliesMap["JShape"] === undefined || null) {
+            this.fliesMap["JShape"] = new RedJShape();
+        }
+        return this.fliesMap["JShape"];
     }
     createOShape() {
-        return new RedOShape();
+        console.log("flyweight used");
+        if (this.fliesMap["OShape"] === undefined || null) {
+            this.fliesMap["OShape"] = new RedOShape();
+        }
+        return this.fliesMap["OShape"];
     }
     createLShape() {
-        return new RedLShape();
+        console.log("flyweight used");
+        if (this.fliesMap["LShape"] === undefined || null) {
+            this.fliesMap["LShape"] = new RedLShape();
+        }
+        return this.fliesMap["LShape"];
     }
     createZShape() {
-        return new RedZShape();
+        console.log("flyweight used");
+        if (this.fliesMap["ZShape"] === undefined || null) {
+            this.fliesMap["ZShape"] = new RedZShape();
+        }
+        return this.fliesMap["ZShape"];
     }
     createTShape() {
-        return new RedTShape();
+        console.log("flyweight used");
+        if (this.fliesMap["TShape"] === undefined || null) {
+            this.fliesMap["TShape"] = new RedTShape();
+        }
+        return this.fliesMap["TShape"];
     }
     createSShape() {
-        return new RedSShape();
+        console.log("flyweight used");
+        if (this.fliesMap["SShape"] === undefined || null) {
+            this.fliesMap["SShape"] = new RedSShape();
+        }
+        return this.fliesMap["SShape"];
     }
 }
 class BlueFactory {
@@ -281,7 +308,7 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 export function getRandomPiece() {
-    var factoryType = getRandomInt(4);
+    var factoryType = 0; //getRandomInt(4);
     let factory = null;
     switch (factoryType) {
         case 0: {

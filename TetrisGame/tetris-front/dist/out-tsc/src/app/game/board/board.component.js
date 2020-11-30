@@ -59,22 +59,22 @@ let BoardComponent = class BoardComponent {
             }
             case KEY.RIGHT: {
                 // p.x++;
-                p = this.keyboardControl.right(p);
+                this.move(this.keyboardControl.right(p));
                 break;
             }
             case KEY.LEFT: {
                 //p.x--;
-                p = this.keyboardControl.left(p);
+                this.move(this.keyboardControl.left(p));
                 break;
             }
             case KEY.DOWN: {
                 //p.y++;
-                p = this.keyboardControl.down(p);
+                this.move(this.keyboardControl.down(p));
                 break;
             }
             case KEY.UP: {
                 //p = this.boardService.rotate(p);
-                p = this.keyboardControl.rotate(p);
+                this.move(this.keyboardControl.rotate(p));
                 break;
             }
             default: {
@@ -82,7 +82,6 @@ let BoardComponent = class BoardComponent {
                 break;
             }
         }
-        this.move(p);
     }
     initBoard() {
         // Get the 2D context that we draw on.
