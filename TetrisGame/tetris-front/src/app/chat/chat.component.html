@@ -8,8 +8,8 @@
     </ul>
   </div>
   <div>
-    <input type="text" placeholder="Type message here" [(ngModel)]="msgDto.msgText"  />
+    <input type="text" placeholder="Type message here" [(ngModel)]="msgDto.msgText" name="message" />
     <button class="btn btn-danger" (click)= "send()">Send</button>
   </div>
-  <input type="text" placeholder="Your name" [(ngModel)]="msgDto.user" />
+  <input type="text" placeholder="Your name" [(ngModel)]="msgDto.user" name="user" />
 </div>

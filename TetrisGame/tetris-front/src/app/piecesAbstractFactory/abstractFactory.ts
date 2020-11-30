@@ -18,42 +18,42 @@ class RedFactory implements AbstractFactory {
     if (this.fliesMap["JShape"] === undefined || null) {
       this.fliesMap["JShape"] = new RedJShape();
     }
-    return this.fliesMap["JShape"];
+    return this.fliesMap["JShape"] as RedJShape;
   }
   public createOShape(): OShape {
     console.log("flyweight used");
     if (this.fliesMap["OShape"] === undefined || null) {
       this.fliesMap["OShape"] = new RedOShape();
     }
-    return this.fliesMap["OShape"];
+    return this.fliesMap["OShape"] as RedOShape;
   }
   public createLShape(): LShape {
     console.log("flyweight used");
     if (this.fliesMap["LShape"] === undefined || null) {
       this.fliesMap["LShape"] = new RedLShape();
     }
-    return this.fliesMap["LShape"];
+    return this.fliesMap["LShape"] as RedLShape;
   }
   public createZShape(): ZShape {
     console.log("flyweight used");
     if (this.fliesMap["ZShape"] === undefined || null) {
       this.fliesMap["ZShape"] = new RedZShape();
     }
-    return this.fliesMap["ZShape"];
+    return this.fliesMap["ZShape"] as RedZShape;
   }
   public createTShape(): TShape {
     console.log("flyweight used");
     if (this.fliesMap["TShape"] === undefined || null) {
       this.fliesMap["TShape"] = new RedTShape();
     }
-    return this.fliesMap["TShape"];
+    return this.fliesMap["TShape"] as RedTShape;
   }
   public createSShape(): SShape {
     console.log("flyweight used");
     if (this.fliesMap["SShape"] === undefined || null) {
       this.fliesMap["SShape"] = new RedSShape();
     }
-    return this.fliesMap["SShape"];
+    return this.fliesMap["SShape"] as RedZShape;
   }
 }
 
