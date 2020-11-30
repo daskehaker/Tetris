@@ -22,6 +22,7 @@ import { Bot } from 'src/app/Singleton/gameBot';
 import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { ConcreteGun } from 'src/app/Prototype/ConcreteGun';
 import { Oponent } from 'src/app/Prototype/Oponent';
+import { Task, TaskBank } from 'src/app/Composite/composite';
 
 //import { Facade } from 'src/app/models/Facade';
 
@@ -407,6 +408,34 @@ export class BoardComponent implements OnInit {
     const build = builder.getSpecialPiece();
     this.bomb(build);
   }
+
+
+
+
+  //Composite
+
+
+
+  test() {
+    const task1 = new Task('task1', 3);
+    const task2 = new Task('task2', 3);
+    const task3 = new Task('task3', 3);
+    const TaskBank1 = new TaskBank();
+    const TaskBank2 = new TaskBank();
+    
+    TaskBank1.addComponent(task1);
+    TaskBank1.addComponent(task3);
+    TaskBank1.addComponent(task2);
+    TaskBank1.addComponent(TaskBank2);
+    TaskBank2.addComponent(task1);
+    TaskBank2.addComponent(task3);
+    TaskBank2.addComponent(task2);
+
+    console.log(TaskBank1.getTasks());
+
+  }
+
+  
 
 
 

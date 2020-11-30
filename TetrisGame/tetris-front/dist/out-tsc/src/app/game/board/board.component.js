@@ -11,6 +11,7 @@ import { Context, defender1, defender2, defender3, defender4 } from '../../Strat
 import { Player } from './../../user/player';
 import { Bot } from 'src/app/Singleton/gameBot';
 import { KeyboardControl } from './../../Bridge/KeyboardControl';
+import { Task, TaskBank } from 'src/app/Composite/composite';
 //import { Facade } from 'src/app/models/Facade';
 let BoardComponent = class BoardComponent {
     constructor(chatService) {
@@ -59,22 +60,22 @@ let BoardComponent = class BoardComponent {
             }
             case KEY.RIGHT: {
                 // p.x++;
-                p = this.keyboardControl.right(p);
+                this.move(this.keyboardControl.right(p));
                 break;
             }
             case KEY.LEFT: {
                 //p.x--;
-                p = this.keyboardControl.left(p);
+                this.move(this.keyboardControl.left(p));
                 break;
             }
             case KEY.DOWN: {
                 //p.y++;
-                p = this.keyboardControl.down(p);
+                this.move(this.keyboardControl.down(p));
                 break;
             }
             case KEY.UP: {
                 //p = this.boardService.rotate(p);
-                p = this.keyboardControl.rotate(p);
+                this.move(this.keyboardControl.rotate(p));
                 break;
             }
             default: {
@@ -82,7 +83,6 @@ let BoardComponent = class BoardComponent {
                 break;
             }
         }
-        this.move(p);
     }
     initBoard() {
         // Get the 2D context that we draw on.
@@ -333,6 +333,17 @@ let BoardComponent = class BoardComponent {
         director.buildBomb();
         const build = builder.getSpecialPiece();
         this.bomb(build);
+    }
+    //Composite
+    test() {
+        const task1 = new Task('task1', 3);
+        const task2 = new Task('task2', 3);
+        const task3 = new Task('task3', 3);
+        const TaskBank1 = new TaskBank();
+        TaskBank1.addTask(task1);
+        TaskBank1.addTask(task3);
+        TaskBank1.addTask(task2);
+        console.log(TaskBank1);
     }
 };
 __decorate([
