@@ -308,7 +308,7 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 export function getRandomPiece() {
-    var factoryType = 0; //getRandomInt(4);
+    var factoryType = getRandomInt(4);
     let factory = null;
     switch (factoryType) {
         case 0: {
