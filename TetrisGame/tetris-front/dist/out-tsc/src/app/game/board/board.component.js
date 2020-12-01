@@ -12,6 +12,7 @@ import { Player } from './../../user/player';
 import { Bot } from 'src/app/Singleton/gameBot';
 import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { Task, TaskBank } from 'src/app/Composite/composite';
+import { BlueHandler } from '../../ChainOfResponsibility/chain';
 //import { Facade } from 'src/app/models/Facade';
 let BoardComponent = class BoardComponent {
     constructor(chatService) {
@@ -25,6 +26,14 @@ let BoardComponent = class BoardComponent {
         this.gunsDeepCopiesArray = [];
         this.gunsShallowCopiesArray = [];
         this.oponents = [{ id: "1", name: "Petras" }, { id: "1", name: "Jonas" }, { id: "1", name: "Ona" }];
+        //play() {
+        //  this.board = this.boardService.getBoardById(this.player.Id)
+        //  this.piece = new Piece(this.ctx);
+        //  //this.piece.draw();
+        //  this.animate();
+        //  this.boardService.broadcastPiece(this.piece.dto);
+        //}
+        this.blue = new BlueHandler();
     }
     ngOnInit() {
         this.userService.getUserProfile().subscribe((res) => {
@@ -93,13 +102,6 @@ let BoardComponent = class BoardComponent {
         this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
         this.boardService.getEmptyBoard();
     }
-    //play() {
-    //  this.board = this.boardService.getBoardById(this.player.Id)
-    //  this.piece = new Piece(this.ctx);
-    //  //this.piece.draw();
-    //  this.animate();
-    //  this.boardService.broadcastPiece(this.piece.dto);
-    //}
     animate(now = 0) {
         // Update elapsed time.
         this.time.elapsed = now - this.time.start;
@@ -109,11 +111,12 @@ let BoardComponent = class BoardComponent {
             this.time.start = now;
             this.time = getSpeed(this.time, this.player.level);
             if (this.pieceCount > 0) {
+                this.move(this.blue.handle(this.piece.color, this.player.name, this.piece, this.boardService));
                 //=============Strategy Spell=======================
                 switch (this.piece.color.toLowerCase()) {
                     case "blue":
-                        this.strategy.setStrategy(new defender1());
-                        this.move(this.strategy.defend(this.player.name, this.piece, this.boardService));
+                        //this.strategy.setStrategy(new defender1());
+                        //this.move(this.strategy.defend(this.player.name, this.piece, this.boardService));
                         break;
                     case "yellow":
                         this.strategy.setStrategy(new defender4());
@@ -340,10 +343,15 @@ let BoardComponent = class BoardComponent {
         const task2 = new Task('task2', 3);
         const task3 = new Task('task3', 3);
         const TaskBank1 = new TaskBank();
-        TaskBank1.addTask(task1);
-        TaskBank1.addTask(task3);
-        TaskBank1.addTask(task2);
-        console.log(TaskBank1);
+        const TaskBank2 = new TaskBank();
+        TaskBank1.addComponent(task1);
+        TaskBank1.addComponent(task3);
+        TaskBank1.addComponent(task2);
+        TaskBank1.addComponent(TaskBank2);
+        TaskBank2.addComponent(task1);
+        TaskBank2.addComponent(task3);
+        TaskBank2.addComponent(task2);
+        console.log(TaskBank1.getTasks());
     }
 };
 __decorate([

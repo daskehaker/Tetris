@@ -23,6 +23,7 @@ import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { ConcreteGun } from 'src/app/Prototype/ConcreteGun';
 import { Oponent } from 'src/app/Prototype/Oponent';
 import { Task, TaskBank } from 'src/app/Composite/composite';
+import { BlueHandler } from '../../ChainOfResponsibility/chain';
 
 //import { Facade } from 'src/app/models/Facade';
 
@@ -115,7 +116,8 @@ export class BoardComponent implements OnInit {
       }
       case KEY.UP: {
         //p = this.boardService.rotate(p);
-          this.move(this.keyboardControl.rotate(p));
+        this.move(this.keyboardControl.rotate(p));
+        this.piece.rotationCount++;
         break;
       }
       default: {
@@ -146,7 +148,7 @@ export class BoardComponent implements OnInit {
   //  this.animate();
   //  this.boardService.broadcastPiece(this.piece.dto);
   //}
-
+  blue = new BlueHandler();
   animate(now = 0) {
     // Update elapsed time.
     this.time.elapsed = now - this.time.start;
@@ -156,6 +158,7 @@ export class BoardComponent implements OnInit {
       this.time.start = now;
       this.time = getSpeed(this.time, this.player.level);
       if (this.pieceCount > 0) {
+        //this.move(this.blue.handle(this.piece.color, this.player.name, this.piece, this.boardService));
         //=============Strategy Spell=======================
         switch (this.piece.color.toLowerCase()) {
           case "blue":
