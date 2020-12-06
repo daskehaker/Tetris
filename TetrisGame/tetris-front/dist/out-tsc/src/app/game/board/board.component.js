@@ -340,10 +340,15 @@ let BoardComponent = class BoardComponent {
         const task2 = new Task('task2', 3);
         const task3 = new Task('task3', 3);
         const TaskBank1 = new TaskBank();
-        TaskBank1.addTask(task1);
-        TaskBank1.addTask(task3);
-        TaskBank1.addTask(task2);
-        console.log(TaskBank1);
+        const TaskBank2 = new TaskBank();
+        TaskBank1.addComponent(task1);
+        TaskBank1.addComponent(task3);
+        TaskBank1.addComponent(task2);
+        TaskBank1.addComponent(TaskBank2);
+        TaskBank2.addComponent(task1);
+        TaskBank2.addComponent(task3);
+        TaskBank2.addComponent(task2);
+        console.log(TaskBank1.getTasks());
     }
 };
 __decorate([

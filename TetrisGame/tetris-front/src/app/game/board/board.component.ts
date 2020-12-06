@@ -23,7 +23,7 @@ import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { ConcreteGun } from 'src/app/Prototype/ConcreteGun';
 import { Oponent } from 'src/app/Prototype/Oponent';
 import { Task, TaskBank } from 'src/app/Composite/composite';
-
+import { SHAPES } from 'src/app/shared/constants'
 //import { Facade } from 'src/app/models/Facade';
 
 
@@ -271,7 +271,7 @@ export class BoardComponent implements OnInit {
     });
     //console.table(this.board);
   }
-
+  
   clearLines(){
     let lines = 0;
     this.board.forEach((row, y) => {
@@ -414,7 +414,45 @@ export class BoardComponent implements OnInit {
 
   //Composite
 
+  positionTask(requiredColor, requiredShape, color, shape, task:Task) {
+    if (requiredColor === color && requiredShape === shape)  {
+      task.setToCompleted();
+    }
+  }
 
+  date: Date = new Date();  
+
+
+  rotateClockwise = function (clockwise, N) {
+    var matrix = JSON.parse(JSON.stringify(clockwise));
+    for (var m = 0; m < N; m++) {
+      matrix = matrix.reverse();
+      // swap the symmetric elements
+      for (var i = 0; i < matrix.length; i++) {
+        for (var j = 0; j < i; j++) {
+          var temp = matrix[i][j];
+          matrix[i][j] = matrix[j][i];
+          matrix[j][i] = temp;
+        }
+      }
+    }
+     return matrix;
+};
+
+
+  startCountdown = seconds => {
+    let counter = seconds;
+
+    const interval = setInterval(() => {
+      console.log(counter);
+      counter--;
+
+      if (counter < 0) {
+        clearInterval(interval);
+        console.log('Ding!');
+      }
+    }, 1000);
+  }
 
   test() {
     const task1 = new Task('task1', 3);
@@ -422,7 +460,6 @@ export class BoardComponent implements OnInit {
     const task3 = new Task('task3', 3);
     const TaskBank1 = new TaskBank();
     const TaskBank2 = new TaskBank();
-    
     TaskBank1.addComponent(task1);
     TaskBank1.addComponent(task3);
     TaskBank1.addComponent(task2);
@@ -431,7 +468,6 @@ export class BoardComponent implements OnInit {
     TaskBank2.addComponent(task3);
     TaskBank2.addComponent(task2);
 
-    console.log(TaskBank1.getTasks());
 
   }
 

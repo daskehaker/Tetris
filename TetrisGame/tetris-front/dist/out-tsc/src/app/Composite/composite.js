@@ -18,8 +18,14 @@ export class Task {
     }
 }
 export class TaskBank {
-    addTask(task) {
-        this.tasksArray.push(task);
+    constructor() {
+        this.tasksArray = [];
+    }
+    addComponent(taskComponent) {
+        this.tasksArray.push(taskComponent);
+    }
+    getTasks() {
+        return this.tasksArray;
     }
     checkIfCompleted() {
         return this.tasksArray.every(function (element) {
