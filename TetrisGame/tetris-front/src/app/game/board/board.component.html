@@ -1,0 +1,60 @@
+<h1 *ngIf="facade!=null">{{facade.PlayerSystem.getPlayerName()}}</h1>
+<gui-movement [piece]="piece" (emitPiece)="move($event)"></gui-movement>
+<div class="grid">
+  <canvas #board class="game-board" (click)="explodeBoard($event)"></canvas>
+  <div class="right-column">
+    <div>
+      <h1>TETRIS</h1>
+      <p>Score: {{ facade.PlayerSystem.getPlayerPoints() }}</p>
+      <p>Lines: {{ facade.PlayerSystem.getPlayerLines() }}</p>
+      <p>Level: {{ facade.PlayerSystem.getPlayerLevel() }}</p>
+    </div>
+    <button (click)="play()" class="play-button">{{currentState.text}}</button>
+    <button (click)="dropBomb()" class="play-button">Spell 1</button>
+    <button class="play-button">Spell 2</button>
+    <button class="play-button">Spell 3</button>
+    <button (click)="defend1()" class="play-button" style="color: red;">Defender 1</button>
+    <button (click)="defend2()" class="play-button" style="color: red;">Defender 2</button>
+    <button (click)="facade.getAK47()" class="play-button" style="color: yellow;">Gauti AK47 (-50)</button>
+    <button (click)="facade.getUSP()" class="play-button" style="color: yellow;">Gauti USP (-50)</button>
+  </div>
+</div>
+<br>
+<div>
+  Turimi ginklai
+  <ul>
+    <li *ngFor="let gun of facade.GunsSystem.gunsArray">
+      {{gun.name}} priklausantis {{gun.owner.name}}
+      oponentas {{gun.oponent.name}} 
+      <br>
+      <button (click)="facade.clone(gun)">Klonuoti -10</button>
+      <button *ngIf="gun.name=='USP'" (click)="facade.cloneDeep(gun)">Klonuoti (Deep) -15 <br> </button> 
+      <br>
+      <button (click)="facade.setVersus(gun, 'Jonas')">Jonas</button>
+      <button (click)="facade.setVersus(gun, 'Petras')">Petras</button>
+      <button (click)="facade.setVersus(gun, 'Ona')">Ona</button>
+    </li>
+    <br>
+  </ul>
+</div>
+<br>
+<div>
+  Ginklu shallow klonai <button (click)="facade.shoot()">Shoot -5</button>
+  <ul>
+    <li *ngFor="let gun of facade.GunsSystem.gunsShallowCopiesArray">{{gun.name}}
+      oponentas {{gun.oponent.name}} <br> </li>
+  </ul>
+</div>
+
+<div>
+  Ginklu Deep klonai
+  <ul>
+    <li *ngFor="let gun of facade.GunsSystem.gunsDeepCopiesArray">{{gun.name}} 
+      oponentas {{gun.oponent.name}} <br>
+      <button (click)="facade.setVersus(gun, 'Jonas')">Jonas</button>
+      <button (click)="facade.setVersus(gun, 'Petras')">Petras</button>
+      <button (click)="facade.setVersus(gun, 'Ona')">Ona</button>
+      <br><button (click)="facade.shoot(gun)">Shoot</button>
+    </li>
+  </ul>
+</div>

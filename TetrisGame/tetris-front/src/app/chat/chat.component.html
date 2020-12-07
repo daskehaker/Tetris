@@ -1,0 +1,15 @@
+<div>
+  <h2>Public Chat</h2>
+</div>
+<div>
+  <div>
+    <ul>
+      <li *ngFor="let mObj of msgInboxArray" [ngClass]="mObj.user === msgDto.user ? 'in-msg' : 'ex-msg'">{{mObj.user}} :<br /><span class="msg-italic-style">{{mObj.msgText}}</span></li>
+    </ul>
+  </div>
+  <div>
+    <input type="text" placeholder="Type message here" [(ngModel)]="msgDto.msgText"  />
+    <button class="btn btn-danger" (click)= "send()">Send</button>
+  </div>
+  <input type="text" placeholder="Your name" [(ngModel)]="msgDto.user" />
+</div>
