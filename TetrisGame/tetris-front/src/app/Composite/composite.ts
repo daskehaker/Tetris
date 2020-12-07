@@ -11,12 +11,12 @@ export class Task implements TaskComponent {
   private taskName: string;
   private count: number;
   private isCompleted = false;
+  private type: string;
 
   constructor(taskName, count) {
     this.taskName = taskName;
     this.count = count;
   }
-
   public setToCompleted():void {
     this.isCompleted = true;
   }
