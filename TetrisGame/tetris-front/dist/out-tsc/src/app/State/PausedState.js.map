@@ -1,0 +1,1 @@
+{"version":3,"file":"PausedState.js","sourceRoot":"","sources":["../../../../../src/app/State/PausedState.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,YAAY,EAAE,MAAM,gBAAgB,CAAC;AAC9C,MAAM,OAAO,WAAW;IAGpB;QAFA,SAAI,GAAG,QAAQ,CAAC;IAEF,CAAC;IAEf,WAAW;QACP,OAAO,CAAC,GAAG,CAAC,qBAAqB,CAAC,CAAC;QACnC,OAAO,IAAI,YAAY,EAAE,CAAC;IAC9B,CAAC;CACJ"}

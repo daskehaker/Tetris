@@ -1,4 +1,6 @@
 import { __decorate } from "tslib";
+import { EndedState } from './../../State/EndedState';
+import { PendingState } from './../../State/PendingState';
 import { Collection } from './../../Iterator/collection';
 import { Player } from './../../user/player';
 import { Component, ViewChild, HostListener, Input } from '@angular/core';
@@ -20,6 +22,7 @@ let BoardComponent = class BoardComponent extends Exploder {
         this.facade = new Facade();
         this.time = new Time({ start: 0, elapsed: 0, level: 1000 });
         this.keyboardControl = new KeyboardControl();
+        this.currentState = new PendingState();
         this.oponents = [{ id: "1", name: "Petras" }, { id: "1", name: "Jonas" }, { id: "1", name: "Ona" }];
     }
     ngOnInit() {
@@ -197,6 +200,7 @@ let BoardComponent = class BoardComponent extends Exploder {
         }
     }
     gameOver() {
+        this.currentState = new EndedState();
         cancelAnimationFrame(this.requestId);
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(1, 3, 8, 1.2);
@@ -222,10 +226,9 @@ let BoardComponent = class BoardComponent extends Exploder {
         context.defend(this.chatService, this.facade.PlayerSystem.getPlayerName());
     }
     play() {
+        this.currentState = this.currentState.buttonPress();
         this.board = this.boardService.getBoardById(this.facade.PlayerSystem.getPlayerId());
         this.piece = new Piece(this.ctx);
-        console.log("play");
-        //this.piece.draw();
         this.animate();
         this.boardService.broadcastPiece(this.piece.dto);
     }

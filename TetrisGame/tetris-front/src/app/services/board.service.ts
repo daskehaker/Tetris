@@ -12,11 +12,12 @@ import { Board } from '../models/board';
 import { SpecialPiece } from '../models/SpecialPiece';
 import { IAdapter } from '../Adapter/IAdapter';
 import { Adapter } from '../Adapter/Adapter';
+import { IBroadcaster } from '../Proxy/IBroadcaster';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BoardService implements IObserver {
+export class BoardService implements IObserver, IBroadcaster {
 
   readonly rootUrl=environment.rootUrl + "board/"
   boards: Board[] = [];

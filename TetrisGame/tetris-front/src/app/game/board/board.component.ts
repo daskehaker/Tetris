@@ -1,4 +1,4 @@
-import { PlayingState } from './../../State/PlayingState';
+import { BroadcastProxy } from './../../Proxy/BroadcastProxy';
 import { EndedState } from './../../State/EndedState';
 import { PendingState } from './../../State/PendingState';
 import { IState } from './../../State/IState';
@@ -23,6 +23,7 @@ import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { Oponent } from 'src/app/Prototype/Oponent';
 import { Facade } from 'src/app/Facade/facade';
 import { Exploder } from 'src/app/Template/Exploder';
+import { IBroadcaster } from 'src/app/Proxy/IBroadcaster';
 // import { ConsoleReporter } from 'jasmine';
 
 @Component({
@@ -49,20 +50,21 @@ export class BoardComponent extends Exploder implements OnInit  {
   requestId: number;
   keyboardControl = new KeyboardControl();
   currentState: IState = new PendingState();
+  broadcastProxy: IBroadcaster
 
   oponents: Oponent[] = [{id: "1", name: "Petras"}, {id: "1", name: "Jonas"}, {id: "1", name: "Ona"}]
   
   constructor(private chatService: ChatService) {
     super()
-    
   }
-
+  
   ngOnInit(): void {
     this.userService.getUserProfile().subscribe((res: any) => {
-     this.facade = new Facade(new Player({id: res.userId, name: res.UserName}));
-
+      this.facade = new Facade(new Player({id: res.userId, name: res.UserName}));
+      
     })
     this.initBoard();
+    this.broadcastProxy = new BroadcastProxy(this.boardService);
   }
 
   explodeBoard(event){
@@ -149,6 +151,9 @@ export class BoardComponent extends Exploder implements OnInit  {
   }
 
   animate(now = 0) {
+    if(this.currentState.text == "Resume"){
+      return
+    }
     // Update elapsed time.
     this.time.elapsed = now - this.time.start;
     // If elapsed time has passed time for current level
@@ -171,7 +176,7 @@ export class BoardComponent extends Exploder implements OnInit  {
       this.piece.shape = p.shape;
       this.piece.x = p.x;
       this.piece.y = p.y;
-      this.boardService.broadcastPiece(this.piece.dto);
+      this.broadcastProxy.broadcastPiece(this.piece.dto, this.currentState.text);
     } else console.log("not valid", p, this.piece)
   }
 
@@ -180,7 +185,7 @@ export class BoardComponent extends Exploder implements OnInit  {
     p.y++;
     if(this.boardService.valid(p, this.board)){
       this.piece.move(p)
-      this.boardService.broadcastPiece(this.piece.dto);
+      this.broadcastProxy.broadcastPiece(this.piece.dto, this.currentState.text);
     } else {
       this.freeze();
       this.clearLines();
@@ -290,9 +295,11 @@ export class BoardComponent extends Exploder implements OnInit  {
   play() {
     this.currentState = this.currentState.buttonPress();
     this.board = this.boardService.getBoardById(this.facade.PlayerSystem.getPlayerId())
-    this.piece = new Piece(this.ctx);
+    if(!this.piece){
+      this.piece = new Piece(this.ctx);
+    }
     this.animate();
-    this.boardService.broadcastPiece(this.piece.dto);
+    this.broadcastProxy.broadcastPiece(this.piece.dto, this.currentState.text);
   }
 
   bomb(bomb: SpecialPiece) {

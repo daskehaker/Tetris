@@ -1,0 +1,1 @@
+{"version":3,"file":"EndedState.js","sourceRoot":"","sources":["../../../../../src/app/State/EndedState.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,gBAAgB,CAAC;AAE9C,MAAM,OAAO,UAAU;IACnB;QACA,SAAI,GAAG,SAAS,CAAC;IADH,CAAC;IAGf,WAAW;QACP,OAAO,CAAC,GAAG,CAAC,sBAAsB,CAAC,CAAC;QACpC,QAAQ,CAAC,MAAM,EAAE,CAAC;QAClB,OAAO,IAAI,YAAY,EAAE,CAAC;IAC9B,CAAC;CACJ"}

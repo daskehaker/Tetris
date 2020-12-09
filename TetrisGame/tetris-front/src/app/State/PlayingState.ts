@@ -1,12 +1,12 @@
-import { PendingState } from './PendingState';
+import { PausedState } from './PausedState';
 import { IState } from './IState';
 export class PlayingState implements IState{
-    text= 'Stop';
+    text= 'Pauze';
     constructor(){}
 
     buttonPress(): IState {
         console.log('State: Game is stopped');
-        return new PendingState();
+        return new PausedState();
     }
     
 }
