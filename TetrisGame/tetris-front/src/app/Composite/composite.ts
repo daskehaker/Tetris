@@ -5,18 +5,49 @@ export interface TaskComponent {
 }
 
 
-
-
-export class Task implements TaskComponent {
+export class TimerTask implements TaskComponent {
   private taskName: string;
   private count: number;
   private isCompleted = false;
-  private type: string;
 
   constructor(taskName, count) {
     this.taskName = taskName;
     this.count = count;
   }
+
+  public setToCompleted(): void {
+    this.isCompleted = true;
+  }
+
+  public getTaskName(): string {
+    return this.taskName;
+  }
+
+  public getCount(): number {
+    return this.count
+  }
+
+  public checkIfCompleted(): boolean {
+    return this.isCompleted;
+  }
+}
+
+export class Task implements TaskComponent {
+  private taskName: string;
+  private count: number;
+  private isCompleted = false;
+  public imgURL: string
+
+  constructor(taskName, count, imgURL){
+    this.taskName = taskName;
+    this.count = count;
+    this.imgURL = imgURL;
+  }
+
+  public decreaseCounter() {
+    this.count--;
+  }
+
   public setToCompleted():void {
     this.isCompleted = true;
   }

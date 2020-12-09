@@ -84,8 +84,6 @@ C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\Bridge\KeyboardControl.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\Composite\composite.js
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\Composite\composite.js.map
-C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\ChainOfResponsibility\chain.js
-C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\ChainOfResponsibility\chain.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\game\board\board.component.js
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\game\board\board.component.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\shared\navbar\navbar.component.js
@@ -102,6 +100,8 @@ C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\test.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\app.component.spec.js
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\app.component.spec.js.map
+C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\ChainOfResponsibility\chain.js
+C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\ChainOfResponsibility\chain.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\Composite\composite.spec.js
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\Composite\composite.spec.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\chat\chat.component.spec.js
@@ -124,6 +124,8 @@ C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\services\user.service.spec.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\shared\points.js
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\shared\points.js.map
+C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\shared\timer.js
+C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\shared\timer.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\shared\navbar\navbar.component.spec.js
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\shared\navbar\navbar.component.spec.js.map
 C:\Users\dovsav\Documents\GitHub\Tetris\TetrisGame\tetris-front\dist\out-tsc\src\app\user\player.spec.js

@@ -12,13 +12,15 @@ import { Player } from './../../user/player';
 import { Bot } from 'src/app/Singleton/gameBot';
 import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { Task, TaskBank } from 'src/app/Composite/composite';
-import { BlueHandler } from '../../ChainOfResponsibility/chain';
+import { Stopwatch } from "ts-stopwatch";
+import { SHAPES } from 'src/app/shared/constants';
 //import { Facade } from 'src/app/models/Facade';
 let BoardComponent = class BoardComponent {
     constructor(chatService) {
         this.chatService = chatService;
         this.player = new Player();
         this.time = new Time({ start: 0, elapsed: 0, level: 1000 });
+        this.stopwatch = new Stopwatch();
         this.strategy = new Context(new defender1());
         this.pieceCount = 0;
         this.keyboardControl = new KeyboardControl();
@@ -26,14 +28,32 @@ let BoardComponent = class BoardComponent {
         this.gunsDeepCopiesArray = [];
         this.gunsShallowCopiesArray = [];
         this.oponents = [{ id: "1", name: "Petras" }, { id: "1", name: "Jonas" }, { id: "1", name: "Ona" }];
-        //play() {
-        //  this.board = this.boardService.getBoardById(this.player.Id)
-        //  this.piece = new Piece(this.ctx);
-        //  //this.piece.draw();
-        //  this.animate();
-        //  this.boardService.broadcastPiece(this.piece.dto);
-        //}
-        this.blue = new BlueHandler();
+        this.task1 = new Task('Raudonas J nukrenta ɾ', 2, '../../../assets/images/T180.png');
+        this.task2 = new Task('Mėlynas Z-blokas nukrenta N', 2, './../../../images/J180.svg');
+        this.task3 = new Task('Raudonas L nukrenta ﹂', 2, './../../../images/J180.svg');
+        this.task4 = new Task('geltonas T nukrenta ⊣', 2, './../../../images/J180.svg');
+        this.task5 = new Task('Žalias S-blokas nukrenta ᔕ', 2, './../../../images/J180.svg');
+        this.task6 = new Task('Mėlynas T-blokas nukrenta T', 2, './../../../images/J180.svg');
+        this.rootTaskBank = new TaskBank();
+        this.TaskBank1 = new TaskBank();
+        this.TaskBank2 = new TaskBank();
+        this.TaskBank3 = new TaskBank();
+        this.date = new Date();
+        this.rotateClockwise = function (clockwise, N) {
+            var matrix = JSON.parse(JSON.stringify(clockwise));
+            for (var m = 0; m < N; m++) {
+                matrix = matrix.reverse();
+                // swap the symmetric elements
+                for (var i = 0; i < matrix.length; i++) {
+                    for (var j = 0; j < i; j++) {
+                        var temp = matrix[i][j];
+                        matrix[i][j] = matrix[j][i];
+                        matrix[j][i] = temp;
+                    }
+                }
+            }
+            return matrix;
+        };
     }
     ngOnInit() {
         this.userService.getUserProfile().subscribe((res) => {
@@ -85,6 +105,7 @@ let BoardComponent = class BoardComponent {
             case KEY.UP: {
                 //p = this.boardService.rotate(p);
                 this.move(this.keyboardControl.rotate(p));
+                this.piece.rotationCount++;
                 break;
             }
             default: {
@@ -94,6 +115,15 @@ let BoardComponent = class BoardComponent {
         }
     }
     initBoard() {
+        this.rootTaskBank.addComponent(this.TaskBank1);
+        this.rootTaskBank.addComponent(this.TaskBank2);
+        this.rootTaskBank.addComponent(this.TaskBank3);
+        this.TaskBank1.addComponent(this.task1);
+        this.TaskBank1.addComponent(this.task2);
+        this.TaskBank2.addComponent(this.task3);
+        this.TaskBank2.addComponent(this.task4);
+        this.TaskBank3.addComponent(this.task5);
+        this.TaskBank3.addComponent(this.task6);
         // Get the 2D context that we draw on.
         this.ctx = this.canvas.nativeElement.getContext('2d');
         // Calculate size of canvas from constants.
@@ -102,6 +132,13 @@ let BoardComponent = class BoardComponent {
         this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
         this.boardService.getEmptyBoard();
     }
+    //play() {
+    //  this.board = this.boardService.getBoardById(this.player.Id)
+    //  this.piece = new Piece(this.ctx);
+    //  //this.piece.draw();
+    //  this.animate();
+    //  this.boardService.broadcastPiece(this.piece.dto);
+    //}
     animate(now = 0) {
         // Update elapsed time.
         this.time.elapsed = now - this.time.start;
@@ -111,12 +148,12 @@ let BoardComponent = class BoardComponent {
             this.time.start = now;
             this.time = getSpeed(this.time, this.player.level);
             if (this.pieceCount > 0) {
-                this.move(this.blue.handle(this.piece.color, this.player.name, this.piece, this.boardService));
+                //this.move(this.blue.handle(this.piece.color, this.player.name, this.piece, this.boardService));
                 //=============Strategy Spell=======================
                 switch (this.piece.color.toLowerCase()) {
                     case "blue":
-                        //this.strategy.setStrategy(new defender1());
-                        //this.move(this.strategy.defend(this.player.name, this.piece, this.boardService));
+                        this.strategy.setStrategy(new defender1());
+                        this.move(this.strategy.defend(this.player.name, this.piece, this.boardService));
                         break;
                     case "yellow":
                         this.strategy.setStrategy(new defender4());
@@ -209,6 +246,7 @@ let BoardComponent = class BoardComponent {
     }
     ///when piece cannot move anymore
     freeze() {
+        this.positionTask('red', SHAPES.LShape, this.piece.color, this.piece.shape, this.task1);
         this.piece.shape.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value > 0) {
@@ -338,20 +376,17 @@ let BoardComponent = class BoardComponent {
         this.bomb(build);
     }
     //Composite
+    positionTask(requiredColor, requiredShape, color, shape, task) {
+        console.log(requiredShape == shape);
+        if (requiredColor == color && requiredShape == shape) {
+            task.decreaseCounter();
+            if (task.getCount() == 0) {
+                task.setToCompleted();
+            }
+        }
+    }
     test() {
-        const task1 = new Task('task1', 3);
-        const task2 = new Task('task2', 3);
-        const task3 = new Task('task3', 3);
-        const TaskBank1 = new TaskBank();
-        const TaskBank2 = new TaskBank();
-        TaskBank1.addComponent(task1);
-        TaskBank1.addComponent(task3);
-        TaskBank1.addComponent(task2);
-        TaskBank1.addComponent(TaskBank2);
-        TaskBank2.addComponent(task1);
-        TaskBank2.addComponent(task3);
-        TaskBank2.addComponent(task2);
-        console.log(TaskBank1.getTasks());
+        console.log(this.task1);
     }
 };
 __decorate([

@@ -1,8 +1,31 @@
-export class Task {
+export class TimerTask {
     constructor(taskName, count) {
         this.isCompleted = false;
         this.taskName = taskName;
         this.count = count;
+    }
+    setToCompleted() {
+        this.isCompleted = true;
+    }
+    getTaskName() {
+        return this.taskName;
+    }
+    getCount() {
+        return this.count;
+    }
+    checkIfCompleted() {
+        return this.isCompleted;
+    }
+}
+export class Task {
+    constructor(taskName, count, imgURL) {
+        this.isCompleted = false;
+        this.taskName = taskName;
+        this.count = count;
+        this.imgURL = imgURL;
+    }
+    decreaseCounter() {
+        this.count--;
     }
     setToCompleted() {
         this.isCompleted = true;

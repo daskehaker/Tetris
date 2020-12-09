@@ -23,7 +23,7 @@ import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { ConcreteGun } from 'src/app/Prototype/ConcreteGun';
 import { Oponent } from 'src/app/Prototype/Oponent';
 import { Task, TaskBank } from 'src/app/Composite/composite';
-
+import { Stopwatch } from "ts-stopwatch";
 import { SHAPES } from 'src/app/shared/constants'
 //import { Facade } from 'src/app/models/Facade';
 
@@ -50,7 +50,7 @@ export class BoardComponent implements OnInit {
   pieceDto: PieceDto;
   time = new Time({ start: 0, elapsed: 0, level: 1000 });
   requestId: number;
-
+  stopwatch: Stopwatch = new Stopwatch();
   strategy = new Context(new defender1());
   pieceCount = 0;
   commandColor: changeColor;
@@ -59,15 +59,28 @@ export class BoardComponent implements OnInit {
   gunsArray: ConcreteGun[] = [];
   gunsDeepCopiesArray: ConcreteGun[] = [];
   gunsShallowCopiesArray: ConcreteGun[] = [];
-
   oponents: Oponent[] = [{id: "1", name: "Petras"}, {id: "1", name: "Jonas"}, {id: "1", name: "Ona"}]
+
+  task1 = new Task('Raudonas J nukrenta ɾ', 2, '../../../assets/images/J180.png');
+  task2 = new Task('Mėlynas Z-blokas nukrenta N', 2, './../../../images/J180.svg');
+  task3 = new Task('Raudonas L nukrenta ﹂', 2, './../../../images/J180.svg');
+  task4 = new Task('geltonas T nukrenta ⊣', 2, './../../../images/J180.svg');
+  task5 = new Task('Žalias S-blokas nukrenta ᔕ', 2, './../../../images/J180.svg');
+  task6 = new Task('Mėlynas T-blokas nukrenta T', 2, './../../../images/J180.svg');
+
+
+  rootTaskBank = new TaskBank();
+  TaskBank1 = new TaskBank();
+  TaskBank2 = new TaskBank();
+  TaskBank3 = new TaskBank();
+
+
 
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
     this.userService.getUserProfile().subscribe((res: any) => {
      this.player = new Player({id: res.userId, name: res.UserName})
-
     })
     this.initBoard();
   }
@@ -129,6 +142,20 @@ export class BoardComponent implements OnInit {
 
 
   initBoard() {
+
+    this.rootTaskBank.addComponent(this.TaskBank1);
+    this.rootTaskBank.addComponent(this.TaskBank2);
+    this.rootTaskBank.addComponent(this.TaskBank3);
+
+    this.TaskBank1.addComponent(this.task1);
+    this.TaskBank1.addComponent(this.task2);
+
+    this.TaskBank2.addComponent(this.task3);
+    this.TaskBank2.addComponent(this.task4);
+
+    this.TaskBank3.addComponent(this.task5);
+    this.TaskBank3.addComponent(this.task6);
+
     // Get the 2D context that we draw on.
     this.ctx = this.canvas.nativeElement.getContext('2d');
 
@@ -137,7 +164,6 @@ export class BoardComponent implements OnInit {
     this.ctx.canvas.height = ROWS * BLOCK_SIZE;
 
     this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
-
     this.boardService.getEmptyBoard();
   }
 
@@ -148,7 +174,6 @@ export class BoardComponent implements OnInit {
   //  this.animate();
   //  this.boardService.broadcastPiece(this.piece.dto);
   //}
-  blue = new BlueHandler();
   animate(now = 0) {
     // Update elapsed time.
     this.time.elapsed = now - this.time.start;
@@ -265,6 +290,8 @@ export class BoardComponent implements OnInit {
 
   ///when piece cannot move anymore
   freeze() {
+
+    this.positionTask('red', SHAPES.LShape, this.piece.color, this.piece.shape, this.task1);
     this.piece.shape.forEach((row, y) => {
       row.forEach((value, x) => {
         if (value > 0) {
@@ -417,9 +444,15 @@ export class BoardComponent implements OnInit {
 
   //Composite
 
-  positionTask(requiredColor, requiredShape, color, shape, task:Task) {
-    if (requiredColor === color && requiredShape === shape)  {
-      task.setToCompleted();
+  positionTask(requiredColor, requiredShape, color, shape, task: Task) {
+    console.log(requiredShape == shape);
+
+    if (requiredColor == color && requiredShape == shape) {
+      task.decreaseCounter();
+      if (task.getCount() == 0) {
+        task.setToCompleted();
+      }
+      
     }
   }
 
@@ -443,34 +476,9 @@ export class BoardComponent implements OnInit {
   };
 
 
-  startCountdown = seconds => {
-    let counter = seconds;
-
-    const interval = setInterval(() => {
-      console.log(counter);
-      counter--;
-
-      if (counter < 0) {
-        clearInterval(interval);
-        console.log('Ding!');
-      }
-    }, 1000);
-  }
-
+  
   test() {
-    const task1 = new Task('task1', 3);
-    const task2 = new Task('task2', 3);
-    const task3 = new Task('task3', 3);
-    const TaskBank1 = new TaskBank();
-    const TaskBank2 = new TaskBank();
-    TaskBank1.addComponent(task1);
-    TaskBank1.addComponent(task3);
-    TaskBank1.addComponent(task2);
-    TaskBank1.addComponent(TaskBank2);
-    TaskBank2.addComponent(task1);
-    TaskBank2.addComponent(task3);
-    TaskBank2.addComponent(task2);
-
+    console.log(this.task1)
 
   }
 
