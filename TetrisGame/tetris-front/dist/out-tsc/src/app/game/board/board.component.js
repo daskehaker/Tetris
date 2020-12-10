@@ -28,17 +28,18 @@ let BoardComponent = class BoardComponent {
         this.gunsDeepCopiesArray = [];
         this.gunsShallowCopiesArray = [];
         this.oponents = [{ id: "1", name: "Petras" }, { id: "1", name: "Jonas" }, { id: "1", name: "Ona" }];
-        this.task1 = new Task('Raudonas J nukrenta ɾ', 2, '../../../assets/images/T180.png');
-        this.task2 = new Task('Mėlynas Z-blokas nukrenta N', 2, './../../../images/J180.svg');
-        this.task3 = new Task('Raudonas L nukrenta ﹂', 2, './../../../images/J180.svg');
-        this.task4 = new Task('geltonas T nukrenta ⊣', 2, './../../../images/J180.svg');
-        this.task5 = new Task('Žalias S-blokas nukrenta ᔕ', 2, './../../../images/J180.svg');
-        this.task6 = new Task('Mėlynas T-blokas nukrenta T', 2, './../../../images/J180.svg');
+        this.task1 = new Task('Raudonas J-blokas nukrenta', 2, '../../../assets/images/J180.png');
+        this.task2 = new Task('Mėlynas Z-blokas nukrenta', 2, './../../../image/BlueZ90.png');
+        this.task3 = new Task('Raudonas J-blokas nukrenta ﹂', 2, './../../../images/RedJ90.png');
+        this.task4 = new Task('geltonas T nukrenta ⊣', 2, './../../../images/YellowT90.png');
+        this.task5 = new Task('Žalias S-blokas nukrenta ᔕ', 2, './../../../images/GreenS90.png');
+        this.task6 = new Task('Mėlynas T-blokas nukrenta T', 2, './../../../images/BlueT.png');
         this.rootTaskBank = new TaskBank();
         this.TaskBank1 = new TaskBank();
         this.TaskBank2 = new TaskBank();
         this.TaskBank3 = new TaskBank();
-        this.date = new Date();
+        this.taskToScreen1 = this.task5;
+        this.taskToScreen2 = this.task6;
         this.rotateClockwise = function (clockwise, N) {
             var matrix = JSON.parse(JSON.stringify(clockwise));
             for (var m = 0; m < N; m++) {
@@ -116,12 +117,14 @@ let BoardComponent = class BoardComponent {
     }
     initBoard() {
         this.rootTaskBank.addComponent(this.TaskBank1);
-        this.rootTaskBank.addComponent(this.TaskBank2);
-        this.rootTaskBank.addComponent(this.TaskBank3);
+        //this.rootTaskBank.addComponent(this.TaskBank2);
+        //this.rootTaskBank.addComponent(this.TaskBank3);
         this.TaskBank1.addComponent(this.task1);
         this.TaskBank1.addComponent(this.task2);
+        this.TaskBank1.addComponent(this.TaskBank2);
         this.TaskBank2.addComponent(this.task3);
         this.TaskBank2.addComponent(this.task4);
+        this.TaskBank2.addComponent(this.TaskBank3);
         this.TaskBank3.addComponent(this.task5);
         this.TaskBank3.addComponent(this.task6);
         // Get the 2D context that we draw on.
@@ -246,7 +249,10 @@ let BoardComponent = class BoardComponent {
     }
     ///when piece cannot move anymore
     freeze() {
-        this.positionTask('red', SHAPES.LShape, this.piece.color, this.piece.shape, this.task1);
+        if (!this.TaskBank3.checkIfCompleted()) {
+            this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.task6);
+            this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.task5);
+        }
         this.piece.shape.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value > 0) {
@@ -377,7 +383,7 @@ let BoardComponent = class BoardComponent {
     }
     //Composite
     positionTask(requiredColor, requiredShape, color, shape, task) {
-        console.log(requiredShape == shape);
+        console.log(requiredShape);
         if (requiredColor == color && requiredShape == shape) {
             task.decreaseCounter();
             if (task.getCount() == 0) {
@@ -386,7 +392,7 @@ let BoardComponent = class BoardComponent {
         }
     }
     test() {
-        console.log(this.task1);
+        console.log(this.TaskBank3.getTasks());
     }
 };
 __decorate([

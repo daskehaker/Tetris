@@ -22,6 +22,7 @@
     "@microsoft/signalr": "^3.1.8",
     "bootstrap": "^4.5.2",
     "rxjs": "~6.5.4",
+    "scuri": "^1.0.5",
     "ts-stopwatch": "0.0.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

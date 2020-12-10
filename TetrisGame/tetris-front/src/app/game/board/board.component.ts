@@ -25,6 +25,7 @@ import { Oponent } from 'src/app/Prototype/Oponent';
 import { Task, TaskBank } from 'src/app/Composite/composite';
 import { Stopwatch } from "ts-stopwatch";
 import { SHAPES } from 'src/app/shared/constants'
+import { Level1BankHandler } from '../../ChainOfResponsibility/chain';
 //import { Facade } from 'src/app/models/Facade';
 
 
@@ -61,20 +62,24 @@ export class BoardComponent implements OnInit {
   gunsShallowCopiesArray: ConcreteGun[] = [];
   oponents: Oponent[] = [{id: "1", name: "Petras"}, {id: "1", name: "Jonas"}, {id: "1", name: "Ona"}]
 
-  task1 = new Task('Raudonas J nukrenta ɾ', 2, '../../../assets/images/J180.png');
-  task2 = new Task('Mėlynas Z-blokas nukrenta N', 2, './../../../images/J180.svg');
-  task3 = new Task('Raudonas L nukrenta ﹂', 2, './../../../images/J180.svg');
-  task4 = new Task('geltonas T nukrenta ⊣', 2, './../../../images/J180.svg');
-  task5 = new Task('Žalias S-blokas nukrenta ᔕ', 2, './../../../images/J180.svg');
-  task6 = new Task('Mėlynas T-blokas nukrenta T', 2, './../../../images/J180.svg');
+
+
+  task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/J180.png');
+  task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/image/BlueZ90.png');
+  task3 = new Task('Raudonas J-blokas nukrenta ﹂', 2, '../../../assets/images/RedJ90.png');
+  task4 = new Task('geltonas T nukrenta ⊣', 2, '../../../assets/images/YellowT90.png');
+  task5 = new Task('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
+  task6 = new Task('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
 
 
   rootTaskBank = new TaskBank();
   TaskBank1 = new TaskBank();
   TaskBank2 = new TaskBank();
   TaskBank3 = new TaskBank();
+  taskToScreen1: Task = this.task5;
+  taskToScreen2: Task = this.task6;
 
-
+ 
 
   constructor(private chatService: ChatService) {}
 
@@ -144,17 +149,20 @@ export class BoardComponent implements OnInit {
   initBoard() {
 
     this.rootTaskBank.addComponent(this.TaskBank1);
-    this.rootTaskBank.addComponent(this.TaskBank2);
-    this.rootTaskBank.addComponent(this.TaskBank3);
+    //this.rootTaskBank.addComponent(this.TaskBank2);
+    //this.rootTaskBank.addComponent(this.TaskBank3);
 
     this.TaskBank1.addComponent(this.task1);
     this.TaskBank1.addComponent(this.task2);
+    this.TaskBank1.addComponent(this.TaskBank2)
 
     this.TaskBank2.addComponent(this.task3);
     this.TaskBank2.addComponent(this.task4);
+    this.TaskBank2.addComponent(this.TaskBank3);
 
     this.TaskBank3.addComponent(this.task5);
     this.TaskBank3.addComponent(this.task6);
+
 
     // Get the 2D context that we draw on.
     this.ctx = this.canvas.nativeElement.getContext('2d');
@@ -291,7 +299,26 @@ export class BoardComponent implements OnInit {
   ///when piece cannot move anymore
   freeze() {
 
-    this.positionTask('red', SHAPES.LShape, this.piece.color, this.piece.shape, this.task1);
+    if (!this.TaskBank3.checkIfCompleted()) {
+      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      if (this.TaskBank3.checkIfCompleted()) {
+        this.taskToScreen1 = this.task4;
+        this.taskToScreen2 = this.task3;
+      }
+
+
+    } else if (!this.TaskBank2.checkIfCompleted()) {
+
+      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      if (this.TaskBank3.checkIfCompleted()) {
+        this.taskToScreen1 == null;
+        this.taskToScreen2 == null;
+      }
+    }
+    
+
     this.piece.shape.forEach((row, y) => {
       row.forEach((value, x) => {
         if (value > 0) {
@@ -445,18 +472,17 @@ export class BoardComponent implements OnInit {
   //Composite
 
   positionTask(requiredColor, requiredShape, color, shape, task: Task) {
-    console.log(requiredShape == shape);
-
+    console.log(color)
+    console.log(requiredShape == shape)
     if (requiredColor == color && requiredShape == shape) {
       task.decreaseCounter();
       if (task.getCount() == 0) {
         task.setToCompleted();
       }
-      
     }
   }
 
-  date: Date = new Date();
+
 
 
   rotateClockwise = function (clockwise, N) {
@@ -475,16 +501,8 @@ export class BoardComponent implements OnInit {
     return matrix;
   };
 
-
-  
   test() {
-    console.log(this.task1)
-
+    console.log(this.TaskBank3.getTasks())
   }
-
-
-
-
-
 
 }
