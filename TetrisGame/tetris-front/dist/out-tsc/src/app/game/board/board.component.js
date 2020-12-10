@@ -28,12 +28,12 @@ let BoardComponent = class BoardComponent {
         this.gunsDeepCopiesArray = [];
         this.gunsShallowCopiesArray = [];
         this.oponents = [{ id: "1", name: "Petras" }, { id: "1", name: "Jonas" }, { id: "1", name: "Ona" }];
-        this.task1 = new Task('Raudonas J-blokas nukrenta', 2, '../../../assets/images/J180.png');
-        this.task2 = new Task('Mėlynas Z-blokas nukrenta', 2, './../../../image/BlueZ90.png');
-        this.task3 = new Task('Raudonas J-blokas nukrenta ﹂', 2, './../../../images/RedJ90.png');
-        this.task4 = new Task('geltonas T nukrenta ⊣', 2, './../../../images/YellowT90.png');
-        this.task5 = new Task('Žalias S-blokas nukrenta ᔕ', 2, './../../../images/GreenS90.png');
-        this.task6 = new Task('Mėlynas T-blokas nukrenta T', 2, './../../../images/BlueT.png');
+        this.task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/J180.png');
+        this.task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/image/BlueZ90.png');
+        this.task3 = new Task('Raudonas J-blokas nukrenta ﹂', 2, '../../../assets/images/RedJ90.png');
+        this.task4 = new Task('geltonas T nukrenta ⊣', 2, '../../../assets/images/YellowT90.png');
+        this.task5 = new Task('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
+        this.task6 = new Task('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
         this.rootTaskBank = new TaskBank();
         this.TaskBank1 = new TaskBank();
         this.TaskBank2 = new TaskBank();
@@ -250,8 +250,20 @@ let BoardComponent = class BoardComponent {
     ///when piece cannot move anymore
     freeze() {
         if (!this.TaskBank3.checkIfCompleted()) {
-            this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.task6);
-            this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.task5);
+            this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+            this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+            if (this.TaskBank3.checkIfCompleted()) {
+                this.taskToScreen1 = this.task4;
+                this.taskToScreen2 = this.task3;
+            }
+        }
+        else if (!this.TaskBank2.checkIfCompleted()) {
+            this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+            this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+            if (this.TaskBank3.checkIfCompleted()) {
+                this.taskToScreen1 == null;
+                this.taskToScreen2 == null;
+            }
         }
         this.piece.shape.forEach((row, y) => {
             row.forEach((value, x) => {
@@ -383,7 +395,8 @@ let BoardComponent = class BoardComponent {
     }
     //Composite
     positionTask(requiredColor, requiredShape, color, shape, task) {
-        console.log(requiredShape);
+        console.log(color);
+        console.log(requiredShape == shape);
         if (requiredColor == color && requiredShape == shape) {
             task.decreaseCounter();
             if (task.getCount() == 0) {

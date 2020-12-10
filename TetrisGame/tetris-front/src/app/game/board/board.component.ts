@@ -310,11 +310,18 @@ export class BoardComponent implements OnInit {
 
     } else if (!this.TaskBank2.checkIfCompleted()) {
 
-      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('red', this.rotateClockwise(SHAPES.LShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
       if (this.TaskBank3.checkIfCompleted()) {
-        this.taskToScreen1 == null;
-        this.taskToScreen2 == null;
+        this.taskToScreen1 == this.task2;
+        this.taskToScreen2 == this.task1;
+      }
+    } else if (!this.TaskBank1.checkIfCompleted()) {
+      this.positionTask('blue', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      if (this.TaskBank3.checkIfCompleted()) {
+        this.taskToScreen1 == this.task2;
+        this.taskToScreen2 == this.task1;
       }
     }
     
