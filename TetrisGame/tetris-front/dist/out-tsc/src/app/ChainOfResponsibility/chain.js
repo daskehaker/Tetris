@@ -1,4 +1,4 @@
-export class Level1BankHandler {
+class AbstractBankHandler {
     constructor(taskBank) {
         this.taskBank = taskBank;
     }
@@ -6,46 +6,90 @@ export class Level1BankHandler {
         this.nextHandler = handler;
         return handler;
     }
-    handle(task) {
-        this.taskBank.getTasks().forEach(function (task) {
-            console.log;
-        });
+    handle(player, prizeMultiplier, inARow) {
+        if (this.nextHandler) {
+            return this.nextHandler.handle(player, prizeMultiplier, inARow);
+        }
+        return null;
     }
 }
-export class Level2BankHandler {
-    setNext(handler) {
-        this.nextHandler = handler;
-        return handler;
+export class Level1BankHandler extends AbstractBankHandler {
+    constructor(taskBank) {
+        super(taskBank);
     }
-    handle(task) {
-        if (task.checkIfCompleted()) {
-            return true;
+    handle(player, prizeMultiplier, inARow) {
+        if (this.taskBank.checkIfCompleted()) {
+            console.log("in");
+            if (prizeMultiplier[0] != true) {
+                player.points = player.points * 2;
+                prizeMultiplier[0] = true;
+                inARow += 0.5;
+                player.level--;
+            }
+            return super.handle(player, prizeMultiplier, inARow);
         }
-        return this.nextHandler;
+        else {
+            console.log("out");
+            inARow = 1;
+            return prizeMultiplier;
+        }
     }
 }
-export class Level3BankHandler {
-    setNext(handler) {
-        this.nextHandler = handler;
-        return handler;
+export class Level2BankHandler extends AbstractBankHandler {
+    constructor(taskBank) {
+        super(taskBank);
     }
-    handle(task) {
-        if (task.checkIfCompleted()) {
-            return true;
+    handle(player, prizeMultiplier, inARow) {
+        if (this.taskBank.checkIfCompleted()) {
+            if (prizeMultiplier[1] != true) {
+                player.points = player.points * 2 * inARow;
+                prizeMultiplier[1] = true;
+                inARow += 0.5;
+            }
+            return super.handle(player, prizeMultiplier, inARow);
         }
-        return this.nextHandler;
+        else {
+            inARow = 1;
+            return super.handle(player, prizeMultiplier, inARow);
+        }
     }
 }
-export class Level4BankHandler {
-    setNext(handler) {
-        this.nextHandler = handler;
-        return handler;
+export class Level3BankHandler extends AbstractBankHandler {
+    constructor(taskBank) {
+        super(taskBank);
     }
-    handle(task) {
-        if (task.checkIfCompleted()) {
-            return true;
+    handle(player, prizeMultiplier, inARow) {
+        if (this.taskBank.checkIfCompleted()) {
+            if (prizeMultiplier[2] != true) {
+                prizeMultiplier[2] = true;
+                player.points = player.points * 2 * inARow;
+                inARow += 0.5;
+            }
+            return super.handle(player, prizeMultiplier, inARow);
         }
-        return this.nextHandler;
+        else {
+            inARow = 1;
+            return super.handle(player, prizeMultiplier, inARow);
+        }
+    }
+}
+export class Level4BankHandler extends AbstractBankHandler {
+    constructor(taskBank) {
+        super(taskBank);
+    }
+    handle(player, prizeMultiplier, inARow) {
+        if (this.taskBank.checkIfCompleted()) {
+            if (prizeMultiplier[3] != true) {
+                prizeMultiplier[3] = true;
+                player.points = player.points * 2 * inARow;
+                inARow += 0.5;
+            }
+            return super.handle(player, prizeMultiplier, inARow);
+        }
+        else {
+            inARow = 1;
+            return super.handle(player, prizeMultiplier, inARow);
+        }
     }
 }
 //# sourceMappingURL=chain.js.map

@@ -25,7 +25,7 @@ import { Oponent } from 'src/app/Prototype/Oponent';
 import { Task, TaskBank } from 'src/app/Composite/composite';
 import { Stopwatch } from "ts-stopwatch";
 import { SHAPES } from 'src/app/shared/constants'
-import { Level1BankHandler } from '../../ChainOfResponsibility/chain';
+import { Level1BankHandler, Level2BankHandler, Level3BankHandler, Level4BankHandler } from '../../ChainOfResponsibility/chain';
 //import { Facade } from 'src/app/models/Facade';
 
 
@@ -64,22 +64,30 @@ export class BoardComponent implements OnInit {
 
 
 
-  task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/J180.png');
-  task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/image/BlueZ90.png');
-  task3 = new Task('Raudonas J-blokas nukrenta ﹂', 2, '../../../assets/images/RedJ90.png');
-  task4 = new Task('geltonas T nukrenta ⊣', 2, '../../../assets/images/YellowT90.png');
+
+  task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
+  task3 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  task4 = new Task('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
   task5 = new Task('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
   task6 = new Task('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
-
+  task7 = new Task('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
+  task8 = new Task('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
 
   rootTaskBank = new TaskBank();
   TaskBank1 = new TaskBank();
   TaskBank2 = new TaskBank();
   TaskBank3 = new TaskBank();
-  taskToScreen1: Task = this.task5;
-  taskToScreen2: Task = this.task6;
+  TaskBank4 = new TaskBank();
+  taskToScreen1: Task = this.task7;
+  taskToScreen2: Task = this.task8;
+  completed1:string = "none";
+  completed2: string = "none";
 
- 
+  level1: Level1BankHandler = new Level1BankHandler(this.TaskBank4);
+  level2: Level2BankHandler = new Level2BankHandler(this.TaskBank3);
+  level3: Level3BankHandler = new Level3BankHandler(this.TaskBank2);
+  level4: Level4BankHandler = new Level4BankHandler(this.TaskBank1);
 
   constructor(private chatService: ChatService) {}
 
@@ -147,10 +155,11 @@ export class BoardComponent implements OnInit {
 
 
   initBoard() {
+    this.level1.setNext(this.level2)
+    this.level2.setNext(this.level3)
+    this.level3.setNext(this.level4)
 
     this.rootTaskBank.addComponent(this.TaskBank1);
-    //this.rootTaskBank.addComponent(this.TaskBank2);
-    //this.rootTaskBank.addComponent(this.TaskBank3);
 
     this.TaskBank1.addComponent(this.task1);
     this.TaskBank1.addComponent(this.task2);
@@ -162,6 +171,10 @@ export class BoardComponent implements OnInit {
 
     this.TaskBank3.addComponent(this.task5);
     this.TaskBank3.addComponent(this.task6);
+    this.TaskBank3.addComponent(this.TaskBank4);
+
+    this.TaskBank4.addComponent(this.task7);
+    this.TaskBank4.addComponent(this.task8);
 
 
     // Get the 2D context that we draw on.
@@ -298,30 +311,69 @@ export class BoardComponent implements OnInit {
 
   ///when piece cannot move anymore
   freeze() {
+    if (!this.TaskBank4.checkIfCompleted()) {
+      this.positionTask('red', this.rotateClockwise(SHAPES.ZShape, 0).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('green', this.rotateClockwise(SHAPES.TShape, 3).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      if (this.taskToScreen1.checkIfCompleted())
+      {
+        this.completed1 = "completed";
+      }
+      if (this.taskToScreen2.checkIfCompleted()) {
+        this.completed2 = "completed";
+      }
+      if (this.TaskBank4.checkIfCompleted()){
+        this.taskToScreen1 = this.task5;
+        this.taskToScreen2 = this.task6;
+        this.completed1 = "none";
+        this.completed2 = "none";
+      }
 
-    if (!this.TaskBank3.checkIfCompleted()) {
+    } else if (!this.TaskBank3.checkIfCompleted()) {
       this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
       this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      if (this.taskToScreen1.checkIfCompleted()) {
+        this.completed1 = "completed";
+      }
+      if (this.taskToScreen2.checkIfCompleted()) {
+        this.completed2 = "completed";
+      }
       if (this.TaskBank3.checkIfCompleted()) {
         this.taskToScreen1 = this.task4;
         this.taskToScreen2 = this.task3;
+        this.completed1 = "none";
+        this.completed2 = "none";
       }
-
 
     } else if (!this.TaskBank2.checkIfCompleted()) {
-
       this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('red', this.rotateClockwise(SHAPES.LShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
-      if (this.TaskBank3.checkIfCompleted()) {
-        this.taskToScreen1 == this.task2;
-        this.taskToScreen2 == this.task1;
-      }
-    } else if (!this.TaskBank1.checkIfCompleted()) {
-      this.positionTask('blue', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
       this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
-      if (this.TaskBank3.checkIfCompleted()) {
-        this.taskToScreen1 == this.task2;
-        this.taskToScreen2 == this.task1;
+      if (this.taskToScreen1.checkIfCompleted()) {
+        this.completed1 = "completed";
+      }
+      if (this.taskToScreen2.checkIfCompleted()) {
+        this.completed2 = "completed";
+      }
+      if (this.TaskBank2.checkIfCompleted()) {
+        this.taskToScreen1 = this.task1;
+        this.taskToScreen2 = this.task2;
+        this.completed1 = "none";
+        this.completed2 = "none";
+      }
+
+    } else if (!this.TaskBank1.checkIfCompleted()) {
+      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('blue', this.rotateClockwise(SHAPES.ZShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      if (this.taskToScreen1.checkIfCompleted()) {
+        this.completed1 = "completed";
+      }
+      if (this.taskToScreen2.checkIfCompleted()) {
+        this.completed2 = "completed";
+      }
+      if (this.TaskBank1.checkIfCompleted()) {
+        this.taskToScreen1 = null;
+        this.taskToScreen2 = null;
+        this.completed1 = "none";
+        this.completed2 = "none";
       }
     }
     
@@ -424,6 +476,7 @@ export class BoardComponent implements OnInit {
   }
 
   player2() {
+    this.player.points = 1;
     const director = new Director();
     const builder = new PieceBuilder();
     director.setBuilder(builder);
@@ -508,8 +561,15 @@ export class BoardComponent implements OnInit {
     return matrix;
   };
 
+  prizeMultiplier = [false, false, false, false];
+  
   test() {
-    console.log(this.TaskBank3.getTasks())
+    const inARow = 1;
+    console.log("start")
+    this.level1.handle(this.player, this.prizeMultiplier, inARow);
+    console.log(this.prizeMultiplier)
+    console.log(inARow)
+    console.log("end")
   }
 
 }

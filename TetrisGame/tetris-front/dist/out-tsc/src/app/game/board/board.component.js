@@ -14,6 +14,7 @@ import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { Task, TaskBank } from 'src/app/Composite/composite';
 import { Stopwatch } from "ts-stopwatch";
 import { SHAPES } from 'src/app/shared/constants';
+import { Level1BankHandler, Level2BankHandler, Level3BankHandler, Level4BankHandler } from '../../ChainOfResponsibility/chain';
 //import { Facade } from 'src/app/models/Facade';
 let BoardComponent = class BoardComponent {
     constructor(chatService) {
@@ -28,18 +29,27 @@ let BoardComponent = class BoardComponent {
         this.gunsDeepCopiesArray = [];
         this.gunsShallowCopiesArray = [];
         this.oponents = [{ id: "1", name: "Petras" }, { id: "1", name: "Jonas" }, { id: "1", name: "Ona" }];
-        this.task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/J180.png');
-        this.task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/image/BlueZ90.png');
-        this.task3 = new Task('Raudonas J-blokas nukrenta ﹂', 2, '../../../assets/images/RedJ90.png');
-        this.task4 = new Task('geltonas T nukrenta ⊣', 2, '../../../assets/images/YellowT90.png');
+        this.task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+        this.task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
+        this.task3 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+        this.task4 = new Task('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
         this.task5 = new Task('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
         this.task6 = new Task('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
+        this.task7 = new Task('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
+        this.task8 = new Task('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
         this.rootTaskBank = new TaskBank();
         this.TaskBank1 = new TaskBank();
         this.TaskBank2 = new TaskBank();
         this.TaskBank3 = new TaskBank();
-        this.taskToScreen1 = this.task5;
-        this.taskToScreen2 = this.task6;
+        this.TaskBank4 = new TaskBank();
+        this.taskToScreen1 = this.task7;
+        this.taskToScreen2 = this.task8;
+        this.completed1 = "none";
+        this.completed2 = "none";
+        this.level1 = new Level1BankHandler(this.TaskBank4);
+        this.level2 = new Level2BankHandler(this.TaskBank3);
+        this.level3 = new Level3BankHandler(this.TaskBank2);
+        this.level4 = new Level4BankHandler(this.TaskBank1);
         this.rotateClockwise = function (clockwise, N) {
             var matrix = JSON.parse(JSON.stringify(clockwise));
             for (var m = 0; m < N; m++) {
@@ -55,6 +65,7 @@ let BoardComponent = class BoardComponent {
             }
             return matrix;
         };
+        this.prizeMultiplier = [false, false, false, false];
     }
     ngOnInit() {
         this.userService.getUserProfile().subscribe((res) => {
@@ -116,9 +127,10 @@ let BoardComponent = class BoardComponent {
         }
     }
     initBoard() {
+        this.level1.setNext(this.level2);
+        this.level2.setNext(this.level3);
+        this.level3.setNext(this.level4);
         this.rootTaskBank.addComponent(this.TaskBank1);
-        //this.rootTaskBank.addComponent(this.TaskBank2);
-        //this.rootTaskBank.addComponent(this.TaskBank3);
         this.TaskBank1.addComponent(this.task1);
         this.TaskBank1.addComponent(this.task2);
         this.TaskBank1.addComponent(this.TaskBank2);
@@ -127,6 +139,9 @@ let BoardComponent = class BoardComponent {
         this.TaskBank2.addComponent(this.TaskBank3);
         this.TaskBank3.addComponent(this.task5);
         this.TaskBank3.addComponent(this.task6);
+        this.TaskBank3.addComponent(this.TaskBank4);
+        this.TaskBank4.addComponent(this.task7);
+        this.TaskBank4.addComponent(this.task8);
         // Get the 2D context that we draw on.
         this.ctx = this.canvas.nativeElement.getContext('2d');
         // Calculate size of canvas from constants.
@@ -249,20 +264,66 @@ let BoardComponent = class BoardComponent {
     }
     ///when piece cannot move anymore
     freeze() {
-        if (!this.TaskBank3.checkIfCompleted()) {
+        if (!this.TaskBank4.checkIfCompleted()) {
+            this.positionTask('red', this.rotateClockwise(SHAPES.ZShape, 0).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+            this.positionTask('green', this.rotateClockwise(SHAPES.TShape, 3).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+            if (this.taskToScreen1.checkIfCompleted()) {
+                this.completed1 = "completed";
+            }
+            if (this.taskToScreen2.checkIfCompleted()) {
+                this.completed2 = "completed";
+            }
+            if (this.TaskBank4.checkIfCompleted()) {
+                this.taskToScreen1 = this.task5;
+                this.taskToScreen2 = this.task6;
+                this.completed1 = "none";
+                this.completed2 = "none";
+            }
+        }
+        else if (!this.TaskBank3.checkIfCompleted()) {
             this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
             this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+            if (this.taskToScreen1.checkIfCompleted()) {
+                this.completed1 = "completed";
+            }
+            if (this.taskToScreen2.checkIfCompleted()) {
+                this.completed2 = "completed";
+            }
             if (this.TaskBank3.checkIfCompleted()) {
                 this.taskToScreen1 = this.task4;
                 this.taskToScreen2 = this.task3;
+                this.completed1 = "none";
+                this.completed2 = "none";
             }
         }
         else if (!this.TaskBank2.checkIfCompleted()) {
-            this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-            this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
-            if (this.TaskBank3.checkIfCompleted()) {
-                this.taskToScreen1 == null;
-                this.taskToScreen2 == null;
+            this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+            this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 0).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+            if (this.taskToScreen1.checkIfCompleted()) {
+                this.completed1 = "completed";
+            }
+            if (this.taskToScreen2.checkIfCompleted()) {
+                this.completed2 = "completed";
+            }
+            if (this.TaskBank2.checkIfCompleted()) {
+                this.taskToScreen1 = this.task1;
+                this.taskToScreen2 = this.task2;
+            }
+        }
+        else if (!this.TaskBank1.checkIfCompleted()) {
+            this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+            this.positionTask('blue', this.rotateClockwise(SHAPES.ZShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+            if (this.taskToScreen1.checkIfCompleted()) {
+                this.completed1 = "completed";
+            }
+            if (this.taskToScreen2.checkIfCompleted()) {
+                this.completed2 = "completed";
+            }
+            if (this.TaskBank1.checkIfCompleted()) {
+                this.taskToScreen1 = null;
+                this.taskToScreen2 = null;
+                this.completed1 = "none";
+                this.completed2 = "none";
             }
         }
         this.piece.shape.forEach((row, y) => {
@@ -350,6 +411,7 @@ let BoardComponent = class BoardComponent {
         this.gunsArray.push(usp);
     }
     player2() {
+        this.player.points = 1;
         const director = new Director();
         const builder = new PieceBuilder();
         director.setBuilder(builder);
@@ -405,7 +467,11 @@ let BoardComponent = class BoardComponent {
         }
     }
     test() {
-        console.log(this.TaskBank3.getTasks());
+        const inARow = 1;
+        console.log("start");
+        this.level1.handle(this.player, this.prizeMultiplier, inARow);
+        console.log(this.prizeMultiplier);
+        console.log("end");
     }
 };
 __decorate([
