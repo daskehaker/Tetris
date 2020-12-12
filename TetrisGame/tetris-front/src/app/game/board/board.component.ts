@@ -64,7 +64,6 @@ export class BoardComponent implements OnInit {
 
 
 
-
   task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
   task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
   task3 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
@@ -309,6 +308,7 @@ export class BoardComponent implements OnInit {
     });
   }
 
+
   ///when piece cannot move anymore
   freeze() {
     if (!this.TaskBank4.checkIfCompleted()) {
@@ -338,15 +338,15 @@ export class BoardComponent implements OnInit {
         this.completed2 = "completed";
       }
       if (this.TaskBank3.checkIfCompleted()) {
-        this.taskToScreen1 = this.task4;
-        this.taskToScreen2 = this.task3;
+        this.taskToScreen1 = this.task3;
+        this.taskToScreen2 = this.task4;
         this.completed1 = "none";
         this.completed2 = "none";
       }
 
     } else if (!this.TaskBank2.checkIfCompleted()) {
-      this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
       if (this.taskToScreen1.checkIfCompleted()) {
         this.completed1 = "completed";
       }
@@ -368,12 +368,6 @@ export class BoardComponent implements OnInit {
       }
       if (this.taskToScreen2.checkIfCompleted()) {
         this.completed2 = "completed";
-      }
-      if (this.TaskBank1.checkIfCompleted()) {
-        this.taskToScreen1 = null;
-        this.taskToScreen2 = null;
-        this.completed1 = "none";
-        this.completed2 = "none";
       }
     }
     

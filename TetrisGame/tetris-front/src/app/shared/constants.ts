@@ -34,6 +34,7 @@ export class SHAPES {
   static readonly SShape = [[0, 0, 0], [0, 2, 2], [2, 2, 0]];
 }
 
+
 export const SHAPE = [
   [[2, 0, 0], [2, 2, 2], [0, 0, 0]],
   [[2, 2, 0], [2, 2, 0], [0, 0, 0]],
