@@ -73,6 +73,11 @@ export class TaskBank implements TaskComponent {
     this.tasksArray.push(taskComponent);
   }
 
+  public getNextTaskBank(): TaskComponent {
+    const nextTaskBank: TaskComponent = this.tasksArray[2];
+    return nextTaskBank;
+  }
+
   public getTasks(): TaskComponent[] {
     return this.tasksArray;
   }

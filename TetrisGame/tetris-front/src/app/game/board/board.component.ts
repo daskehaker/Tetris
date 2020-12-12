@@ -64,29 +64,7 @@ export class BoardComponent implements OnInit {
 
 
 
-  task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
-  task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
-  task3 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
-  task4 = new Task('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
-  task5 = new Task('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
-  task6 = new Task('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
-  task7 = new Task('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
-  task8 = new Task('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
-
-  rootTaskBank = new TaskBank();
-  TaskBank1 = new TaskBank();
-  TaskBank2 = new TaskBank();
-  TaskBank3 = new TaskBank();
-  TaskBank4 = new TaskBank();
-  taskToScreen1: Task = this.task7;
-  taskToScreen2: Task = this.task8;
-  completed1:string = "none";
-  completed2: string = "none";
-
-  level1: Level1BankHandler = new Level1BankHandler(this.TaskBank4);
-  level2: Level2BankHandler = new Level2BankHandler(this.TaskBank3);
-  level3: Level3BankHandler = new Level3BankHandler(this.TaskBank2);
-  level4: Level4BankHandler = new Level4BankHandler(this.TaskBank1);
+  
 
   constructor(private chatService: ChatService) {}
 
@@ -153,6 +131,30 @@ export class BoardComponent implements OnInit {
   }
 
 
+  task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
+  task3 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  task4 = new Task('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
+  task5 = new Task('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
+  task6 = new Task('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
+  task7 = new Task('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
+  task8 = new Task('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
+
+  rootTaskBank = new TaskBank();
+  TaskBank1 = new TaskBank();
+  TaskBank2 = new TaskBank();
+  TaskBank3 = new TaskBank();
+  TaskBank4 = new TaskBank();
+  taskToScreen1: Task = this.task1;
+  taskToScreen2: Task = this.task2;
+  completed1: string = "none";
+  completed2: string = "none";
+
+  level1: Level1BankHandler = new Level1BankHandler();
+  level2: Level2BankHandler = new Level2BankHandler();
+  level3: Level3BankHandler = new Level3BankHandler();
+  level4: Level4BankHandler = new Level4BankHandler();
+
   initBoard() {
     this.level1.setNext(this.level2)
     this.level2.setNext(this.level3)
@@ -162,19 +164,19 @@ export class BoardComponent implements OnInit {
 
     this.TaskBank1.addComponent(this.task1);
     this.TaskBank1.addComponent(this.task2);
-    this.TaskBank1.addComponent(this.TaskBank2)
+
 
     this.TaskBank2.addComponent(this.task3);
     this.TaskBank2.addComponent(this.task4);
-    this.TaskBank2.addComponent(this.TaskBank3);
+    this.TaskBank2.addComponent(this.TaskBank1);
 
     this.TaskBank3.addComponent(this.task5);
     this.TaskBank3.addComponent(this.task6);
-    this.TaskBank3.addComponent(this.TaskBank4);
+    this.TaskBank3.addComponent(this.TaskBank2);
 
     this.TaskBank4.addComponent(this.task7);
     this.TaskBank4.addComponent(this.task8);
-
+    this.TaskBank4.addComponent(this.TaskBank3)
 
     // Get the 2D context that we draw on.
     this.ctx = this.canvas.nativeElement.getContext('2d');
@@ -311,39 +313,22 @@ export class BoardComponent implements OnInit {
 
   ///when piece cannot move anymore
   freeze() {
-    if (!this.TaskBank4.checkIfCompleted()) {
-      this.positionTask('red', this.rotateClockwise(SHAPES.ZShape, 0).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('green', this.rotateClockwise(SHAPES.TShape, 3).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
-      if (this.taskToScreen1.checkIfCompleted())
-      {
-        this.completed1 = "completed";
-      }
-      if (this.taskToScreen2.checkIfCompleted()) {
-        this.completed2 = "completed";
-      }
-      if (this.TaskBank4.checkIfCompleted()){
-        this.taskToScreen1 = this.task5;
-        this.taskToScreen2 = this.task6;
-        this.completed1 = "none";
-        this.completed2 = "none";
-      }
 
-    } else if (!this.TaskBank3.checkIfCompleted()) {
-      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+    if (!this.TaskBank1.checkIfCompleted()) {
+      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('blue', this.rotateClockwise(SHAPES.ZShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
       if (this.taskToScreen1.checkIfCompleted()) {
         this.completed1 = "completed";
       }
-      if (this.taskToScreen2.checkIfCompleted()) {
+      if (this.taskToScreen2.checkIfCompleted()) { 
         this.completed2 = "completed";
       }
-      if (this.TaskBank3.checkIfCompleted()) {
+      if (this.TaskBank1.checkIfCompleted()) {
         this.taskToScreen1 = this.task3;
         this.taskToScreen2 = this.task4;
         this.completed1 = "none";
         this.completed2 = "none";
       }
-
     } else if (!this.TaskBank2.checkIfCompleted()) {
       this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
       this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
@@ -354,23 +339,40 @@ export class BoardComponent implements OnInit {
         this.completed2 = "completed";
       }
       if (this.TaskBank2.checkIfCompleted()) {
-        this.taskToScreen1 = this.task1;
-        this.taskToScreen2 = this.task2;
+        this.taskToScreen1 = this.task5;
+        this.taskToScreen2 = this.task6;
         this.completed1 = "none";
         this.completed2 = "none";
       }
-
-    } else if (!this.TaskBank1.checkIfCompleted()) {
-      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('blue', this.rotateClockwise(SHAPES.ZShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+    } else if (!this.TaskBank3.checkIfCompleted()) {
+      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
       if (this.taskToScreen1.checkIfCompleted()) {
         this.completed1 = "completed";
       }
       if (this.taskToScreen2.checkIfCompleted()) {
         this.completed2 = "completed";
       }
-    }
-    
+      if (this.TaskBank3.checkIfCompleted()) {
+        this.taskToScreen1 = this.task7;
+        this.taskToScreen2 = this.task8;
+        this.completed1 = "none";
+        this.completed2 = "none";
+      }
+
+    } else if (!this.TaskBank4.checkIfCompleted()) {
+      this.positionTask('red', this.rotateClockwise(SHAPES.ZShape, 0).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
+      this.positionTask('green', this.rotateClockwise(SHAPES.TShape, 3).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
+      if (this.taskToScreen1.checkIfCompleted()) {
+        this.completed1 = "completed";
+      }
+      if (this.taskToScreen2.checkIfCompleted()) {
+        this.completed2 = "completed";
+      }
+    } 
+
+
+
 
     this.piece.shape.forEach((row, y) => {
       row.forEach((value, x) => {
@@ -560,7 +562,7 @@ export class BoardComponent implements OnInit {
   test() {
     const inARow = 1;
     console.log("start")
-    this.level1.handle(this.player, this.prizeMultiplier, inARow);
+    this.level1.handle(this.player, this.prizeMultiplier, inARow, this.TaskBank1);
     console.log(this.prizeMultiplier)
     console.log(inARow)
     console.log("end")
