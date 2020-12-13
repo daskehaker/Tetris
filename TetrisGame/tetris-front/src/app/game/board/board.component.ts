@@ -22,10 +22,11 @@ import { Bot } from 'src/app/Singleton/gameBot';
 import { KeyboardControl } from './../../Bridge/KeyboardControl';
 import { ConcreteGun } from 'src/app/Prototype/ConcreteGun';
 import { Oponent } from 'src/app/Prototype/Oponent';
-import { Task, TaskBank } from 'src/app/Composite/composite';
+import { ControlTask, PositionTask, TaskBank, TimeTask } from 'src/app/Composite/composite';
 import { Stopwatch } from "ts-stopwatch";
 import { SHAPES } from 'src/app/shared/constants'
 import { Level1BankHandler, Level2BankHandler, Level3BankHandler, Level4BankHandler } from '../../ChainOfResponsibility/chain';
+import { Key } from 'readline';
 //import { Facade } from 'src/app/models/Facade';
 
 
@@ -75,10 +76,30 @@ export class BoardComponent implements OnInit {
     this.initBoard();
   }
 
+
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     event.preventDefault();
     var p = Object.assign({}, this.piece.dto)
+    if (!this.timeTask1.checkIfCompleted()) {
+      this.TaskBankTimeReset(event, this.timeTask1);
+    } else if (!this.timeTask2.checkIfCompleted()) {
+      this.TaskBankTimeReset(event, this.timeTask2);
+    }
+
+
+    if (!this.TaskBank3.checkIfCompleted() && this.TaskBank2.checkIfCompleted()) {
+      if (!this.controlTask1.checkIfCompleted()) {
+        
+        this.completed1 = this.keyLogger(event, this.controlTask1);  
+        console.log(this.controlTask1)
+      }
+
+      if (!this.controlTask2.checkIfCompleted()) {
+        this.completed2 = this.keyLogger(event, this.controlTask2);        
+      }
+    }
+
     switch(event.keyCode) {
       case KEY.E: {
         if (this.commandShape == null) {
@@ -130,25 +151,72 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  TaskBankTimeReset(event: KeyboardEvent, timeTask: TimeTask) {
+    if (!this.TaskBank2.checkIfCompleted()) {
+      switch (event.keyCode) {
+        case KEY.E: {
+          if (timeTask.getTaskName() == "Nenaudoti formos keitimo") {
+            timeTask.stopwatch.reset();
+          }
+          break;
+        }
+        case KEY.R: {
+          if (timeTask.getTaskName() == "Nenaudoti undo") {
+            timeTask.stopwatch.reset();
+          }
+          break;
+        }
+        case KEY.D: {
+          if (timeTask.getTaskName() == "Nenaudoti spalvos keitimo") {
+            timeTask.stopwatch.reset();
+          }
+          break;
+        }
+        case KEY.F: {
+          if (timeTask.getTaskName() == "Nenaudoti undo") {
+            timeTask.stopwatch.reset();
+          }
+          break;
+        }
+        default:
+          break;
+      }
+    }
+  }
 
-  task1 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
-  task2 = new Task('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
-  task3 = new Task('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
-  task4 = new Task('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
-  task5 = new Task('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
-  task6 = new Task('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
-  task7 = new Task('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
-  task8 = new Task('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
+
+  positionTask1 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  positionTask2 = new PositionTask('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
+  positionTask3 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  positionTask4 = new PositionTask('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
+  positionTask5 = new PositionTask('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
+  positionTask6 = new PositionTask('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
+  positionTask7 = new PositionTask('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
+  positionTask8 = new PositionTask('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
+
+  timeTask1 = new TimeTask("Nenaudoti bombos", 1000);
+  timeTask2 = new TimeTask("Nenaudoti formos keitimo", 1000);
+
+  controlTask1 = new ControlTask("Pasukti figūrą", 38, 15)
+  controlTask2 = new ControlTask("Pakeisti spalvą", 68 , 5)
+
 
   rootTaskBank = new TaskBank();
   TaskBank1 = new TaskBank();
   TaskBank2 = new TaskBank();
   TaskBank3 = new TaskBank();
   TaskBank4 = new TaskBank();
-  taskToScreen1: Task = this.task1;
-  taskToScreen2: Task = this.task2;
+  positionTaskToScreen1: PositionTask = this.positionTask1;
+  positionTaskToScreen2: PositionTask = this.positionTask2;
+  timeTask1Time = 0;
+  timeTask2Time = 0;
   completed1: string = "none";
   completed2: string = "none";
+  hidePositionTask: string = "";
+  hideTimeTask: string = "hide";
+  hideControlTask: string = "hide";
+  buttonPressed = "";
+  
 
   level1: Level1BankHandler = new Level1BankHandler();
   level2: Level2BankHandler = new Level2BankHandler();
@@ -162,21 +230,25 @@ export class BoardComponent implements OnInit {
 
     this.rootTaskBank.addComponent(this.TaskBank1);
 
-    this.TaskBank1.addComponent(this.task1);
-    this.TaskBank1.addComponent(this.task2);
+    this.TaskBank1.addComponent(this.positionTask1);
+    this.TaskBank1.addComponent(this.positionTask2);
+    this.TaskBank1.addComponent(this.TaskBank2)
 
+    this.TaskBank2.addComponent(this.timeTask1);
+    this.TaskBank2.addComponent(this.timeTask2);
+    this.TaskBank2.addComponent(this.TaskBank3);
 
-    this.TaskBank2.addComponent(this.task3);
-    this.TaskBank2.addComponent(this.task4);
-    this.TaskBank2.addComponent(this.TaskBank1);
+    // this.TaskBank2.addComponent(this.positionTask3);
+    // this.TaskBank2.addComponent(this.positionTask4);
+    // this.TaskBank2.addComponent(this.TaskBank3);
 
-    this.TaskBank3.addComponent(this.task5);
-    this.TaskBank3.addComponent(this.task6);
-    this.TaskBank3.addComponent(this.TaskBank2);
+    this.TaskBank3.addComponent(this.controlTask1);
+    this.TaskBank3.addComponent(this.controlTask2);
+    this.TaskBank3.addComponent(this.TaskBank4);
 
-    this.TaskBank4.addComponent(this.task7);
-    this.TaskBank4.addComponent(this.task8);
-    this.TaskBank4.addComponent(this.TaskBank3)
+    this.TaskBank4.addComponent(this.positionTask7);
+    this.TaskBank4.addComponent(this.positionTask8);
+
 
     // Get the 2D context that we draw on.
     this.ctx = this.canvas.nativeElement.getContext('2d');
@@ -220,6 +292,47 @@ export class BoardComponent implements OnInit {
         }
       //==================================
       }
+      
+
+      //Composit time taskBank
+      if (!this.TaskBank2.checkIfCompleted() && this.TaskBank1.checkIfCompleted()) {
+        
+        if (!this.timeTask1.checkIfCompleted()) {
+          if (this.timeTask1.stopwatch.isIdle()) {
+            this.timeTask1.stopwatch.start();
+          }
+          this.TaskButtonPressedTimeReset(this.timeTask1);
+          this.timeTask1Time = Math.round(this.timeTask1.stopwatch.getTime() / 1000);
+          if (this.timeTask1.getTime() <= this.timeTask1.stopwatch.getTime()) {
+            this.completed1 = "completed";
+            this.timeTask1.setToCompleted();
+            this.timeTask1.stopwatch.stop();
+          }
+        }
+
+        if (this.timeTask1.checkIfCompleted()) {
+          if (this.timeTask2.stopwatch.isIdle()) {
+            this.timeTask2.stopwatch.start();
+          }
+          this.TaskButtonPressedTimeReset(this.timeTask2);
+          this.timeTask2Time = Math.round(this.timeTask2.stopwatch.getTime() / 1000);
+          if (this.timeTask2.getTime() <= this.timeTask2.stopwatch.getTime()) {
+            this.completed2 = "completed";
+            this.timeTask2.setToCompleted();
+            this.timeTask2.stopwatch.stop();
+          }
+        }
+
+        if (this.TaskBank2.checkIfCompleted()) {
+          this.completed1 = "";
+          this.completed2 = "";
+          this.hideTimeTask = "hide";
+          this.hideControlTask = "";
+          
+        }
+
+        this.buttonPressed = ""
+      }
 
 
       if(!this.drop()){
@@ -230,6 +343,14 @@ export class BoardComponent implements OnInit {
     this.draw();
     this.requestId = requestAnimationFrame(this.animate.bind(this));
   }
+
+  TaskButtonPressedTimeReset(task: TimeTask) {
+    if (this.buttonPressed == task.getTaskName()) {
+      task.stopwatch.reset();
+    };
+  }
+
+
 
   move(p: IPiece) {
     if(this.boardService.valid(p, this.board)){
@@ -310,67 +431,43 @@ export class BoardComponent implements OnInit {
     });
   }
 
+  keyLogger(key: KeyboardEvent, task: ControlTask) {
+    if (task.getCount() >= 1 ){
+      if (key.keyCode == task.getButton()) {
+        task.decreaseCount();
+      }
+      if (task.getCount() == 0) {
+        task.setToCompleted();
+        return "completed";
+      }
+    }
+    return "";
+
+    
+  }
 
   ///when piece cannot move anymore
   freeze() {
 
     if (!this.TaskBank1.checkIfCompleted()) {
-      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('blue', this.rotateClockwise(SHAPES.ZShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
-      if (this.taskToScreen1.checkIfCompleted()) {
+      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTaskToScreen1);
+      this.positionTask('blue', this.rotateClockwise(SHAPES.ZShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTaskToScreen2);
+      if (this.positionTaskToScreen1.checkIfCompleted()) {
         this.completed1 = "completed";
       }
-      if (this.taskToScreen2.checkIfCompleted()) { 
+      if (this.positionTaskToScreen2.checkIfCompleted()) { 
         this.completed2 = "completed";
       }
       if (this.TaskBank1.checkIfCompleted()) {
-        this.taskToScreen1 = this.task3;
-        this.taskToScreen2 = this.task4;
+        
+        this.positionTaskToScreen1 = this.positionTask1;
+        this.positionTaskToScreen2 = this.positionTask1;
+        this.hidePositionTask = "hide";
+        this.hideTimeTask = "";
         this.completed1 = "none";
         this.completed2 = "none";
       }
-    } else if (!this.TaskBank2.checkIfCompleted()) {
-      this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
-      if (this.taskToScreen1.checkIfCompleted()) {
-        this.completed1 = "completed";
-      }
-      if (this.taskToScreen2.checkIfCompleted()) {
-        this.completed2 = "completed";
-      }
-      if (this.TaskBank2.checkIfCompleted()) {
-        this.taskToScreen1 = this.task5;
-        this.taskToScreen2 = this.task6;
-        this.completed1 = "none";
-        this.completed2 = "none";
-      }
-    } else if (!this.TaskBank3.checkIfCompleted()) {
-      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('blue', SHAPES.TShape.toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
-      if (this.taskToScreen1.checkIfCompleted()) {
-        this.completed1 = "completed";
-      }
-      if (this.taskToScreen2.checkIfCompleted()) {
-        this.completed2 = "completed";
-      }
-      if (this.TaskBank3.checkIfCompleted()) {
-        this.taskToScreen1 = this.task7;
-        this.taskToScreen2 = this.task8;
-        this.completed1 = "none";
-        this.completed2 = "none";
-      }
-
-    } else if (!this.TaskBank4.checkIfCompleted()) {
-      this.positionTask('red', this.rotateClockwise(SHAPES.ZShape, 0).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen1);
-      this.positionTask('green', this.rotateClockwise(SHAPES.TShape, 3).toString(), this.piece.color, this.piece.shape.toString(), this.taskToScreen2);
-      if (this.taskToScreen1.checkIfCompleted()) {
-        this.completed1 = "completed";
-      }
-      if (this.taskToScreen2.checkIfCompleted()) {
-        this.completed2 = "completed";
-      }
-    } 
-
+    }
 
 
 
@@ -447,6 +544,7 @@ export class BoardComponent implements OnInit {
       this.player.points -= 200;
       this.pieceCount = 5;
     }
+    this.buttonPressed = "Nenaudoti strategy"
   }
 
 
@@ -472,6 +570,7 @@ export class BoardComponent implements OnInit {
   }
 
   player2() {
+    this.buttonPressed = "Nenaudoti bombos"
     this.player.points = 1;
     const director = new Director();
     const builder = new PieceBuilder();
@@ -481,6 +580,7 @@ export class BoardComponent implements OnInit {
     this.piece.color = bomb.color;
     this.piece.shape = bomb.shape;
     this.piece.dto.shape = bomb.shape;
+    
   }
 
 
@@ -527,9 +627,7 @@ export class BoardComponent implements OnInit {
 
   //Composite
 
-  positionTask(requiredColor, requiredShape, color, shape, task: Task) {
-    console.log(color)
-    console.log(requiredShape == shape)
+  positionTask(requiredColor, requiredShape, color, shape, task: PositionTask) {
     if (requiredColor == color && requiredShape == shape) {
       task.decreaseCounter();
       if (task.getCount() == 0) {
@@ -561,11 +659,7 @@ export class BoardComponent implements OnInit {
   
   test() {
     const inARow = 1;
-    console.log("start")
     this.level1.handle(this.player, this.prizeMultiplier, inARow, this.TaskBank1);
-    console.log(this.prizeMultiplier)
-    console.log(inARow)
-    console.log("end")
   }
 
 }

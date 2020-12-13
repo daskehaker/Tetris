@@ -27,7 +27,7 @@ export class changeColor implements ICommand{
 
   public execute(): void {
     this.state.push(this.piece.color);
-    console.log(this.state);
+
     var index = Math.floor(Math.random() * Math.floor(8));
     this.setColor(COLORS[index]);
     
@@ -51,21 +51,20 @@ export class changeShape implements ICommand {
   private setShape(shape: number[][]) {
     this.piece.dto.shape = shape;
     this.piece.shape = this.piece.dto.shape;
-    console.log(this.piece.dto);
+
   }
 
   public execute() {
     this.state.push(this.piece.shape);
     var index = Math.floor(Math.random() * Math.floor(SHAPE.length));
-    console.log(index);
-    console.log(SHAPE[index]);
+
     this.setShape(SHAPE[index]);
-    console.log("Shape changed");
+
   }
   public undo() {
     var shape = this.state[this.state.length - 1];
     this.state.pop();
     this.setShape(shape);
-    console.log("Undo");
+
   }
 }

@@ -1,8 +1,10 @@
-export class TimerTask {
-    constructor(taskName, count) {
+import { Stopwatch } from "ts-stopwatch";
+export class TimeTask {
+    constructor(taskName, time) {
         this.isCompleted = false;
+        this.stopwatch = new Stopwatch();
         this.taskName = taskName;
-        this.count = count;
+        this.time = time;
     }
     setToCompleted() {
         this.isCompleted = true;
@@ -10,14 +12,14 @@ export class TimerTask {
     getTaskName() {
         return this.taskName;
     }
-    getCount() {
-        return this.count;
+    getTime() {
+        return this.time;
     }
     checkIfCompleted() {
         return this.isCompleted;
     }
 }
-export class Task {
+export class PositionTask {
     constructor(taskName, count, imgURL) {
         this.isCompleted = false;
         this.taskName = taskName;
@@ -40,6 +42,28 @@ export class Task {
         return this.isCompleted;
     }
 }
+export class ControlTask {
+    constructor(taskName) {
+        this.isCompleted = false;
+        this.taskName = taskName;
+    }
+    setButton(button) {
+        this.buttonTask = button;
+    }
+    getButton() {
+        return this.buttonTask;
+        2;
+    }
+    setToCompleted() {
+        this.isCompleted = true;
+    }
+    getTaskName() {
+        return this.taskName;
+    }
+    checkIfCompleted() {
+        return this.isCompleted;
+    }
+}
 export class TaskBank {
     constructor() {
         this.tasksArray = [];
@@ -47,12 +71,23 @@ export class TaskBank {
     addComponent(taskComponent) {
         this.tasksArray.push(taskComponent);
     }
+    getNextTaskBank() {
+        const nextTaskBank = this.tasksArray[2];
+        return nextTaskBank;
+    }
     getTasks() {
         return this.tasksArray;
     }
     checkIfCompleted() {
         return this.tasksArray.every(function (element) {
-            return element.checkIfCompleted();
+            if (element instanceof PositionTask) {
+                return element.checkIfCompleted();
+            }
+            else if (element instanceof TimeTask) {
+                return element.checkIfCompleted();
+            }
+            else
+                return true;
         });
     }
 }

@@ -13,7 +13,7 @@ export class Adapter implements IAdapter{
     mapSpawnPiece(x: number, y: number, color: string, shape: number[][]) {
         let receivePiece: PieceDto = new MapablePiece(x, y, color, shape);
         this.piece = receivePiece;
-        console.log("ADAPTER dalele buvo adaptuota");
+
     }
 
     getPiece(): PieceDto{
@@ -24,7 +24,6 @@ export class Adapter implements IAdapter{
         this.user = new User(user.name, user.password)
         //this.user.name = ;
         //this.user.password = 
-        console.log("ADAPTER naujo vartotojo duomenys buvo adaptuoti");
     }
 
     getUser(): IUser{

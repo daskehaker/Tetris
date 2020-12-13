@@ -1,6 +1,6 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Task } from '../../Composite/composite';
+import { PositionTask } from '../../Composite/composite';
 import { BoardComponent } from './board.component';
 import { HttpClientModule, HttpHandler, HttpHeaders } from '@angular/common/http';
 import { of } from 'rxjs';

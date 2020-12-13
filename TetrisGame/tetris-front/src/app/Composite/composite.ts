@@ -1,3 +1,5 @@
+import { count } from "console";
+import { Stopwatch } from "ts-stopwatch";
 
 
 export interface TaskComponent {
@@ -5,15 +7,18 @@ export interface TaskComponent {
 }
 
 
-export class TimerTask implements TaskComponent {
+export class TimeTask implements TaskComponent {
   private taskName: string;
-  private count: number;
+  private time: number;
   private isCompleted = false;
+  public stopwatch = new Stopwatch();
 
-  constructor(taskName, count) {
+  constructor(taskName, time) {
     this.taskName = taskName;
-    this.count = count;
+    this.time = time;
+    this.stopwatch
   }
+
 
   public setToCompleted(): void {
     this.isCompleted = true;
@@ -23,8 +28,8 @@ export class TimerTask implements TaskComponent {
     return this.taskName;
   }
 
-  public getCount(): number {
-    return this.count
+  public getTime(): number {
+    return this.time;
   }
 
   public checkIfCompleted(): boolean {
@@ -32,7 +37,7 @@ export class TimerTask implements TaskComponent {
   }
 }
 
-export class Task implements TaskComponent {
+export class PositionTask implements TaskComponent {
   private taskName: string;
   private count: number;
   private isCompleted = false;
@@ -65,6 +70,44 @@ export class Task implements TaskComponent {
   }
 }
 
+export class ControlTask implements TaskComponent{
+  private taskName: string;
+  private isCompleted = false;
+  private buttonTask: number;
+  private count: number
+
+  constructor(taskName, buttonTask, requiredCount){
+    this.taskName = taskName;
+    this.buttonTask = buttonTask;
+    this.count = requiredCount;
+  }
+  public getCount() {
+    return this.count;
+  }
+
+  public decreaseCount() {
+    this.count--;
+  }
+
+
+  public getButton() {
+    return this.buttonTask;
+  }
+
+  public setToCompleted():void {
+    this.isCompleted = true;
+  }
+
+  public getTaskName(): string {
+    return this.taskName;
+  }
+
+  public checkIfCompleted(): boolean {
+    return this.isCompleted;
+  }
+
+}
+
 export class TaskBank implements TaskComponent {
 
   private tasksArray: TaskComponent[]=[];
@@ -83,8 +126,15 @@ export class TaskBank implements TaskComponent {
   }
 
   checkIfCompleted(): boolean {
-    return this.tasksArray.every(function (element: Task) {
-      return element.checkIfCompleted();
+    return this.tasksArray.every(function (element: TaskComponent) {
+      if (element instanceof PositionTask) {
+        return element.checkIfCompleted();
+      } else if (element instanceof TimeTask) {
+        return element.checkIfCompleted();
+      }else if (element instanceof ControlTask) {
+        return element.checkIfCompleted();
+      } else return true
+      
     });
     }
 

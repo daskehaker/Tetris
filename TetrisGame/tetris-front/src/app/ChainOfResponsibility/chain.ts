@@ -1,5 +1,5 @@
 
-import { Task, TaskBank, TaskComponent } from '../Composite/composite';
+import { PositionTask, TaskBank, TaskComponent } from '../Composite/composite';
 import { Piece } from '../models/piece';
 import { BoardService } from '../services/board.service';
 import { IPiece } from '../shared/interfaces';
@@ -38,8 +38,6 @@ abstract class AbstractBankHandler implements BankHandler {
 export class Level1BankHandler extends AbstractBankHandler {
 
   public handle(player: Player, prizeMultiplier: boolean[], inARow: number, taskBank: TaskBank) {
-    console.log("TaskBank1")
-    console.log(taskBank);
     console.log(taskBank.getNextTaskBank());
     if (taskBank.checkIfCompleted()) {
       if (prizeMultiplier[0] != true) {
@@ -75,8 +73,6 @@ export class Level2BankHandler extends AbstractBankHandler {
 
     }
   }
-
-
 }
 
 export class Level3BankHandler extends AbstractBankHandler {
@@ -93,7 +89,7 @@ export class Level3BankHandler extends AbstractBankHandler {
         inARow += 0.5
       }
       if (player.level > 0) {
-        player.points--;
+        player.level--;
       }
       return super.handle(player, prizeMultiplier, inARow, taskBank.getNextTaskBank());
     } else {
