@@ -94,10 +94,12 @@ export class BoardComponent implements OnInit {
   hidePositionTask: string = "";
   hideTimeTask: string = "hide";
   hideControlTask: string = "hide";
+  tasksCompleted = ["hide", "visos užduotys atliktos"];
   buttonPressed = "";
   
 
   level1: Level1BankHandler = new Level1BankHandler();
+
   level2: Level2BankHandler = new Level2BankHandler();
   level3: Level3BankHandler = new Level3BankHandler();
   level4: Level4BankHandler = new Level4BankHandler();
@@ -231,31 +233,7 @@ export class BoardComponent implements OnInit {
  
 
   initBoard() {
-    this.level1.setNext(this.level2)
-    this.level2.setNext(this.level3)
-    this.level3.setNext(this.level4)
-
-    this.rootTaskBank.addComponent(this.TaskBank1);
-
-    this.TaskBank1.addComponent(this.positionTask1);
-    this.TaskBank1.addComponent(this.positionTask2);
-    this.TaskBank1.addComponent(this.TaskBank2)
-
-    this.TaskBank2.addComponent(this.timeTask1);
-    this.TaskBank2.addComponent(this.timeTask2);
-    this.TaskBank2.addComponent(this.TaskBank3);
-
-    // this.TaskBank2.addComponent(this.positionTask3);
-    // this.TaskBank2.addComponent(this.positionTask4);
-    // this.TaskBank2.addComponent(this.TaskBank3);
-
-    this.TaskBank3.addComponent(this.controlTask1);
-    this.TaskBank3.addComponent(this.controlTask2);
-    this.TaskBank3.addComponent(this.TaskBank4);
-
-    this.TaskBank4.addComponent(this.positionTask7);
-    this.TaskBank4.addComponent(this.positionTask8);
-
+    
 
     // Get the 2D context that we draw on.
     this.ctx = this.canvas.nativeElement.getContext('2d');
@@ -455,7 +433,8 @@ export class BoardComponent implements OnInit {
 
   ///when piece cannot move anymore
   freeze() {
-
+    console.log(this.tasksCompleted[0], "1");
+    console.log(this.tasksCompleted[1], "2")
     if (!this.TaskBank1.checkIfCompleted()) {
       this.positionTask('red', this.rotateClockwise(SHAPES.JShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTaskToScreen1);
       this.positionTask('blue', this.rotateClockwise(SHAPES.ZShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTaskToScreen2);
@@ -474,8 +453,8 @@ export class BoardComponent implements OnInit {
         this.completed2 = "none";
       }
     } else if (!this.TaskBank4.checkIfCompleted() && this.TaskBank3.checkIfCompleted()) {
-      this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTaskToScreen1);
-      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTaskToScreen2);
+      this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTask4);
+      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTask5);
       if (this.positionTaskToScreen1.checkIfCompleted()) {
         this.completed1 = "completed";
       }
@@ -484,9 +463,7 @@ export class BoardComponent implements OnInit {
       }
       if (this.TaskBank4.checkIfCompleted()) {
         this.hidePositionTask = "hide";
-        this.hideTimeTask = "";
-        this.completed1 = "none";
-        this.completed2 = "none";
+        this.tasksCompleted[0] = "";
       }
     }
 
@@ -551,6 +528,31 @@ export class BoardComponent implements OnInit {
 
 
   play() {
+    this.level1.setNext(this.level2)
+    this.level2.setNext(this.level3)
+    this.level3.setNext(this.level4)
+
+    this.rootTaskBank.addComponent(this.TaskBank1);
+
+    this.TaskBank1.addComponent(this.positionTask1);
+    this.TaskBank1.addComponent(this.positionTask2);
+    this.TaskBank1.addComponent(this.TaskBank2)
+
+    this.TaskBank2.addComponent(this.timeTask1);
+    this.TaskBank2.addComponent(this.timeTask2);
+    this.TaskBank2.addComponent(this.TaskBank3);
+
+    // this.TaskBank2.addComponent(this.positionTask3);
+    // this.TaskBank2.addComponent(this.positionTask4);
+    // this.TaskBank2.addComponent(this.TaskBank3);
+
+    this.TaskBank3.addComponent(this.controlTask1);
+    this.TaskBank3.addComponent(this.controlTask2);
+    this.TaskBank3.addComponent(this.TaskBank4);
+
+    this.TaskBank4.addComponent(this.positionTask4);
+    this.TaskBank4.addComponent(this.positionTask5);
+
     this.board = this.boardService.getBoardById(this.player.Id)
     this.piece = new Piece(this.ctx);
     console.log("play");
@@ -649,10 +651,6 @@ export class BoardComponent implements OnInit {
   //Composite
 
   positionTask(requiredColor, requiredShape, color, shape, task: PositionTask) {
-    console.log(requiredColor);
-    console.log(color);
-    console.log(requiredShape);
-    console.log(shape);
     if (requiredColor == color && requiredShape == shape) {
       task.decreaseCounter();
       if (task.getCount() == 0) {
@@ -684,7 +682,8 @@ export class BoardComponent implements OnInit {
   
   test() {
     const inARow = 1;
-    this.level1.handle(this.player, this.prizeMultiplier, inARow, this.TaskBank1);
+    console.log(this.level1.handle(this.player, this.prizeMultiplier, inARow, this.TaskBank1));
+    
   }
 
 }

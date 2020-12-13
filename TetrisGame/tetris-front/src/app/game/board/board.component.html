@@ -11,12 +11,14 @@
       <p>Level: {{ player.level }}</p>
       <p>Task:</p>
       <ul>
+        
         <li class="{{completed1}} {{hidePositionTask}}"><p >{{positionTaskToScreen1.getTaskName()}} <img src="{{positionTaskToScreen1.imgURL}}" /> Kartai: {{positionTaskToScreen1.getCount()}}  </p></li>
         <li class="{{completed2}} {{hidePositionTask}}"><p >{{positionTaskToScreen2.getTaskName()}} <img src="{{positionTaskToScreen2.imgURL}}" /> Kartai: {{positionTaskToScreen2.getCount()}}  </p></li>
         <li class="{{completed1}} {{hideTimeTask}}"><p >{{timeTask1.getTaskName()}}  Laikas: {{timeTask1Time}}  </p></li>
         <li class="{{completed2}} {{hideTimeTask}}"><p >{{timeTask2.getTaskName()}}  Laikas: {{timeTask2Time}}  </p></li>
         <li class="{{completed1}} {{hideControlTask}}"><p >{{controlTask1.getTaskName()}} {{controlTask1.getCount()}} kartus</p></li>
         <li class="{{completed2}} {{hideControlTask}}"><p >{{controlTask2.getTaskName()}} {{controlTask2.getCount()}} kartus</p></li> 
+        <li class="{{tasksCompleted[0]}}"><p>{{tasksCompleted[1]}}</p></li>
       </ul>
       
       
