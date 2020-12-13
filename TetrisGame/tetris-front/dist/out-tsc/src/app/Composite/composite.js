@@ -5,6 +5,7 @@ export class TimeTask {
         this.stopwatch = new Stopwatch();
         this.taskName = taskName;
         this.time = time;
+        this.stopwatch;
     }
     setToCompleted() {
         this.isCompleted = true;
@@ -43,16 +44,20 @@ export class PositionTask {
     }
 }
 export class ControlTask {
-    constructor(taskName) {
+    constructor(taskName, buttonTask, requiredCount) {
         this.isCompleted = false;
         this.taskName = taskName;
+        this.buttonTask = buttonTask;
+        this.count = requiredCount;
     }
-    setButton(button) {
-        this.buttonTask = button;
+    getCount() {
+        return this.count;
+    }
+    decreaseCount() {
+        this.count--;
     }
     getButton() {
         return this.buttonTask;
-        2;
     }
     setToCompleted() {
         this.isCompleted = true;
@@ -84,6 +89,9 @@ export class TaskBank {
                 return element.checkIfCompleted();
             }
             else if (element instanceof TimeTask) {
+                return element.checkIfCompleted();
+            }
+            else if (element instanceof ControlTask) {
                 return element.checkIfCompleted();
             }
             else

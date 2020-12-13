@@ -6,7 +6,6 @@ export class Adapter {
     mapSpawnPiece(x, y, color, shape) {
         let receivePiece = new MapablePiece(x, y, color, shape);
         this.piece = receivePiece;
-        console.log("ADAPTER dalele buvo adaptuota");
     }
     getPiece() {
         return this.piece;
@@ -15,7 +14,6 @@ export class Adapter {
         this.user = new User(user.name, user.password);
         //this.user.name = ;
         //this.user.password = 
-        console.log("ADAPTER naujo vartotojo duomenys buvo adaptuoti");
     }
     getUser() {
         return this.user;

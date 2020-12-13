@@ -64,7 +64,43 @@ export class BoardComponent implements OnInit {
   oponents: Oponent[] = [{id: "1", name: "Petras"}, {id: "1", name: "Jonas"}, {id: "1", name: "Ona"}]
 
 
+  positionTask1 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  positionTask2 = new PositionTask('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
+  positionTask3 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  positionTask4 = new PositionTask('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
+  positionTask5 = new PositionTask('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
+  positionTask6 = new PositionTask('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
+  positionTask7 = new PositionTask('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
+  positionTask8 = new PositionTask('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
 
+  timeTask1 = new TimeTask("Nenaudoti bombos", 3000);
+  timeTask2 = new TimeTask("Nenaudoti formos keitimo", 3000);
+
+  controlTask1 = new ControlTask("Pasukti figūrą", 38, 15)
+  controlTask2 = new ControlTask("Pakeisti spalvą", 68 , 5)
+
+
+  rootTaskBank = new TaskBank();
+  TaskBank1 = new TaskBank();
+  TaskBank2 = new TaskBank();
+  TaskBank3 = new TaskBank();
+  TaskBank4 = new TaskBank();
+  positionTaskToScreen1: PositionTask = this.positionTask1;
+  positionTaskToScreen2: PositionTask = this.positionTask2;
+  timeTask1Time = 0;
+  timeTask2Time = 0;
+  completed1: string = "none";
+  completed2: string = "none";
+  hidePositionTask: string = "";
+  hideTimeTask: string = "hide";
+  hideControlTask: string = "hide";
+  buttonPressed = "";
+  
+
+  level1: Level1BankHandler = new Level1BankHandler();
+  level2: Level2BankHandler = new Level2BankHandler();
+  level3: Level3BankHandler = new Level3BankHandler();
+  level4: Level4BankHandler = new Level4BankHandler();
   
 
   constructor(private chatService: ChatService) {}
@@ -90,14 +126,21 @@ export class BoardComponent implements OnInit {
 
     if (!this.TaskBank3.checkIfCompleted() && this.TaskBank2.checkIfCompleted()) {
       if (!this.controlTask1.checkIfCompleted()) {
-        
         this.completed1 = this.keyLogger(event, this.controlTask1);  
-        console.log(this.controlTask1)
       }
 
       if (!this.controlTask2.checkIfCompleted()) {
         this.completed2 = this.keyLogger(event, this.controlTask2);        
       }
+      if (this.TaskBank3.checkIfCompleted()) {
+        this.positionTaskToScreen1 = this.positionTask4;
+        this.positionTaskToScreen2 = this.positionTask5;
+        this.hideControlTask = "hide";
+        this.hidePositionTask = "";
+        this.completed1 = "";
+        this.completed2 = "";
+      }
+
     }
 
     switch(event.keyCode) {
@@ -185,43 +228,7 @@ export class BoardComponent implements OnInit {
   }
 
 
-  positionTask1 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
-  positionTask2 = new PositionTask('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
-  positionTask3 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
-  positionTask4 = new PositionTask('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
-  positionTask5 = new PositionTask('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
-  positionTask6 = new PositionTask('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
-  positionTask7 = new PositionTask('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
-  positionTask8 = new PositionTask('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
-
-  timeTask1 = new TimeTask("Nenaudoti bombos", 1000);
-  timeTask2 = new TimeTask("Nenaudoti formos keitimo", 1000);
-
-  controlTask1 = new ControlTask("Pasukti figūrą", 38, 15)
-  controlTask2 = new ControlTask("Pakeisti spalvą", 68 , 5)
-
-
-  rootTaskBank = new TaskBank();
-  TaskBank1 = new TaskBank();
-  TaskBank2 = new TaskBank();
-  TaskBank3 = new TaskBank();
-  TaskBank4 = new TaskBank();
-  positionTaskToScreen1: PositionTask = this.positionTask1;
-  positionTaskToScreen2: PositionTask = this.positionTask2;
-  timeTask1Time = 0;
-  timeTask2Time = 0;
-  completed1: string = "none";
-  completed2: string = "none";
-  hidePositionTask: string = "";
-  hideTimeTask: string = "hide";
-  hideControlTask: string = "hide";
-  buttonPressed = "";
-  
-
-  level1: Level1BankHandler = new Level1BankHandler();
-  level2: Level2BankHandler = new Level2BankHandler();
-  level3: Level3BankHandler = new Level3BankHandler();
-  level4: Level4BankHandler = new Level4BankHandler();
+ 
 
   initBoard() {
     this.level1.setNext(this.level2)
@@ -459,9 +466,23 @@ export class BoardComponent implements OnInit {
         this.completed2 = "completed";
       }
       if (this.TaskBank1.checkIfCompleted()) {
-        
-        this.positionTaskToScreen1 = this.positionTask1;
-        this.positionTaskToScreen2 = this.positionTask1;
+        this.positionTaskToScreen1 = this.positionTask4;
+        this.positionTaskToScreen2 = this.positionTask5;
+        this.hidePositionTask = "hide";
+        this.hideTimeTask = "";
+        this.completed1 = "none";
+        this.completed2 = "none";
+      }
+    } else if (!this.TaskBank4.checkIfCompleted() && this.TaskBank3.checkIfCompleted()) {
+      this.positionTask('yellow', this.rotateClockwise(SHAPES.TShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTaskToScreen1);
+      this.positionTask('green', this.rotateClockwise(SHAPES.SShape, 1).toString(), this.piece.color, this.piece.shape.toString(), this.positionTaskToScreen2);
+      if (this.positionTaskToScreen1.checkIfCompleted()) {
+        this.completed1 = "completed";
+      }
+      if (this.positionTaskToScreen2.checkIfCompleted()) { 
+        this.completed2 = "completed";
+      }
+      if (this.TaskBank4.checkIfCompleted()) {
         this.hidePositionTask = "hide";
         this.hideTimeTask = "";
         this.completed1 = "none";
@@ -628,6 +649,10 @@ export class BoardComponent implements OnInit {
   //Composite
 
   positionTask(requiredColor, requiredShape, color, shape, task: PositionTask) {
+    console.log(requiredColor);
+    console.log(color);
+    console.log(requiredShape);
+    console.log(shape);
     if (requiredColor == color && requiredShape == shape) {
       task.decreaseCounter();
       if (task.getCount() == 0) {

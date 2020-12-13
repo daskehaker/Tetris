@@ -9,7 +9,6 @@ export class changeColor {
     }
     execute() {
         this.state.push(this.piece.color);
-        console.log(this.state);
         var index = Math.floor(Math.random() * Math.floor(8));
         this.setColor(COLORS[index]);
     }
@@ -27,21 +26,16 @@ export class changeShape {
     setShape(shape) {
         this.piece.dto.shape = shape;
         this.piece.shape = this.piece.dto.shape;
-        console.log(this.piece.dto);
     }
     execute() {
         this.state.push(this.piece.shape);
         var index = Math.floor(Math.random() * Math.floor(SHAPE.length));
-        console.log(index);
-        console.log(SHAPE[index]);
         this.setShape(SHAPE[index]);
-        console.log("Shape changed");
     }
     undo() {
         var shape = this.state[this.state.length - 1];
         this.state.pop();
         this.setShape(shape);
-        console.log("Undo");
     }
 }
 //# sourceMappingURL=command.js.map
