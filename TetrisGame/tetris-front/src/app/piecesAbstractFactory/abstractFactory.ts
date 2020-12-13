@@ -3,122 +3,196 @@ import { Piece } from '../models/piece';
 import { IPiece } from './../shared/interfaces';
 
 interface AbstractFactory {
-  createJShape(): JShape;
-  createOShape(): OShape;
-  createLShape(): LShape;
-  createZShape(): ZShape;
-  createTShape(): TShape;
-  createSShape(): SShape;
+  createJShape(fliesMap): JShape;
+  createOShape(fliesMap): OShape;
+  createLShape(fliesMap): LShape;
+  createZShape(fliesMap): ZShape;
+  createTShape(fliesMap): TShape;
+  createSShape(fliesMap): SShape;
 }
 
 class RedFactory implements AbstractFactory {
-  private fliesMap: { [s: string]: IPiece; } = <any>{};
-  public createJShape(): JShape {
+  public createJShape(fliesMap): JShape {
     console.log("flyweight used");
-    if (this.fliesMap["JShape"] === undefined || null) {
-      this.fliesMap["JShape"] = new RedJShape();
+    if (fliesMap["RedJShape"] === undefined || null) {
+      console.log("create item");
+      fliesMap["RedJShape"] = new RedJShape();
     }
-    return this.fliesMap["JShape"] as RedJShape;
+    return fliesMap["RedJShape"] as RedJShape;
   }
-  public createOShape(): OShape {
+  public createOShape(fliesMap): OShape {
     console.log("flyweight used");
-    if (this.fliesMap["OShape"] === undefined || null) {
-      this.fliesMap["OShape"] = new RedOShape();
+    if (fliesMap["RedOShape"] === undefined || null) {
+      fliesMap["RedOShape"] = new RedOShape();
     }
-    return this.fliesMap["OShape"] as RedOShape;
+    return fliesMap["RedOShape"] as RedOShape;
   }
-  public createLShape(): LShape {
+  public createLShape(fliesMap): LShape {
     console.log("flyweight used");
-    if (this.fliesMap["LShape"] === undefined || null) {
-      this.fliesMap["LShape"] = new RedLShape();
+    if (fliesMap["RedLShape"] === undefined || null) {
+      fliesMap["RedLShape"] = new RedLShape();
     }
-    return this.fliesMap["LShape"] as RedLShape;
+    return fliesMap["RedLShape"] as RedLShape;
   }
-  public createZShape(): ZShape {
+  public createZShape(fliesMap): ZShape {
     console.log("flyweight used");
-    if (this.fliesMap["ZShape"] === undefined || null) {
-      this.fliesMap["ZShape"] = new RedZShape();
+    if (fliesMap["RedZShape"] === undefined || null) {
+      fliesMap["RedZShape"] = new RedZShape();
     }
-    return this.fliesMap["ZShape"] as RedZShape;
+    return fliesMap["RedZShape"] as RedZShape;
   }
-  public createTShape(): TShape {
+  public createTShape(fliesMap): TShape {
     console.log("flyweight used");
-    if (this.fliesMap["TShape"] === undefined || null) {
-      this.fliesMap["TShape"] = new RedTShape();
+    if (fliesMap["RedTShape"] === undefined || null) {
+      fliesMap["RedTShape"] = new RedTShape();
     }
-    return this.fliesMap["TShape"] as RedTShape;
+    return fliesMap["RedTShape"] as RedTShape;
   }
-  public createSShape(): SShape {
+  public createSShape(fliesMap): SShape {
     console.log("flyweight used");
-    if (this.fliesMap["SShape"] === undefined || null) {
-      this.fliesMap["SShape"] = new RedSShape();
+    if (fliesMap["RedSShape"] === undefined || null) {
+      fliesMap["RedSShape"] = new RedSShape();
     }
-    return this.fliesMap["SShape"] as RedZShape;
+    return fliesMap["RedSShape"] as RedZShape;
   }
 }
 
 class BlueFactory implements AbstractFactory {
-  public createJShape(): JShape {
-    const simple = new ConcreteBlueJShape();
-    const decorator1 = new SoundDecorator(simple);
-    return new AlertDecorator(decorator1);
+  public createJShape(fliesMap): JShape {
+    console.log("flyweight used");
+    if (fliesMap["BlueJShape"] === undefined || null) {
+      const simple = new ConcreteBlueJShape();
+      const decorator1 = new SoundDecorator(simple);
+      fliesMap["BlueJShape"] = new AlertDecorator(decorator1);
+    }
+    return fliesMap["BlueJShape"] as BlueJShape;
   }
-  public createOShape(): OShape {
-      return new BlueOShape();
+  public createOShape(fliesMap): OShape {
+    console.log("flyweight used");
+    if (fliesMap["BlueOShape"] === undefined || null) {
+      fliesMap["BlueOShape"] = new BlueOShape();
+    }
+    return fliesMap["BlueOShape"] as BlueOShape;
   }
-  public createLShape(): LShape {
-    return new BlueLShape();
+  public createLShape(fliesMap): LShape {
+    console.log("flyweight used");
+    if (fliesMap["BlueLShape"] === undefined || null) {
+      fliesMap["BlueLShape"] = new BlueLShape();
+    }
+    return fliesMap["BlueLShape"] as BlueLShape;
   }
-  public createZShape(): ZShape {
-    return new BlueZShape();
+  public createZShape(fliesMap): ZShape {
+    console.log("flyweight used");
+    if (fliesMap["BlueZShape"] === undefined || null) {
+      fliesMap["BlueZShape"] = new BlueZShape();
+    }
+    return fliesMap["BlueZShape"] as BlueZShape;
   }
-  public createTShape(): TShape {
-    return new BlueTShape();
+  public createTShape(fliesMap): TShape {
+    console.log("flyweight used");
+    if (fliesMap["BlueTShape"] === undefined || null) {
+      fliesMap["BlueTShape"] = new BlueTShape();
+    }
+    return fliesMap["BlueTShape"] as BlueTShape;
   }
-  public createSShape(): SShape {
-    return new BlueSShape();
+  public createSShape(fliesMap): SShape {
+    console.log("flyweight used");
+    if (fliesMap["BlueSShape"] === undefined || null) {
+      fliesMap["BlueSShape"] = new BlueSShape();
+    }
+    return fliesMap["BlueSShape"] as BlueZShape;
   }
 }
 
 class GreenFactory implements AbstractFactory {
-  public createJShape(): JShape {
-      return new GreenJShape();
+  public createJShape(fliesMap): JShape {
+    console.log("flyweight used");
+    if (fliesMap["GreenJShape"] === undefined || null) {
+      console.log("create item");
+      fliesMap["GreenJShape"] = new GreenJShape();
+    }
+    return fliesMap["GreenJShape"] as GreenJShape;
   }
-  public createOShape(): OShape {
-      return new GreenOShape();
+  public createOShape(fliesMap): OShape {
+    console.log("flyweight used");
+    if (fliesMap["GreenOShape"] === undefined || null) {
+      fliesMap["GreenOShape"] = new GreenOShape();
+    }
+    return fliesMap["GreenOShape"] as GreenOShape;
   }
-  public createLShape(): LShape {
-    return new GreenLShape();
+  public createLShape(fliesMap): LShape {
+    console.log("flyweight used");
+    if (fliesMap["GreenLShape"] === undefined || null) {
+      fliesMap["GreenLShape"] = new GreenLShape();
+    }
+    return fliesMap["GreenLShape"] as GreenLShape;
   }
-  public createZShape(): ZShape {
-    return new GreenZShape();
+  public createZShape(fliesMap): ZShape {
+    console.log("flyweight used");
+    if (fliesMap["GreenZShape"] === undefined || null) {
+      fliesMap["GreenZShape"] = new GreenZShape();
+    }
+    return fliesMap["GreenZShape"] as GreenZShape;
   }
-  public createTShape(): TShape {
-    return new GreenTShape();
+  public createTShape(fliesMap): TShape {
+    console.log("flyweight used");
+    if (fliesMap["GreenTShape"] === undefined || null) {
+      fliesMap["GreenTShape"] = new GreenTShape();
+    }
+    return fliesMap["GreenTShape"] as GreenTShape;
   }
-  public createSShape(): SShape {
-    return new GreenSShape();
+  public createSShape(fliesMap): SShape {
+    console.log("flyweight used");
+    if (fliesMap["GreenSShape"] === undefined || null) {
+      fliesMap["GreenSShape"] = new GreenSShape();
+    }
+    return fliesMap["GreenSShape"] as GreenZShape;
   }
 }
 
 class YellowFactory implements AbstractFactory {
-  public createJShape(): JShape {
-      return new YellowJShape();
+  public createJShape(fliesMap): JShape {
+    console.log("flyweight used");
+    if (fliesMap["YellowJShape"] === undefined || null) {
+      console.log("create item");
+      fliesMap["YellowJShape"] = new YellowJShape();
+    }
+    return fliesMap["YellowJShape"] as YellowJShape;
   }
-  public createOShape(): OShape {
-      return new YellowOShape();
+  public createOShape(fliesMap): OShape {
+    console.log("flyweight used");
+    if (fliesMap["YellowOShape"] === undefined || null) {
+      fliesMap["YellowOShape"] = new YellowOShape();
+    }
+    return fliesMap["YellowOShape"] as YellowOShape;
   }
-  public createLShape(): LShape {
-    return new YellowLShape();
+  public createLShape(fliesMap): LShape {
+    console.log("flyweight used");
+    if (fliesMap["YellowLShape"] === undefined || null) {
+      fliesMap["YellowLShape"] = new YellowLShape();
+    }
+    return fliesMap["YellowLShape"] as YellowLShape;
   }
-  public createZShape(): ZShape {
-    return new YellowZShape();
+  public createZShape(fliesMap): ZShape {
+    console.log("flyweight used");
+    if (fliesMap["YellowZShape"] === undefined || null) {
+      fliesMap["YellowZShape"] = new YellowZShape();
+    }
+    return fliesMap["YellowZShape"] as YellowZShape;
   }
-  public createTShape(): TShape {
-    return new YellowTShape();
+  public createTShape(fliesMap): TShape {
+    console.log("flyweight used");
+    if (fliesMap["YellowTShape"] === undefined || null) {
+      fliesMap["YellowTShape"] = new YellowTShape();
+    }
+    return fliesMap["YellowTShape"] as YellowTShape;
   }
-  public createSShape(): SShape {
-    return new YellowSShape();
+  public createSShape(fliesMap): SShape {
+    console.log("flyweight used");
+    if (fliesMap["YellowSShape"] === undefined || null) {
+      fliesMap["YellowSShape"] = new YellowSShape();
+    }
+    return fliesMap["YellowSShape"] as YellowZShape;
   }
 }
 
@@ -378,7 +452,10 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
+let fliesMap: { [s: string]: IPiece; } = <any>{}//{"JShape": undefined};
 export function getRandomPiece(){
+  console.log("map:")
+  console.log(fliesMap);
   var factoryType = getRandomInt(4);
   let factory = null;
   switch(factoryType) {
@@ -406,31 +483,31 @@ export function getRandomPiece(){
   var pieceType = getRandomInt(6);
   switch(pieceType) {
     case 0: {
-       return factory.createJShape();
+       return factory.createJShape(fliesMap);
        break;
     }
     case 1: {
-      return factory.createOShape();
+      return factory.createOShape(fliesMap);
        break;
     }
     case 2: {
-      return factory.createLShape();
+      return factory.createLShape(fliesMap);
        break;
     }
     case 3: {
-      return factory.createZShape();
+      return factory.createZShape(fliesMap);
        break;
     }
     case 4: {
-      return factory.createTShape();
+      return factory.createTShape(fliesMap);
        break;
     }
     case 5: {
-      return factory.createSShape();
+      return factory.createSShape(fliesMap);
        break;
     }
     default: {
-      return factory.createJShape();
+      return factory.createJShape(fliesMap);
        break;
     }
   }

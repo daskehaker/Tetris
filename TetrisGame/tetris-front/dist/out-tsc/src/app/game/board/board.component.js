@@ -32,54 +32,57 @@ let BoardComponent = class BoardComponent {
         this.initBoard();
     }
     keyEvent(event) {
-        event.preventDefault();
-        var p = Object.assign({}, this.piece.dto);
-        switch (event.keyCode) {
-            case KEY.E: {
-                if (this.commandShape == null) {
-                    this.commandShape = new changeShape(this.piece);
+        let attributeName = document.activeElement.getAttribute("name");
+        if (attributeName != "user" && attributeName != "message") {
+            event.preventDefault();
+            var p = Object.assign({}, this.piece.dto);
+            switch (event.keyCode) {
+                case KEY.E: {
+                    if (this.commandShape == null) {
+                        this.commandShape = new changeShape(this.piece);
+                    }
+                    this.commandShape.execute();
+                    break;
                 }
-                this.commandShape.execute();
-                break;
-            }
-            case KEY.R: {
-                this.commandShape.undo();
-                break;
-            }
-            case KEY.D: {
-                if (this.commandColor == null) {
-                    this.commandColor = new changeColor(this.piece);
+                case KEY.R: {
+                    this.commandShape.undo();
+                    break;
                 }
-                this.commandColor.execute();
-                break;
-            }
-            case KEY.F: {
-                this.commandColor.undo();
-                break;
-            }
-            case KEY.RIGHT: {
-                // p.x++;
-                this.move(this.keyboardControl.right(p));
-                break;
-            }
-            case KEY.LEFT: {
-                //p.x--;
-                this.move(this.keyboardControl.left(p));
-                break;
-            }
-            case KEY.DOWN: {
-                //p.y++;
-                this.move(this.keyboardControl.down(p));
-                break;
-            }
-            case KEY.UP: {
-                //p = this.boardService.rotate(p);
-                this.move(this.keyboardControl.rotate(p));
-                break;
-            }
-            default: {
-                //statements;
-                break;
+                case KEY.D: {
+                    if (this.commandColor == null) {
+                        this.commandColor = new changeColor(this.piece);
+                    }
+                    this.commandColor.execute();
+                    break;
+                }
+                case KEY.F: {
+                    this.commandColor.undo();
+                    break;
+                }
+                case KEY.RIGHT: {
+                    // p.x++;
+                    this.move(this.keyboardControl.right(p));
+                    break;
+                }
+                case KEY.LEFT: {
+                    //p.x--;
+                    this.move(this.keyboardControl.left(p));
+                    break;
+                }
+                case KEY.DOWN: {
+                    //p.y++;
+                    this.move(this.keyboardControl.down(p));
+                    break;
+                }
+                case KEY.UP: {
+                    //p = this.boardService.rotate(p);
+                    this.move(this.keyboardControl.rotate(p));
+                    break;
+                }
+                default: {
+                    //statements;
+                    break;
+                }
             }
         }
     }

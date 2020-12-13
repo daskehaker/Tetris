@@ -3,7 +3,9 @@ import { Bot } from './../Singleton/gameBot';
 import { MessageDto } from './../Dto/MessageDto';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { displayedMessage } from '../interpreter/interpreter';
 let ChatService = class ChatService {
     constructor(http, connectionService) {
         this.http = http;
@@ -18,14 +20,14 @@ let ChatService = class ChatService {
     }
     mapReceiveMessage(user, message) {
         this.receiveMessageObject.user = user;
-        this.receiveMessageObject.msgText = message;
+        this.receiveMessageObject.msgText = displayedMessage(message);
         this.sharedObj.next(this.receiveMessageObject);
     }
     /* ****************************** Public Mehods **************************************** */
     //Cals the controller method
     broadcastMessage(msgDto) {
         //console.log(msgDto)
-        this.http.post(this.POST_URL, msgDto).subscribe();
+        this.http.post(this.POST_URL, msgDto, { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }).subscribe();
     }
     retrieveMapperObject() {
         return this.sharedObj.asObservable();

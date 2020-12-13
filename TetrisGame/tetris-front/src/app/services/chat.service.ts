@@ -4,8 +4,9 @@ import { ConnectionService } from './connection.service';
 import { MessageDto } from './../Dto/MessageDto';
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { displayedMessage } from '../interpreter/interpreter';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class ChatService implements IObserver {
 
   private mapReceiveMessage(user: string, message: string): void {
     this.receiveMessageObject.user = user;
-    this.receiveMessageObject.msgText = message;
+    this.receiveMessageObject.msgText = displayedMessage(message);
     this.sharedObj.next(this.receiveMessageObject);
   }
 
@@ -34,7 +35,7 @@ export class ChatService implements IObserver {
    //Cals the controller method
    public broadcastMessage(msgDto: any){
     //console.log(msgDto)
-    this.http.post(this.POST_URL, msgDto).subscribe();
+    this.http.post(this.POST_URL, msgDto, {headers : new HttpHeaders({ 'Content-Type': 'application/json' })}).subscribe();
    }
 
    public retrieveMapperObject(): Observable<MessageDto> {
