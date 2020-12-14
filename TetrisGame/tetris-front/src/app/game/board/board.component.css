@@ -5,3 +5,13 @@
 .hide{
     display: none;
 }
+
+.customBtn {
+  width: 50px;
+  height: 40px;
+  padding: 0px;
+  margin-left: 6px;
+  box-sizing: border-box;
+  border: 0;
+
+}

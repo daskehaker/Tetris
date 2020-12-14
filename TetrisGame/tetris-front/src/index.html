@@ -20,7 +20,11 @@
   <script src="https://unpkg.com/zone.js/dist/jasmine-patch.js?main=browser"></script>
   <script src="https://unpkg.com/zone.js/dist/async-test.js?main=browser"></script>
   <script src="https://unpkg.com/zone.js/dist/fake-async-test.js?main=browser"></script>
-
+  <script>
+    function func(){
+      document.getElementById("taskDifficulty").setAttribute("class", "hide")
+    }
+  </script>
   <script>
   var __spec_files__ = [
       'app/auth.service.spec'

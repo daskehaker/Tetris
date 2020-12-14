@@ -19,13 +19,18 @@ export class TimeTask {
     checkIfCompleted() {
         return this.isCompleted;
     }
+    accept(visitor) {
+        visitor.visitTimeTask(this);
+    }
 }
 export class PositionTask {
-    constructor(taskName, count, imgURL) {
+    constructor(taskName, imgURL) {
         this.isCompleted = false;
         this.taskName = taskName;
-        this.count = count;
         this.imgURL = imgURL;
+    }
+    setCount(number) {
+        this.count = number;
     }
     decreaseCounter() {
         this.count--;
@@ -41,6 +46,9 @@ export class PositionTask {
     }
     checkIfCompleted() {
         return this.isCompleted;
+    }
+    accept(visitor) {
+        visitor.visitPositionTask(this);
     }
 }
 export class ControlTask {
@@ -67,6 +75,9 @@ export class ControlTask {
     }
     checkIfCompleted() {
         return this.isCompleted;
+    }
+    accept(visitor) {
+        visitor.visitControlTask(this);
     }
 }
 export class TaskBank {

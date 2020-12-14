@@ -27,6 +27,7 @@ import { Stopwatch } from "ts-stopwatch";
 import { SHAPES } from 'src/app/shared/constants'
 import { Level1BankHandler, Level2BankHandler, Level3BankHandler, Level4BankHandler } from '../../ChainOfResponsibility/chain';
 import { Key } from 'readline';
+import { EasyDifficultyVisitor, HardDifficultyVisitor, MediumDifficultyVisitor, Visitor } from 'src/app/Visitor/visitor';
 //import { Facade } from 'src/app/models/Facade';
 
 
@@ -63,21 +64,24 @@ export class BoardComponent implements OnInit {
   gunsShallowCopiesArray: ConcreteGun[] = [];
   oponents: Oponent[] = [{id: "1", name: "Petras"}, {id: "1", name: "Jonas"}, {id: "1", name: "Ona"}]
 
+  easy = new EasyDifficultyVisitor();
+  medium = new MediumDifficultyVisitor();
+  hard = new HardDifficultyVisitor();
 
-  positionTask1 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
-  positionTask2 = new PositionTask('Mėlynas Z-blokas nukrenta', 1, '../../../assets/images/BlueZ90.png');
-  positionTask3 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
-  positionTask4 = new PositionTask('Geltonas T-Blokas nukrenta', 1, '../../../assets/images/YellowT90.png');
-  positionTask5 = new PositionTask('Žalias S-blokas nukrenta', 1, '../../../assets/images/GreenS90.png');
-  positionTask6 = new PositionTask('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
-  positionTask7 = new PositionTask('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
-  positionTask8 = new PositionTask('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
+  positionTask1 = new PositionTask('Raudonas J-blokas nukrenta', '../../../assets/images/RedJ90.png');
+  positionTask2 = new PositionTask('Mėlynas Z-blokas nukrenta', '../../../assets/images/BlueZ90.png');
+  //positionTask3 = new PositionTask('Raudonas J-blokas nukrenta', 1, '../../../assets/images/RedJ90.png');
+  positionTask4 = new PositionTask('Geltonas T-Blokas nukrenta', '../../../assets/images/YellowT90.png');
+  positionTask5 = new PositionTask('Žalias S-blokas nukrenta', '../../../assets/images/GreenS90.png');
+  //positionTask6 = new PositionTask('Mėlynas T-blokas nukrenta', 1, '../../../assets/images/BlueT.png');
+  //positionTask7 = new PositionTask('Raudonas Z-blokas nukrenta', 1, '../../../assets/images/RedZ.png');
+  //positionTask8 = new PositionTask('Žalias T-blokas nukrenta', 1, '../../../assets/images/GreenT270.png');
 
-  timeTask1 = new TimeTask("Nenaudoti bombos", 3000);
-  timeTask2 = new TimeTask("Nenaudoti formos keitimo", 3000);
+  timeTask1 = new TimeTask("Nenaudoti bombos");
+  timeTask2 = new TimeTask("Nenaudoti formos keitimo");
 
-  controlTask1 = new ControlTask("Pasukti figūrą", 38, 15)
-  controlTask2 = new ControlTask("Pakeisti spalvą", 68 , 5)
+  controlTask1 = new ControlTask("Pasukti figūrą", 38)
+  controlTask2 = new ControlTask("Pakeisti spalvą", 68)
 
 
   rootTaskBank = new TaskBank();
@@ -85,29 +89,30 @@ export class BoardComponent implements OnInit {
   TaskBank2 = new TaskBank();
   TaskBank3 = new TaskBank();
   TaskBank4 = new TaskBank();
-  positionTaskToScreen1: PositionTask = this.positionTask1;
-  positionTaskToScreen2: PositionTask = this.positionTask2;
+  positionTaskToScreen1: PositionTask;
+  positionTaskToScreen2: PositionTask;
   timeTask1Time = 0;
   timeTask2Time = 0;
   completed1: string = "none";
   completed2: string = "none";
-  hidePositionTask: string = "";
+  hidePositionTask: string = "hide";
   hideTimeTask: string = "hide";
   hideControlTask: string = "hide";
   tasksCompleted = ["hide", "visos užduotys atliktos"];
   buttonPressed = "";
-  
+  hideTask:string;
 
   level1: Level1BankHandler = new Level1BankHandler();
 
   level2: Level2BankHandler = new Level2BankHandler();
   level3: Level3BankHandler = new Level3BankHandler();
   level4: Level4BankHandler = new Level4BankHandler();
-  
+
 
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
+this.hideTask = "hide";
     this.userService.getUserProfile().subscribe((res: any) => {
      this.player = new Player({id: res.userId, name: res.UserName})
     })
@@ -128,11 +133,11 @@ export class BoardComponent implements OnInit {
 
     if (!this.TaskBank3.checkIfCompleted() && this.TaskBank2.checkIfCompleted()) {
       if (!this.controlTask1.checkIfCompleted()) {
-        this.completed1 = this.keyLogger(event, this.controlTask1);  
+        this.completed1 = this.keyLogger(event, this.controlTask1);
       }
 
       if (!this.controlTask2.checkIfCompleted()) {
-        this.completed2 = this.keyLogger(event, this.controlTask2);        
+        this.completed2 = this.keyLogger(event, this.controlTask2);
       }
       if (this.TaskBank3.checkIfCompleted()) {
         this.positionTaskToScreen1 = this.positionTask4;
@@ -230,10 +235,10 @@ export class BoardComponent implements OnInit {
   }
 
 
- 
+
 
   initBoard() {
-    
+
 
     // Get the 2D context that we draw on.
     this.ctx = this.canvas.nativeElement.getContext('2d');
@@ -277,11 +282,11 @@ export class BoardComponent implements OnInit {
         }
       //==================================
       }
-      
+
 
       //Composit time taskBank
       if (!this.TaskBank2.checkIfCompleted() && this.TaskBank1.checkIfCompleted()) {
-        
+
         if (!this.timeTask1.checkIfCompleted()) {
           if (this.timeTask1.stopwatch.isIdle()) {
             this.timeTask1.stopwatch.start();
@@ -313,7 +318,7 @@ export class BoardComponent implements OnInit {
           this.completed2 = "";
           this.hideTimeTask = "hide";
           this.hideControlTask = "";
-          
+
         }
 
         this.buttonPressed = ""
@@ -428,7 +433,7 @@ export class BoardComponent implements OnInit {
     }
     return "";
 
-    
+
   }
 
   ///when piece cannot move anymore
@@ -441,7 +446,7 @@ export class BoardComponent implements OnInit {
       if (this.positionTaskToScreen1.checkIfCompleted()) {
         this.completed1 = "completed";
       }
-      if (this.positionTaskToScreen2.checkIfCompleted()) { 
+      if (this.positionTaskToScreen2.checkIfCompleted()) {
         this.completed2 = "completed";
       }
       if (this.TaskBank1.checkIfCompleted()) {
@@ -458,7 +463,7 @@ export class BoardComponent implements OnInit {
       if (this.positionTaskToScreen1.checkIfCompleted()) {
         this.completed1 = "completed";
       }
-      if (this.positionTaskToScreen2.checkIfCompleted()) { 
+      if (this.positionTaskToScreen2.checkIfCompleted()) {
         this.completed2 = "completed";
       }
       if (this.TaskBank4.checkIfCompleted()) {
@@ -527,7 +532,16 @@ export class BoardComponent implements OnInit {
   }
 
 
+
+
   play() {
+    this.positionTaskToScreen1 =this.positionTask1;
+    this.positionTaskToScreen2 =this.positionTask2;
+    this.hideTask="";
+    this.hidePositionTask ="";
+
+
+
     this.level1.setNext(this.level2)
     this.level2.setNext(this.level3)
     this.level3.setNext(this.level4)
@@ -541,10 +555,6 @@ export class BoardComponent implements OnInit {
     this.TaskBank2.addComponent(this.timeTask1);
     this.TaskBank2.addComponent(this.timeTask2);
     this.TaskBank2.addComponent(this.TaskBank3);
-
-    // this.TaskBank2.addComponent(this.positionTask3);
-    // this.TaskBank2.addComponent(this.positionTask4);
-    // this.TaskBank2.addComponent(this.TaskBank3);
 
     this.TaskBank3.addComponent(this.controlTask1);
     this.TaskBank3.addComponent(this.controlTask2);
@@ -603,7 +613,7 @@ export class BoardComponent implements OnInit {
     this.piece.color = bomb.color;
     this.piece.shape = bomb.shape;
     this.piece.dto.shape = bomb.shape;
-    
+
   }
 
 
@@ -651,6 +661,9 @@ export class BoardComponent implements OnInit {
   //Composite
 
   positionTask(requiredColor, requiredShape, color, shape, task: PositionTask) {
+    if (color == "none") {
+      color = "blue";
+    }
     if (requiredColor == color && requiredShape == shape) {
       task.decreaseCounter();
       if (task.getCount() == 0) {
@@ -679,11 +692,42 @@ export class BoardComponent implements OnInit {
   };
 
   prizeMultiplier = [false, false, false, false];
-  
+
   test() {
     const inARow = 1;
     console.log(this.level1.handle(this.player, this.prizeMultiplier, inARow, this.TaskBank1));
-    
+
+  }
+
+  easyDiff(){
+    this.positionTask1.accept(this.easy);
+    this.positionTask2.accept(this.easy);
+    this.positionTask4.accept(this.easy);
+    this.positionTask5.accept(this.easy);
+    this.timeTask1.accept(this.easy);
+    this.timeTask2.accept(this.easy);
+    this.controlTask1.accept(this.easy);
+    this.controlTask2.accept(this.easy);
+  }
+  mediumDiff(){
+    this.positionTask1.accept(this.medium);
+    this.positionTask2.accept(this.medium);
+    this.positionTask4.accept(this.medium);
+    this.positionTask5.accept(this.medium);
+    this.timeTask1.accept(this.medium);
+    this.timeTask2.accept(this.medium);
+    this.controlTask1.accept(this.medium);
+    this.controlTask2.accept(this.medium);
+  }
+  hardDiff(){
+    this.positionTask1.accept(this.hard);
+    this.positionTask2.accept(this.hard);
+    this.positionTask4.accept(this.hard);
+    this.positionTask5.accept(this.hard);
+    this.timeTask1.accept(this.hard);
+    this.timeTask2.accept(this.hard);
+    this.controlTask1.accept(this.hard);
+    this.controlTask2.accept(this.hard);
   }
 
 }

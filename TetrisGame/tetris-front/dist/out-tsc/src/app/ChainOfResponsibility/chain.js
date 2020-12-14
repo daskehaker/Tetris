@@ -12,7 +12,8 @@ class AbstractBankHandler {
 }
 export class Level1BankHandler extends AbstractBankHandler {
     handle(player, prizeMultiplier, inARow, taskBank) {
-        console.log(taskBank.getNextTaskBank());
+        console.log("Handle1");
+        console.log(taskBank.getTasks());
         if (taskBank.checkIfCompleted()) {
             if (prizeMultiplier[0] != true) {
                 player.points = player.points * 2;
@@ -23,18 +24,17 @@ export class Level1BankHandler extends AbstractBankHandler {
         }
         else {
             inARow = 1;
-            return [player, prizeMultiplier, inARow];
+            return "First Link";
         }
     }
 }
 export class Level2BankHandler extends AbstractBankHandler {
     handle(player, prizeMultiplier, inARow, taskBank) {
         console.log("TaskBank2");
-        console.log(taskBank);
-        console.log(taskBank.getNextTaskBank());
+        console.log(taskBank.getTasks());
         if (taskBank.checkIfCompleted()) {
             if (prizeMultiplier[1] != true) {
-                player.points = player.points * 2 * inARow;
+                player.points = player.points * 2.5 * inARow;
                 prizeMultiplier[1] = true;
                 inARow += 0.5;
             }
@@ -42,20 +42,19 @@ export class Level2BankHandler extends AbstractBankHandler {
         }
         else {
             inARow = 1;
-            return [player, prizeMultiplier, inARow];
+            return "Second Link";
         }
     }
 }
 export class Level3BankHandler extends AbstractBankHandler {
     handle(player, prizeMultiplier, inARow, taskBank) {
-        console.log(taskBank);
-        console.log(taskBank.getNextTaskBank());
         console.log("TaskBank3");
+        console.log(taskBank.getTasks());
         if (taskBank.checkIfCompleted()) {
             if (prizeMultiplier[2] != true) {
                 prizeMultiplier[2] = true;
-                player.points = player.points * 2 * inARow;
-                inARow += 0.5;
+                player.points = player.points * 3 * inARow;
+                inARow += 1;
             }
             if (player.level > 0) {
                 player.level--;
@@ -64,26 +63,24 @@ export class Level3BankHandler extends AbstractBankHandler {
         }
         else {
             inARow = 1;
-            return [player, prizeMultiplier, inARow];
+            return "Third Link";
         }
     }
 }
 export class Level4BankHandler extends AbstractBankHandler {
     handle(player, prizeMultiplier, inARow, taskBank) {
         console.log("TaskBank4");
-        console.log(taskBank);
-        console.log(taskBank.getNextTaskBank());
+        console.log(taskBank.getTasks());
         if (taskBank.checkIfCompleted()) {
             if (prizeMultiplier[3] != true) {
                 prizeMultiplier[3] = true;
-                player.points = player.points * 2 * inARow;
-                inARow += 0.5;
+                player.points = player.points * 3.5 * inARow;
             }
-            return [player, prizeMultiplier, inARow];
+            return "EndOfChain";
         }
         else {
             inARow = 1;
-            return [player, prizeMultiplier, inARow];
+            return "EndOfChain";
         }
     }
 }
