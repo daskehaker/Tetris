@@ -35,10 +35,8 @@ abstract class AbstractBankHandler implements BankHandler {
 
 
 export class Level1BankHandler extends AbstractBankHandler {
-
   public handle(player: Player, prizeMultiplier: boolean[], inARow: number, taskBank: TaskBank) {
     console.log("Handle1")
-    console.log(taskBank.getTasks());
     if (taskBank.checkIfCompleted()) {
       if (prizeMultiplier[0] != true) {
         player.points = player.points * 2
@@ -51,14 +49,11 @@ export class Level1BankHandler extends AbstractBankHandler {
       return "First Link";
     }
   }
-
 }
 
 export class Level2BankHandler extends AbstractBankHandler {
-
   public handle(player: Player, prizeMultiplier: boolean[], inARow: number, taskBank: TaskBank) {
-    console.log("TaskBank2")
-    console.log(taskBank.getTasks());
+    console.log("Handle2")
     if (taskBank.checkIfCompleted()) {
       if (prizeMultiplier[1] != true) {
         player.points = player.points * 2.5 * inARow
@@ -69,17 +64,13 @@ export class Level2BankHandler extends AbstractBankHandler {
     } else {
       inARow = 1;
       return "Second Link";
-
     }
   }
 }
 
 export class Level3BankHandler extends AbstractBankHandler {
-
-
   public handle(player: Player, prizeMultiplier: boolean[], inARow: number, taskBank: TaskBank) {
-    console.log("TaskBank3")
-    console.log(taskBank.getTasks());
+    console.log("Handle3")
     if (taskBank.checkIfCompleted()) {
       if (prizeMultiplier[2] != true) {
         prizeMultiplier[2] = true
@@ -97,24 +88,19 @@ export class Level3BankHandler extends AbstractBankHandler {
   }
 }
 
-
 export class Level4BankHandler extends AbstractBankHandler {
-
   public handle(player: Player, prizeMultiplier: boolean[], inARow: number, taskBank: TaskBank) {
-    console.log("TaskBank4");
-    console.log(taskBank.getTasks());
+    console.log("Handle4");
     if (taskBank.checkIfCompleted()) {
       if (prizeMultiplier[3] != true) {
-        prizeMultiplier[3] = true
-        player.points = player.points * 3.5 * inARow
-
+        prizeMultiplier[3] = true;
+        player.points = player.points * 3.5 * inARow;
       }
-      return "EndOfChain";
+      return player;
     } else {
       inARow = 1;
       return "EndOfChain";
 
     }
   }
-
 }

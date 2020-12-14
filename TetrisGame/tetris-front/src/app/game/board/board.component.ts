@@ -83,7 +83,6 @@ export class BoardComponent implements OnInit {
   controlTask1 = new ControlTask("Pasukti figūrą", 38)
   controlTask2 = new ControlTask("Pakeisti spalvą", 68)
 
-
   rootTaskBank = new TaskBank();
   TaskBank1 = new TaskBank();
   TaskBank2 = new TaskBank();
@@ -694,9 +693,10 @@ this.hideTask = "hide";
   prizeMultiplier = [false, false, false, false];
 
   test() {
-    const inARow = 1;
-    console.log(this.level1.handle(this.player, this.prizeMultiplier, inARow, this.TaskBank1));
-
+    const inRow= 1;
+    console.log("player poins before", this.player.points)
+    console.log(this.level1.handle(this.player, this.prizeMultiplier, inRow, this.TaskBank1));
+    console.log("player poins after",this.player.points)
   }
 
   easyDiff(){
